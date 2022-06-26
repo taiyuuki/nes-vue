@@ -2,6 +2,12 @@
 
 Vue 3 的 NES(FC) 游戏模拟器组件。
 
+## Demo
+
+🚀[Demo](https://taiyuuki.github.io/nes-vue)
+
+Demo 就在本项目的 `example/` 目录下
+
 ## 使用
 
 ### 安装
@@ -41,7 +47,7 @@ createApp(App).use(eux).mount("#app");
 
 ## API
 
-### props
+### 属性
 
 | Property      | Description                  | Type    | Default      |
 | ------------- | ---------------------------- | ------- | ------------ |
@@ -78,11 +84,11 @@ Controller_P2 = {
 
 ### 事件
 
-只有一个事件:
-
-| events                                 | Description            |
-| -------------------------------------- | ---------------------- |
-| @fpsPerSecond -> function(fps: number) | 游戏运行时每秒执行一次 |
+| events                                   | Description       |
+| ---------------------------------------- | ----------------- |
+| @fpsPerSecond-> function(fps: number)    | 每秒触发一次      |
+| @success -> function()                   | rom加载成功时触发 |
+| @error -> funciont(errorMessage: string) | rom读取错误时触发 |
 
 ```vue
 <template>
@@ -102,9 +108,3 @@ function getFPS(fps){
 | gameStart(url: string) => void |
 | gameReset() => void            |
 | gameStop() => void             |
-
-## Demo
-
-🚀[Demo](https://taiyuuki.github.io/nes-vue)
-
-Demo 就在本项目的 `example/` 目录下

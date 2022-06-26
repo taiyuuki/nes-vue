@@ -2,7 +2,13 @@
 
 A NES(FC) emulator component for Vue 3.
 
-[中文](./README_zh.md)
+:cn:[中文](./README_zh.md)
+
+## Demo
+
+🚀[Demo](https://taiyuuki.github.io/nes-vue)
+
+Demo is in the `example/` directory of this repository.
 
 ## How to use
 
@@ -80,11 +86,11 @@ Controller_P2 = {
 
 ### events
 
-There is only one event:
-
-| events                                 | Description                                 |
-| -------------------------------------- | ------------------------------------------- |
-| @fpsPerSecond -> function(fps: number) | Emitted per second when the game is running |
+| events                                 | Description                                  |
+| -------------------------------------- | -------------------------------------------- |
+| @fpsPerSecond -> function(fps: number) | Emitted per second when the game is running. |
+| @success -> function()                 | Emitted when the ROM is loaded successfully. |
+| @error -> funciont(message: string)    | Emitted when ROM load error occurs.          |
 
 ```vue
 <template>
@@ -104,9 +110,3 @@ function getFPS(fps){
 | gameStart(url: string) => void |
 | gameReset() => void            |
 | gameStop() => void             |
-
-## Demo
-
-🚀[Demo](https://taiyuuki.github.io/nes-vue)
-
-Demo is in the `example/` directory of this repository.

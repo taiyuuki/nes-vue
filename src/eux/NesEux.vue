@@ -72,7 +72,7 @@ const props = defineProps({
   }
 });
 
-const emits = defineEmits(['fpsPerSecond'])
+const emits = defineEmits(['fpsPerSecond', 'success', 'error'])
 
 const WIDTH = ref<number>(256);
 const HEIGHT = ref<number>(240);
@@ -205,31 +205,45 @@ function gameStart(path: string = <string>props.url) {
   script_processor.onaudioprocess = audio_callback;
   script_processor.connect(audio_ctx.destination);
 
-  var req = new XMLHttpRequest();
-  req.open('GET', path);
-  req.overrideMimeType('text/plain; charset=x-user-defined');
-  req.onerror = () => console.log(`Error loading ${path}: ${req.statusText}`);
+  const rp = new Promise((resolve, reject) => {
+    var req = new XMLHttpRequest();
+    req.open('GET', path);
+    req.overrideMimeType('text/plain; charset=x-user-defined');
+    req.onerror = () => {
+      console.log(`Error loading ${path}: ${req.statusText}`);
+      reject(`Error loading ${path}: ${req.statusText}`)
+    };
 
-  req.onload = function () {
-    if (this.status === 200) {
-      try {
-        nes.loadROM(this.responseText);
-        fitInParent(canvas);
-        fpsStamp = setInterval(() => {
-          const fps = nes.getFPS();
-          emits('fpsPerSecond', fps ? fps : 0);
-        }, 1000);
-      } catch (e) {
-        console.error(`Error loading ${path}`);
-        gameStop();
+    req.onload = function () {
+      if (this.status === 200) {
+        try {
+          nes.loadROM(this.responseText);
+          fitInParent(canvas);
+          fpsStamp = setInterval(() => {
+            const fps = nes.getFPS();
+            emits('fpsPerSecond', fps ? fps : 0);
+          }, 1000);
+          resolve(null)
+        } catch (_) {
+          console.error(`Error loading ${path}: rom`);
+          reject(`Error loading ${path}: rom`)
+          gameStop();
+        }
+      } else {
+        console.error(`Error loading ${path}: ${req.statusText}`)
+        reject(`Error loading ${path}: ${req.statusText}`)
       }
-    } else {
-      console.log(`Error loading ${path}: ${req.statusText}`)
-    }
-    animationframeID = requestAnimationFrame(onAnimationFrame);
-  };
+      animationframeID = requestAnimationFrame(onAnimationFrame);
+    };
 
-  req.send();
+    req.send();
+  })
+
+  rp.then(() => {
+    emits('success')
+  }, reason => {
+    emits('error', reason)
+  })
 
   document.addEventListener('keydown', (event: KeyboardEvent) => { keyboard(nes.buttonDown, event) });
   document.addEventListener('keyup', (event: KeyboardEvent) => { keyboard(nes.buttonUp, event) });
@@ -277,6 +291,7 @@ function gameStop() {
   }
   script_processor.disconnect(audio_ctx.destination);
   script_processor.onaudioprocess = null;
+  script_processor = {} as ScriptProcessorNode;
   clearInterval(fpsStamp);
   if ('close' in audio_ctx) {
     audio_ctx.close();
