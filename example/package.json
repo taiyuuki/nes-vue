@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/node": "^18.0.0",
-    "nes-vue": "^1.0.1",
+    "nes-vue": "^1.0.2",
     "vue": "^3.2.25"
   },
   "devDependencies": {

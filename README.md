@@ -32,7 +32,7 @@ Then:
 
 ```vue
 <template>
-    <nes-eux url="example.com/xxx.nes" autoStart :width="512" :height="480" />
+    <nes-vue url="example.com/xxx.nes" autoStart :width="512" :height="480" />
 </template>
 ```
 
@@ -40,10 +40,10 @@ Then:
 
 ```vue
 <template>
-  <nes-eux url="example.com/xxx.nes" autoStart :width="512" :height="480" />
+  <nes-vue url="example.com/xxx.nes" autoStart :width="512" :height="480" />
 </template>
 <script setup>
-  import { NesEux } from 'nes-vue';
+  import { NesVue } from 'nes-vue';
 </script>
 ```
 
@@ -58,13 +58,13 @@ Then:
 | height        | Game screen height                                | number  | 240          |
 | label         | Text of the game screen, show only before running | string  | ‘Game Start’ |
 | autoStart     | Auto start when the component on mounted          | boolean | false        |
-| Controller_P1 | player 1 controller                               | object  | see below    |
-| Controller_P2 | player 2 controller                               | object  | see below    |
+| p1            | player 1 controller                               | object  | see below    |
+| p2            | player 2 controller                               | object  | see below    |
 
 The values of the controller keys are KeyboardEvent.code, default values: 
 
 ```js
-Controller_P1 = {
+p1 = {
     UP: 'KeyW',
     DOWN: 'KeyS',
     LEFT: 'KeyA',
@@ -74,7 +74,7 @@ Controller_P1 = {
     SELECT: 'Digit2',
     START: 'Digit1'
 }
-Controller_P2 = {
+p2 = {
     UP: 'ArrowUp',
     DOWN: 'ArrowDown',
     LEFT: 'ArrowLeft',
@@ -88,13 +88,13 @@ Controller_P2 = {
 
 | events                                 | Description                                  |
 | -------------------------------------- | -------------------------------------------- |
-| @fpsPerSecond -> function(fps: number) | Emitted per second when the game is running. |
+| @fps -> function(fps: number)          | Emitted per second when the game is running. |
 | @success -> function()                 | Emitted when the ROM is loaded successfully. |
 | @error -> funciont(message: string)    | Emitted when ROM load error occurs.          |
 
 ```vue
 <template>
-    <nes-eux url="example.com/xxx.nes" @fpsPerSecond="getFPS" />
+    <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
 </template>
 <script setup>
 function getFPS(fps){

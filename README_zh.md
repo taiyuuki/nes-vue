@@ -30,7 +30,7 @@ createApp(App).use(eux).mount("#app");
 
 ```vue
 <template>
-    <nes-eux url="example.com/xxx.nes" autoStart :width="512" :height="480" />
+    <nes-vue url="example.com/xxx.nes" autoStart :width="512" :height="480" />
 </template>
 ```
 
@@ -38,10 +38,10 @@ createApp(App).use(eux).mount("#app");
 
 ```vue
 <template>
-  <nes-eux url="example.com/xxx.nes" autoStart :width="512" :height="480" />
+  <nes-vue url="example.com/xxx.nes" autoStart :width="512" :height="480" />
 </template>
 <script setup>
-  import { NesEux } from 'nes-vue';
+  import { NesVue } from 'nes-vue';
 </script>
 ```
 
@@ -56,13 +56,13 @@ createApp(App).use(eux).mount("#app");
 | height        | 游戏画面高度                 | number  | 240          |
 | label         | 游戏运行前画面上的显示文字   | string  | ‘Game Start’ |
 | autoStart     | 组件挂载后自动开始游戏       | boolean | false        |
-| Controller_P1 | 玩家 1 控制器                | object  | 见下文       |
-| Controller_P2 | 玩家 2 控制器                | object  | 见下文       |
+| p1            | 玩家 1 控制器                | object  | 见下文       |
+| p2            | 玩家 2 控制器                | object  | 见下文       |
 
 控制器各属性值是 KeyboardEvent.code, 默认值: 
 
 ```js
-Controller_P1 = {
+p1 = {
     UP: 'KeyW',
     DOWN: 'KeyS',
     LEFT: 'KeyA',
@@ -72,7 +72,7 @@ Controller_P1 = {
     SELECT: 'Digit2',
     START: 'Digit1'
 }
-Controller_P2 = {
+p2 = {
     UP: 'ArrowUp',
     DOWN: 'ArrowDown',
     LEFT: 'ArrowLeft',
@@ -86,13 +86,13 @@ Controller_P2 = {
 
 | events                                   | Description       |
 | ---------------------------------------- | ----------------- |
-| @fpsPerSecond-> function(fps: number)    | 每秒触发一次      |
+| @fps -> function(fps: number)            | 每秒触发一次      |
 | @success -> function()                   | rom加载成功时触发 |
 | @error -> funciont(errorMessage: string) | rom读取错误时触发 |
 
 ```vue
 <template>
-    <nes-eux url="example.com/xxx.nes" @fpsPerSecond="getFPS" />
+    <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
 </template>
 <script setup>
 function getFPS(fps){

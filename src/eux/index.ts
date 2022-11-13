@@ -1,7 +1,7 @@
-import NesEux from "./NesEux.vue";
-import { App } from "vue";
+import NesVue from './NesVue.vue'
+import type { App } from 'vue'
 export default {
   install(app: App) {
-    app.component(NesEux.name, NesEux);
+    app.component(NesVue.name, NesVue)
   },
-};
+}

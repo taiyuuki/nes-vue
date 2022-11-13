@@ -1,53 +1,60 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import Delete from "rollup-plugin-delete";
-import Dts from "vite-plugin-dts";
-const path = require("path");
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import rollupDelete from 'rollup-plugin-delete'
+import rollupDts from 'vite-plugin-dts'
+import autoAPIs from 'unplugin-auto-import/vite'
+import path from 'path'
 
-function resolve(dir) {
-  return path.join(__dirname, dir);
+function resolve(dir: string) {
+  return path.join(__dirname, dir)
 }
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "./",
+  // base: './',
   plugins: [
-    Dts({
-      outputDir: "dist",
+    rollupDts({
+      outputDir: 'dist',
       staticImport: true,
       insertTypesEntry: true,
+      exclude: ['src/auto-imports.d.ts'],
     }),
-    vue(),
+    vue({ reactivityTransform: true }),
+    autoAPIs({
+      imports: [
+        'vue',
+        'vue/macros',
+      ],
+      dts: 'src/auto-imports.d.ts',
+    }),
   ],
   resolve: {
     alias: {
-      "@": resolve("src"),
-      src: resolve("src"),
-      common: resolve("src/common"),
-      components: resolve("src/components"),
+      '@': resolve('src'),
+      src: resolve('src'),
+      common: resolve('src/common'),
+      components: resolve('src/components'),
     },
   },
   build: {
     lib: {
-      entry: resolve("src/index.ts"),
-      name: "NesVue",
+      entry: resolve('src/index.ts'),
+      name: 'NesVue',
       fileName: (format) => `nes-vue.${format}.js`,
     },
     rollupOptions: {
       // 打包时忽略vue
-      external: ["vue"],
+      external: ['vue'],
       output: {
-        //为外部依赖提供全局变量
-        globals: {
-          vue: "Vue",
-        },
+        // 为外部依赖提供全局变量
+        globals: { NesVue: 'NesVue' },
       },
       plugins: [
-        Delete({
-          targets: ["dist/*.{ico,txt}", "dist/*.nes", "dist/*.NES"],
-          hook: "generateBundle",
+        rollupDelete({
+          targets: ['dist/*.{ico,txt}', 'dist/*.nes', 'dist/*.NES'],
+          hook: 'generateBundle',
         }),
       ],
     },
   },
-});
+})

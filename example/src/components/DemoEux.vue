@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <nes-eux :url="gameUrl" label="Click to Start" @fpsPerSecond="getFps" @success="isSuccessful" @error="getError"
+    <nes-vue :url="gameUrl" label="Click to Start" @fps="getFps" @success="isSuccessful" @error="getError"
       :width="512" :height="480" ref="eux" />
     <div class="show-fps">FPS:{{ currentFPS }}</div>
   </div>
@@ -12,10 +12,10 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
-import { NesEux } from 'nes-vue';
+import { NesVue } from 'nes-vue';
 
 const eux = ref(null);
-const gameList = ['../public/Wanpaku Duck Yume Bouken 2.nes', '../public/Chip to Dale no Dai Sakusen 2.nes'];
+const gameList = ['Wanpaku Duck Yume Bouken 2.nes', 'Chip to Dale no Dai Sakusen 2.nes'];
 let gameUrl = ref<string>(gameList[0]);
 let currentFPS = ref<string>('0')
 let i = 0;
@@ -34,13 +34,13 @@ function getFps(fps: number) {
 
 function resetGame() {
   if (eux.value) {
-    (<typeof NesEux>eux.value).gameReset()
+    (<typeof NesVue>eux.value).gameReset()
   }
 }
 
 function stopGame() {
   if (eux.value) {
-    (<typeof NesEux>eux.value).gameStop()
+    (<typeof NesVue>eux.value).gameStop()
   }
 }
 

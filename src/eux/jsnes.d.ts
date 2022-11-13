@@ -1,33 +1,34 @@
 declare module "jsnes" {
   class NES {
-    constructor(nesOptions: NesOptions);
-    loadROM(buffer: Buffer | string): void;
-    frame(): void;
-    buttonDown(n: number, button: string): void;
-    buttonUp(n: number, button: string): void;
-    reset(): void;
-    getFPS(): number;
+    constructor(nesOptions: NesOptions)
+    loadROM(buffer: Buffer | string): void
+    frame(): void
+    buttonDown(n: number, button: string): void
+    buttonUp(n: number, button: string): void
+    reset(): void
+    getFPS(): number
   }
-  namespace Controller {
-    let BUTTON_UP: string;
-    let BUTTON_DOWN: string;
-    let BUTTON_LEFT: string;
-    let BUTTON_RIGHT: string;
-    let BUTTON_A: string;
-    let BUTTON_B: string;
-    let BUTTON_SELECT: string;
-    let BUTTON_START: string;
+  export interface ControllerOptions {
+    BUTTON_UP: string
+    BUTTON_DOWN: string
+    BUTTON_LEFT: string
+    BUTTON_RIGHT: string
+    BUTTON_A: string
+    BUTTON_B: string
+    BUTTON_SELECT: string
+    BUTTON_START: string
   }
-  export { NES, Controller };
+  const jsnes = { NES, Controller: ControllerOptions }
+  export default jsnes
 }
 
 type NesOptions = {
-  onFrame(frameBuffer: Buffer): void;
-  onAudioSample(left: number, right: number): void;
-  sampleRate?: number;
+  onFrame(frameBuffer: Buffer): void
+  onAudioSample(left: number, right: number): void
+  sampleRate?: number
 };
 
 type Game = {
-  name: string;
-  path: string;
+  name: string
+  path: string
 };

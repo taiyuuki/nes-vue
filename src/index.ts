@@ -1,4 +1,4 @@
-import NesEux from "./eux/NesEux.vue";
-import eux from "./eux";
-export { NesEux };
-export default eux;
+import NesVue from './eux/NesVue.vue'
+import eux from './eux'
+export { NesVue }
+export default eux
