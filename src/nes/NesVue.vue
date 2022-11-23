@@ -18,114 +18,51 @@
 
 <script lang="ts">
 export default { name: 'nes-vue' }
-interface Controller {
-  UP: KeyboardEvent['code']
-  DOWN: KeyboardEvent['code']
-  LEFT: KeyboardEvent['code']
-  RIGHT: KeyboardEvent['code']
-  A: KeyboardEvent['code']
-  B: KeyboardEvent['code']
-  SELECT?: KeyboardEvent['code']
-  START?: KeyboardEvent['code']
-}
-export interface NesVuePorps {
-  url: string
-  autoStart?: boolean
-  width?: number | string
-  height?: number | string
-  label?: string
-  p1?: Controller
-  p2?: Controller
-}
 </script>
 
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { saveData, loadData, putData } from '../db'
+import type {  EmitErrorObj, Controller } from './types'
 
-const props = defineProps({
-  url: {
-    type: String,
-    required: true,
-  },
-  autoStart: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  width: {
-    type: Number,
-    required: false,
-    default: 256,
-  },
-  height: {
-    type: Number,
-    required: false,
-    default: 240,
-  },
-  label: {
-    type: String,
-    required: false,
-    default: 'Game Start',
-  },
-  p1: {
-    type: Object,
-    required: false,
-    default: function () {
-      return {
-        UP: 'KeyW',
-        DOWN: 'KeyS',
-        LEFT: 'KeyA',
-        RIGHT: 'KeyD',
-        A: 'KeyK',
-        B: 'KeyJ',
-        SELECT: 'Digit2',
-        START: 'Digit1',
-      }
-    },
-  },
-  p2: {
-    type: Object,
-    required: false,
-    default: function () {
-      return {
-        UP: 'ArrowUp',
-        DOWN: 'ArrowDown',
-        LEFT: 'ArrowLeft',
-        RIGHT: 'ArrowRight',
-        A: 'Numpad2',
-        B: 'Numpad1',
-      }
-    },
-  },
+const props = withDefaults(defineProps<{
+  url: string
+  autoStart?: boolean
+  width?: number | string
+  height?: number | string
+  label?: string
+  storage?: boolean
+  p1?: Controller
+  p2?: Controller
+}>(), {
+  autoStart: false,
+  width: 256,
+  height: 240,
+  label: 'Game Start',
+  storage: false,
+  p1: () => ({
+    UP: 'KeyW',
+    DOWN: 'KeyS',
+    LEFT: 'KeyA',
+    RIGHT: 'KeyD',
+    A: 'KeyK',
+    B: 'KeyJ',
+    SELECT: 'Digit2',
+    START: 'Digit1',
+  }),
+  p2: () => ({
+    UP: 'ArrowUp',
+    DOWN: 'ArrowDown',
+    LEFT: 'ArrowLeft',
+    RIGHT: 'ArrowRight',
+    A: 'Numpad2',
+    B: 'Numpad1',
+  }),
 })
-// const props = withDefaults(defineProps<NesVuePorps>(), {
-//   autoStart: () => false,
-//   width: () => 256,
-//   height: () => 240,
-//   label: () => 'Game Start',
-//   p1: () => ({
-//     UP: 'KeyW',
-//     DOWN: 'KeyS',
-//     LEFT: 'KeyA',
-//     RIGHT: 'KeyD',
-//     A: 'KeyK',
-//     B: 'KeyJ',
-//     SELECT: 'Digit2',
-//     START: 'Digit1',
-//   }),
-//   p2: () => ({
-//     UP: 'ArrowUp',
-//     DOWN: 'ArrowDown',
-//     LEFT: 'ArrowLeft',
-//     RIGHT: 'ArrowRight',
-//     A: 'Numpad2',
-//     B: 'Numpad1',
-//   }),
-// })
 
-const emits = defineEmits(['fps', 'success', 'error'])
+const emits = defineEmits(['fps', 'success', 'error', 'saved', 'loaded'])
 
 const WIDTH = 256
 const HEIGHT = 240
@@ -188,7 +125,9 @@ function audio_callback(event: AudioProcessingEvent) {
   const dst = event.outputBuffer
   const len = dst.length
 
-  if (audio_remain() < AUDIO_BUFFERING) {ignoreSourceError(nes.frame)}
+  if (audio_remain() < AUDIO_BUFFERING) {
+    ignoreSourceError(nes.frame)
+  }
 
   const dst_l = dst.getChannelData(0)
   const dst_r = dst.getChannelData(1)
@@ -257,6 +196,11 @@ function keyboardEvents(callback: CallableFunction, event: KeyboardEvent) {
   }
 }
 
+function emitError(errorObj: EmitErrorObj) {
+  console.error(errorObj.message)
+  emits('error', errorObj)
+}
+
 const downKeyboardEvent = function (event: KeyboardEvent) {
   keyboardEvents(nes.buttonDown, event)
 }
@@ -288,8 +232,7 @@ function gameStart(path: string = <string>props.url) {
     req.open('GET', path)
     req.overrideMimeType('text/plain; charset=x-user-defined')
     req.onerror = () => {
-      console.log(`Error loading ${path}: ${req.statusText}`)
-      reject(`Error loading ${path}: ${req.statusText}`)
+      reject(`${path} loading Error: ${req.statusText}`)
     }
 
     req.onload = function () {
@@ -301,20 +244,20 @@ function gameStart(path: string = <string>props.url) {
             const fps = nes.getFPS()
             emits('fps', fps ? fps : 0)
           }, 1000)
-          resolve(null)
+          resolve('success')
         }
         catch (_) {
-          console.error(`Error loading ${path}: rom`)
-          reject(`Error loading ${path}: rom`)
+          reject(`${path} loading Error: Probably the ROM is unsupported.`)
           gameStop()
         }
       }
       else {
-        console.error(`Error loading ${path}: ${req.statusText}`)
-        reject(`Error loading ${path}: ${req.statusText}`)
+        reject(`${path} loading Error: ${req.statusText}.`)
       }
       animationframeID = requestAnimationFrame(onAnimationFrame)
     }
+    document.addEventListener('keydown', downKeyboardEvent)
+    document.addEventListener('keyup', upKeyboardEvent)
 
     req.send()
   })
@@ -322,11 +265,11 @@ function gameStart(path: string = <string>props.url) {
   rp.then(() => {
     emits('success')
   }, reason => {
-    emits('error', reason)
+    emitError({
+      code: 0,
+      message: reason,
+    })
   })
-
-  document.addEventListener('keydown', downKeyboardEvent)
-  document.addEventListener('keyup', upKeyboardEvent)
 
   // 游戏画面
   function onAnimationFrame() {
@@ -380,12 +323,175 @@ function gameStop() {
   cancelAnimationFrame(animationframeID)
 }
 
-onMounted(() => {
-  if (props.url && props.autoStart) {
-    gameStart(props.url as string)
+function loadGameData(data: string) {
+  const saveData = JSON.parse(data)
+  if (saveData.path !== props.url) {
+    emitError({
+      code: 2,
+      message: `Load Error: The saved data is inconsistent with the current game, saved: ${saveData.path}, current: ${props.url}.`,
+    })
+    return
   }
+  try {
+    nes.ppu.reset()
+    nes.romData = saveData.data.romData
+    nes.cpu.fromJSON(saveData.data.cpu)
+    nes.mmap.fromJSON(saveData.data.mmap)
+    nes.ppu.fromJSON(saveData.data.ppu)
+  }
+  catch (_) {
+    emitError({
+      code: 2,
+      message: 'Load Error: The saved data is invalid.',
+    })
+  }
+}
+
+function saveInStorage(id: string) {
+  if (typeof id === 'undefined') {
+    emitError({
+      code: 1,
+      message: 'Save Error: missing save id.',
+    })
+  }
+  try {
+    localStorage.setItem(id, JSON.stringify({
+      path: props.url,
+      data: nes.toJSON(),
+    }))
+    emits('saved', {
+      id,
+      message: 'The state has been saved in localStorage',
+      target: 'localStorage',
+    })
+  }
+  catch (e: any) {
+    if (e.name === 'QuotaExceededError') {
+      emitError({
+        code: 1,
+        message: 'Save Error: localStorage out of memory.',
+      })
+    }
+  }
+}
+
+function loadInStorage(id: string) {
+  if (typeof id === 'undefined') {
+    emitError({
+      code: 2,
+      message: 'Load Error: missing save id.',
+    })
+  }
+  const saveDataJSON = localStorage.getItem(id)
+  if (!saveDataJSON) {
+    emitError({
+      code: 2,
+      message: 'Load Error: nothing to load.',
+    })
+    return
+  }
+  loadGameData(saveDataJSON)
+  emits('loaded', {
+    id,
+    message: 'Loaded state from localStorage',
+    target: 'localStorage',
+  })
+}
+
+function saveIndexedDB(id: string) {
+  if (typeof id === 'undefined') {
+    emitError({
+      code: 1,
+      message: 'Save Error: missing save id.',
+    })
+  }
+  const data = {
+    id,
+    nes: JSON.stringify({
+      path: props.url,
+      data: nes.toJSON(),
+    }),
+  }
+  saveData({
+    data,
+    onSuccess() {
+      emits('saved', {
+        id,
+        message: 'The state has been saved in IndexedDB',
+        target: 'IndexedDB',
+      })
+    },
+    onError(code: number | undefined) {
+      if (code === 0) {
+        putData({ data, onSuccess: () => {console.log('saved')} })
+        return
+      }
+      emitError({
+        code: 1,
+        message: 'Save Error: Unable to save data to indexedDB.',
+      })
+    },
+  })
+}
+
+function loadIndexedDB(id: string) {
+  loadData({
+    id,
+    onSuccess(res) {
+      loadGameData(res.result.nes)
+      emits('loaded', {
+        id,
+        message: 'Loaded state from indexedDB',
+        target: 'indexedDB',
+      })
+    },
+    onError() {
+      emitError({
+        code: 2,
+        message: 'Load Error: Nothing to load, probably the save data has been removed or invalidated.',
+      })
+    },
+  })
+}
+
+function save(id: string) {
+  if (!nes.cpu.irqRequested) {
+    emitError({
+      code: 1,
+      message: 'Save Error: Can only be saved while the game is running.',
+    })
+    return
+  }
+  if (props.storage) {
+    saveInStorage(id)
+  }
+  else {
+    saveIndexedDB(id)
+  }
+}
+
+function load(id: string) {
+  if (!nes.cpu.irqRequested) {
+    emitError({
+      code: 2,
+      message: 'Load Error: Can only be loaded when the game is running.',
+    })
+    return
+  }
+  if (props.storage) {
+    loadInStorage(id)
+  }
+  else {
+    loadIndexedDB(id)
+  }
+}
+
+onMounted(() => {
   if (!props.url) {
-    throw 'nes-vue missing props: url'
+    throw 'nes-vue missing props: url.'
+  }
+  else if (props.autoStart) {
+    gameStart(props.url as string)
   }
 })
 
@@ -400,5 +506,7 @@ defineExpose({
   gameStart,
   gameReset,
   gameStop,
+  save,
+  load,
 })
 </script>

@@ -3,17 +3,17 @@
 ## Install the dependencies
 
 ```bash
-npm i
+yarn
 ```
 
 ## Start in development mode
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 ## Build for production
 
 ```bash
-npm run build
+yarn build
 ```

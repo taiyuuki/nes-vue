@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import rollupDelete from 'rollup-plugin-delete'
 import rollupDts from 'vite-plugin-dts'
-import autoAPIs from 'unplugin-auto-import/vite'
 import path from 'path'
 
 function resolve(dir: string) {
@@ -20,13 +19,6 @@ export default defineConfig({
       exclude: ['src/auto-imports.d.ts'],
     }),
     vue({ reactivityTransform: true }),
-    autoAPIs({
-      imports: [
-        'vue',
-        'vue/macros',
-      ],
-      dts: 'src/auto-imports.d.ts',
-    }),
   ],
   resolve: {
     alias: {

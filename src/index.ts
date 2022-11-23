@@ -1,4 +1,7 @@
-import NesVue from './eux/NesVue.vue'
-import eux from './eux'
-export { NesVue }
-export default eux
+import NesVue from './nes/NesVue.vue'
+import nes from './nes'
+import type { Controller, NesVueProps, EmitErrorObj, SavedOrLoaded } from 'src/nes/types'
+export {
+  NesVue, NesVueProps, Controller, EmitErrorObj, SavedOrLoaded,
+}
+export default nes

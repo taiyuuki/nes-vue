@@ -1,27 +1,62 @@
 <template>
   <div class="box">
-    <nes-vue :url="gameUrl" label="Click to Start" @fps="getFps" @success="isSuccessful" @error="getError"
-      :width="512" :height="480" ref="eux" />
-    <div class="show-fps">FPS:{{ currentFPS }}</div>
+    <nes-vue
+      ref="nes"
+      :url="gameUrl"
+      label="Click to Start"
+      :width="512"
+      :height="480"
+      @fps="getFps"
+      @success="onSuccess"
+      @error="onError"
+      @saved="onSaved"
+      @loaded="onLoaded"
+    />
+    <div class="show-fps">
+      FPS:{{ currentFPS }}
+    </div>
   </div>
-  <div>
-    <button @click="switchGame">Switch</button>
-    <button @click="resetGame">Reset</button>
-    <button @click="stopGame">Stop</button>
+  <div class="btns">
+    <button @click="switchGame">
+      Switch
+    </button>
+    <button @click="resetGame">
+      Reset
+    </button>
+    <button @click="stopGame">
+      Stop
+    </button>
+    <button
+      :disabled="saveable"
+      @click="save"
+    >
+      Save
+    </button>
+    <button
+      :disabled="saveable"
+      @click="load"
+    >
+      Load
+    </button>
   </div>
 </template>
-<script setup lang="ts">
-import { ref } from 'vue';
-import { NesVue } from 'nes-vue';
 
-const eux = ref(null);
-const gameList = ['Wanpaku Duck Yume Bouken 2.nes', 'Chip to Dale no Dai Sakusen 2.nes'];
-let gameUrl = ref<string>(gameList[0]);
-let currentFPS = ref<string>('0')
-let i = 0;
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { EmitErrorObj, SavedOrLoaded } from 'nes-vue'
+import { NesVue } from 'nes-vue'
+
+type NesVueComponent = typeof NesVue
+
+const nes = ref<NesVueComponent | null>(null)
+const gameList = ['Wanpaku Duck Yume Bouken 2.nes', 'Chip to Dale no Dai Sakusen 2.nes']
+const gameUrl = ref<string>(gameList[0])
+const currentFPS = ref<string>('0')
+const saveable = ref(true)
+let i = 0
 
 function switchGame() {
-  i++;
+  i++
   if (i === gameList.length) {
     i = 0
   }
@@ -29,34 +64,61 @@ function switchGame() {
 }
 
 function getFps(fps: number) {
-  currentFPS.value = fps.toFixed(2);
+  currentFPS.value = fps.toFixed(2)
 }
 
 function resetGame() {
-  if (eux.value) {
-    (<typeof NesVue>eux.value).gameReset()
+  if (nes.value) {
+    nes.value.gameReset()
   }
 }
 
 function stopGame() {
-  if (eux.value) {
-    (<typeof NesVue>eux.value).gameStop()
+  saveable.value = true
+  currentFPS.value = '0'
+  if (nes.value) {
+    nes.value.gameStop()
   }
 }
 
-function isSuccessful() {
+function save() {
+  if (nes.value) {
+    nes.value.save(gameUrl.value)
+  }
+}
+
+function load() {
+  if (nes.value) {
+    nes.value.load(gameUrl.value)
+  }
+}
+
+function onSuccess() {
+  saveable.value = false
   console.log('Load successful')
 }
 
-function getError(message: string) {
-  console.log(message);
+function onError(error: EmitErrorObj) {
+  console.log(error)
 }
 
+function onSaved({ id }: SavedOrLoaded) {
+  console.log(id + ' saved')
+}
+
+function onLoaded({ id }: SavedOrLoaded) {
+  console.log(id + ' loaded')
+}
 </script>
+
 <style>
 .box {
   position: relative;
   display: inline-block;
+}
+
+.btns {
+  margin: 20px;
 }
 
 .show-fps {

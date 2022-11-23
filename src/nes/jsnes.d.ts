@@ -1,12 +1,28 @@
 declare module "jsnes" {
   class NES {
     constructor(nesOptions: NesOptions)
+    romData: any
+    cpu: {
+      fromJSON(cpu:any): void,
+      reset(): void,
+      irqRequested: boolean
+    }
+    mmap: {
+      fromJSON(mmap:any): void,
+      reset(): void,
+    }
+    ppu: {
+      fromJSON(ppu:any): void,
+      reset(): void,
+    }
     loadROM(buffer: Buffer | string): void
     frame(): void
     buttonDown(n: number, button: string): void
     buttonUp(n: number, button: string): void
     reset(): void
     getFPS(): number
+    toJSON(): string
+    fromJSON(saveDate: any): void
   }
   export interface ControllerOptions {
     BUTTON_UP: string
