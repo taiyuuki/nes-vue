@@ -26,7 +26,7 @@ import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from 'vue'
 import { saveData, loadData, putData } from 'src/db'
 import type {  EmitErrorObj, Controller } from './types'
-import { resolveController } from 'src/controller/map'
+import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent } from 'src/animation'
 

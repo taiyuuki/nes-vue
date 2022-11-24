@@ -14,6 +14,13 @@ export interface Controller {
   START?: string
 }
 
+export interface ControllerOptions {
+  [key: string]: {
+    p: number
+    value: string
+  }
+}
+
 export interface SavedOrLoaded {
   id: string
   message: string
