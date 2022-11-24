@@ -72,6 +72,7 @@ const emits = defineEmits(['fps', 'success', 'error', 'saved', 'loaded'])
 const controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
 let stop = $ref<boolean>(true)
+
 let fpsStamp: NodeJS.Timeout
 
 function emitError(errorObj: EmitErrorObj) {
@@ -155,10 +156,9 @@ function gameStart(path: string = <string>props.url) {
 }
 
 function gameReset() {
-  if (stop) {
-    return
+  if (!stop) {
+    gameStop()
   }
-  gameStop()
   if (props.url) {
     gameStart(props.url)
   }
@@ -172,6 +172,7 @@ function gameStop() {
   animationStop()
   clearInterval(fpsStamp)
   nes.reset()
+  stop = true
 }
 
 function loadGameData(data: string) {

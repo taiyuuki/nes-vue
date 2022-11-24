@@ -1,4 +1,9 @@
 # Change log
+
+v1.1.3
+
+* Fix bugs
+
 v1.1.1
 
 * Activity resize
