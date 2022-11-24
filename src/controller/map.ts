@@ -12,7 +12,7 @@ const keyMaps = {
 }
 const keys = Object.keys(keyMaps) as (keyof Controller)[]
 
-interface Options {
+interface ControllerOptions {
   [key: string]: {
     p: number
     value: string
@@ -20,7 +20,7 @@ interface Options {
 }
 
 export const resolveController = ({ p1, p2 }: NesVueProps) => {
-  const options: Options = {}
+  const options: ControllerOptions = {}
   keys.forEach(key => {
     options[p1[key] as string] = {
       p: 1,
