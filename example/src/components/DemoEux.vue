@@ -4,8 +4,9 @@
       ref="nes"
       :url="gameUrl"
       label="Click to Start"
-      :width="512"
-      :height="480"
+      :width="480"
+      :height="512"
+      debugger
       @fps="getFps"
       @success="onSuccess"
       @error="onError"
@@ -44,7 +45,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { EmitErrorObj, SavedOrLoaded } from 'nes-vue'
-import { NesVue } from 'nes-vue'
+// import { NesVue } from 'nes-vue'
+import NesVue from '../../../src/nes/NesVue.vue'
 
 type NesVueComponent = typeof NesVue
 

@@ -1,7 +1,7 @@
 <template>
   <div :style="`width:${width}px;height:${height}px;background-color:#000;margin:auto;position:relative`">
     <canvas
-      id="game-box"
+      ref="cvs"
       :width="WIDTH"
       :height="HEIGHT"
       style="display:inline-block"
@@ -23,9 +23,10 @@ export default { name: 'nes-vue' }
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
-import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from 'vue'
 import { saveData, loadData, putData } from '../db'
 import type {  EmitErrorObj, Controller } from './types'
+import { resolveController } from '../controller/map'
 
 const props = withDefaults(defineProps<{
   url: string
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<{
   height?: number | string
   label?: string
   storage?: boolean
+  debugger?: boolean
   p1?: Controller
   p2?: Controller
 }>(), {
@@ -42,6 +44,7 @@ const props = withDefaults(defineProps<{
   height: 240,
   label: 'Game Start',
   storage: false,
+  debugger: false,
   p1: () => ({
     UP: 'KeyW',
     DOWN: 'KeyS',
@@ -64,6 +67,8 @@ const props = withDefaults(defineProps<{
 
 const emits = defineEmits(['fps', 'success', 'error', 'saved', 'loaded'])
 
+const controller = resolveController(props)
+const cvs = $ref<HTMLCanvasElement | null>(null)
 const WIDTH = 256
 const HEIGHT = 240
 const AUDIO_BUFFERING = 512
@@ -78,6 +83,13 @@ const audio_samples_L = new Float32Array(SAMPLE_COUNT)
 const audio_samples_R = new Float32Array(SAMPLE_COUNT)
 let audio_write_cursor = 0, audio_read_cursor = 0
 let fpsStamp: NodeJS.Timeout
+
+function emitError(errorObj: EmitErrorObj) {
+  if (props.debugger) {
+    console.error(errorObj.message)
+  }
+  emits('error', errorObj)
+}
 
 const nes = new jsnes.NES({
   onFrame: function (framebuffer_24) {
@@ -141,64 +153,10 @@ function audio_callback(event: AudioProcessingEvent) {
 }
 
 function keyboardEvents(callback: CallableFunction, event: KeyboardEvent) {
-  const player_1 = 1
-  const player_2 = 2
-  if (props.p1 && props.p2) {
-    switch (event.code) {
-      case props.p1.UP: // W
-        callback(player_1, jsnes.Controller.BUTTON_UP)
-        break
-      case props.p1.DOWN: // S
-        callback(player_1, jsnes.Controller.BUTTON_DOWN)
-        break
-      case props.p1.LEFT: // A
-        callback(player_1, jsnes.Controller.BUTTON_LEFT)
-        break
-      case props.p1.RIGHT: // D
-        callback(player_1, jsnes.Controller.BUTTON_RIGHT)
-        break
-      case props.p1.B: // 'J' - qwerty, dvorak
-        callback(player_1, jsnes.Controller.BUTTON_B)
-        break
-      case props.p1.A: // 'K' - qwerty, azerty
-        callback(player_1, jsnes.Controller.BUTTON_A)
-        break
-      case props.p1.SELECT: // Tab
-        callback(player_1, jsnes.Controller.BUTTON_SELECT)
-        break
-      case props.p1.START: // Return
-        if (audio_ctx.state !== 'running') {
-          audio_ctx.resume()
-        }
-        callback(player_1, jsnes.Controller.BUTTON_START)
-        break
-      case props.p2.UP:
-        callback(player_2, jsnes.Controller.BUTTON_UP)
-        break
-      case props.p2.DOWN:
-        callback(player_2, jsnes.Controller.BUTTON_DOWN)
-        break
-      case props.p2.LEFT:
-        callback(player_2, jsnes.Controller.BUTTON_LEFT)
-        break
-      case props.p2.RIGHT:
-        callback(player_2, jsnes.Controller.BUTTON_RIGHT)
-        break
-      case props.p2.B:
-        callback(player_2, jsnes.Controller.BUTTON_B)
-        break
-      case props.p2.A:
-        callback(player_2, jsnes.Controller.BUTTON_A)
-        break
-      default:
-        break
-    }
+  const keyMap = controller[event.code]
+  if (keyMap) {
+    callback(keyMap.p, jsnes.Controller[keyMap.value])
   }
-}
-
-function emitError(errorObj: EmitErrorObj) {
-  console.error(errorObj.message)
-  emits('error', errorObj)
 }
 
 const downKeyboardEvent = function (event: KeyboardEvent) {
@@ -210,8 +168,10 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
 
 function gameStart(path: string = <string>props.url) {
   stop = false
-  const canvas = document.querySelector('#game-box') as HTMLCanvasElement
-  const canvas_ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  if (!cvs) {
+    return
+  }
+  const canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
   const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT) as ImageData
 
   canvas_ctx.fillStyle = 'black'
@@ -220,12 +180,6 @@ function gameStart(path: string = <string>props.url) {
   const buffer = new ArrayBuffer(image.data.length)
   framebuffer_u8 = new Uint8ClampedArray(buffer)
   framebuffer_u32 = new Uint32Array(buffer)
-
-  audio_ctx = new AudioContext()
-
-  script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
-  script_processor.onaudioprocess = audio_callback
-  script_processor.connect(audio_ctx.destination)
 
   const rp = new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -239,7 +193,7 @@ function gameStart(path: string = <string>props.url) {
       if (this.status === 200) {
         try {
           nes.loadROM(this.responseText)
-          fitInParent(canvas)
+          fitInParent(cvs)
           fpsStamp = setInterval(() => {
             const fps = nes.getFPS()
             emits('fps', fps ? fps : 0)
@@ -263,6 +217,10 @@ function gameStart(path: string = <string>props.url) {
   })
 
   rp.then(() => {
+    audio_ctx = new AudioContext()
+    script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
+    script_processor.onaudioprocess = audio_callback
+    script_processor.connect(audio_ctx.destination)
     emits('success')
   }, reason => {
     emitError({
@@ -280,19 +238,19 @@ function gameStart(path: string = <string>props.url) {
 }
 
 // 画面填充父元素
-function fitInParent(canvas: HTMLCanvasElement) {
-  const parent = canvas.parentNode as HTMLElement
+function fitInParent(cvs: HTMLCanvasElement) {
+  const parent = cvs.parentNode as HTMLElement
   const parentWidth = parent.clientWidth
   const parentHeight = parent.clientHeight
   const parentRatio = parentWidth / parentHeight
   const desiredRatio = WIDTH / HEIGHT
   if (desiredRatio < parentRatio) {
-    canvas.style.width = `${Math.round(parentHeight * desiredRatio)}px`
-    canvas.style.height = `${parentHeight}px`
+    cvs.style.width = `${Math.round(parentHeight * desiredRatio)}px`
+    cvs.style.height = `${parentHeight}px`
   }
   else {
-    canvas.style.width = `${parentWidth}px`
-    canvas.style.height = `${Math.round(parentWidth / desiredRatio)}px`
+    cvs.style.width = `${parentWidth}px`
+    cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
   }
 }
 
@@ -496,6 +454,13 @@ onMounted(() => {
 })
 
 watch(() => props.url, gameReset)
+watchEffect(() => {
+  if (cvs && props.width > 0 && props.height > 0) {
+    nextTick(() => {
+      fitInParent(cvs)
+    })
+  }
+})
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', downKeyboardEvent)

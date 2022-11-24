@@ -22,11 +22,11 @@ export interface SavedOrLoaded {
 
 export interface NesVueProps {
   url: string
-  autoStart?: boolean
-  width?: number | string
-  height?: number | string
-  label?: string
-  storage?: boolean
-  p1?: Controller
-  p2?: Controller
+  autoStart: boolean
+  width: number | string
+  height: number | string
+  label: string
+  storage: boolean
+  p1: Controller
+  p2: Controller
 }

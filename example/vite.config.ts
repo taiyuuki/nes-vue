@@ -9,7 +9,7 @@ function resolve(dir) {
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [vue()],
+  plugins: [vue({ reactivityTransform: true })],
   resolve: {
     alias: {
       '@': resolve('src'),
