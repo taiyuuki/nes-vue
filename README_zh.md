@@ -98,7 +98,7 @@ p2 = {
 | -------------------------------------------- | ------------------ |
 | `@fps -> function(fps: number)`              | 每秒触发一次       |
 | `@success -> function()`                     | rom加载成功时触发  |
-| `@error -> funciont(errorMessage: string)`   | rom读取错误时触发  |
+| `@error -> funciont({code, message})`   | rom读取错误时触发  |
 | `@saved ->  function({id, message, target})` | 游戏保存时触发     |
 | `@loaded -> function({id, message, target})` | 读取游戏存档时触发 |
 

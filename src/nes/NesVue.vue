@@ -24,9 +24,11 @@ export default { name: 'nes-vue' }
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from 'vue'
-import { saveData, loadData, putData } from '../db'
+import { saveData, loadData, putData } from 'src/db'
 import type {  EmitErrorObj, Controller } from './types'
-import { resolveController } from '../controller/map'
+import { resolveController } from 'src/controller/map'
+import { onAudioSample, getSampleRate, audioFrame, audioStop } from 'src/audio'
+import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent } from 'src/animation'
 
 const props = withDefaults(defineProps<{
   url: string
@@ -69,19 +71,7 @@ const emits = defineEmits(['fps', 'success', 'error', 'saved', 'loaded'])
 
 const controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
-const WIDTH = 256
-const HEIGHT = 240
-const AUDIO_BUFFERING = 512
-const SAMPLE_COUNT = 4 * 1024
 let stop = $ref<boolean>(true)
-let audio_ctx = {} as AudioContext
-let script_processor: ScriptProcessorNode
-let animationframeID: number
-let framebuffer_u8 = {} as Uint8ClampedArray, framebuffer_u32 = {} as Uint32Array
-const SAMPLE_MASK = SAMPLE_COUNT - 1
-const audio_samples_L = new Float32Array(SAMPLE_COUNT)
-const audio_samples_R = new Float32Array(SAMPLE_COUNT)
-let audio_write_cursor = 0, audio_read_cursor = 0
 let fpsStamp: NodeJS.Timeout
 
 function emitError(errorObj: EmitErrorObj) {
@@ -92,65 +82,10 @@ function emitError(errorObj: EmitErrorObj) {
 }
 
 const nes = new jsnes.NES({
-  onFrame: function (framebuffer_24) {
-    let i = 0
-    for (let y = 0; y < HEIGHT; ++y) {
-      for (let x = 0; x < WIDTH; ++x) {
-        i = (y * 256) + x
-        framebuffer_u32[i] = 0xff000000 | framebuffer_24[i] // Full alpha
-      }
-    }
-  },
-  onAudioSample: function (l, r) {
-    audio_samples_L[audio_write_cursor] = l
-    audio_samples_R[audio_write_cursor] = r
-    audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
-  },
+  onFrame,
+  onAudioSample,
   sampleRate: getSampleRate(),
 })
-
-// 获取采样频率
-function getSampleRate() {
-  if (!window.AudioContext) {
-    return 44100
-  }
-  const myCtx = new window.AudioContext()
-  const sampleRate = myCtx.sampleRate
-  myCtx.close()
-  return sampleRate
-}
-
-function audio_remain() {
-  return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
-}
-
-function ignoreSourceError(fun: Function) {
-  try {
-    fun()
-  }
-  catch (e) {
-    return
-  }
-}
-
-function audio_callback(event: AudioProcessingEvent) {
-  const dst = event.outputBuffer
-  const len = dst.length
-
-  if (audio_remain() < AUDIO_BUFFERING) {
-    ignoreSourceError(nes.frame)
-  }
-
-  const dst_l = dst.getChannelData(0)
-  const dst_r = dst.getChannelData(1)
-  for (let i = 0; i < len; i++) {
-    const src_idx = (audio_read_cursor + i) & SAMPLE_MASK
-    dst_l[i] = audio_samples_L[src_idx]
-    dst_r[i] = audio_samples_R[src_idx]
-  }
-
-  audio_read_cursor = (audio_read_cursor + len) & SAMPLE_MASK
-}
 
 function keyboardEvents(callback: CallableFunction, event: KeyboardEvent) {
   const keyMap = controller[event.code]
@@ -171,15 +106,7 @@ function gameStart(path: string = <string>props.url) {
   if (!cvs) {
     return
   }
-  const canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
-  const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT) as ImageData
-
-  canvas_ctx.fillStyle = 'black'
-  canvas_ctx.fillRect(0, 0, WIDTH, HEIGHT)
-
-  const buffer = new ArrayBuffer(image.data.length)
-  framebuffer_u8 = new Uint8ClampedArray(buffer)
-  framebuffer_u32 = new Uint32Array(buffer)
+  animationFram(cvs)
 
   const rp = new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -208,7 +135,7 @@ function gameStart(path: string = <string>props.url) {
       else {
         reject(`${path} loading Error: ${req.statusText}.`)
       }
-      animationframeID = requestAnimationFrame(onAnimationFrame)
+      // animationframeID = requestAnimationFrame(onAnimationFrame)
     }
     document.addEventListener('keydown', downKeyboardEvent)
     document.addEventListener('keyup', upKeyboardEvent)
@@ -217,10 +144,7 @@ function gameStart(path: string = <string>props.url) {
   })
 
   rp.then(() => {
-    audio_ctx = new AudioContext()
-    script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
-    script_processor.onaudioprocess = audio_callback
-    script_processor.connect(audio_ctx.destination)
+    audioFrame(nes)
     emits('success')
   }, reason => {
     emitError({
@@ -228,39 +152,13 @@ function gameStart(path: string = <string>props.url) {
       message: reason,
     })
   })
-
-  // 游戏画面
-  function onAnimationFrame() {
-    requestAnimationFrame(onAnimationFrame)
-    image.data.set(framebuffer_u8)
-    canvas_ctx.putImageData(image, 0, 0)
-  }
-}
-
-// 画面填充父元素
-function fitInParent(cvs: HTMLCanvasElement) {
-  const parent = cvs.parentNode as HTMLElement
-  const parentWidth = parent.clientWidth
-  const parentHeight = parent.clientHeight
-  const parentRatio = parentWidth / parentHeight
-  const desiredRatio = WIDTH / HEIGHT
-  if (desiredRatio < parentRatio) {
-    cvs.style.width = `${Math.round(parentHeight * desiredRatio)}px`
-    cvs.style.height = `${parentHeight}px`
-  }
-  else {
-    cvs.style.width = `${parentWidth}px`
-    cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
-  }
 }
 
 function gameReset() {
   if (stop) {
     return
   }
-  if (script_processor.onaudioprocess) {
-    gameStop()
-  }
+  gameStop()
   if (props.url) {
     gameStart(props.url)
   }
@@ -270,15 +168,10 @@ function gameStop() {
   if (stop) {
     return
   }
-  script_processor.disconnect(audio_ctx.destination)
-  script_processor.onaudioprocess = null
-  script_processor = {} as ScriptProcessorNode
+  audioStop()
+  animationStop()
   clearInterval(fpsStamp)
-  if ('close' in audio_ctx) {
-    audio_ctx.close()
-  }
   nes.reset()
-  cancelAnimationFrame(animationframeID)
 }
 
 function loadGameData(data: string) {
@@ -381,7 +274,14 @@ function saveIndexedDB(id: string) {
     },
     onError(code: number | undefined) {
       if (code === 0) {
-        putData({ data, onSuccess: () => {console.log('saved')} })
+        putData({
+          data,
+          onSuccess: () => {
+            emits('saved', {
+              id, message: 'Overwritten saved', target: 'IndexedDB',
+            })
+          },
+        })
         return
       }
       emitError({
@@ -396,12 +296,20 @@ function loadIndexedDB(id: string) {
   loadData({
     id,
     onSuccess(res) {
-      loadGameData(res.result.nes)
-      emits('loaded', {
-        id,
-        message: 'Loaded state from indexedDB',
-        target: 'indexedDB',
-      })
+      if (res.result?.nes) {
+        loadGameData(res.result.nes)
+        emits('loaded', {
+          id,
+          message: 'Loaded state from indexedDB',
+          target: 'indexedDB',
+        })
+      }
+      else {
+        emitError({
+          code: 2,
+          message: 'Load Error: Nothing to load.',
+        })
+      }
     },
     onError() {
       emitError({

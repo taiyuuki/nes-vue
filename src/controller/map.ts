@@ -19,8 +19,7 @@ interface Options {
   }
 }
 
-export const resolveController = (props: NesVueProps) => {
-  const { p1, p2 } = props
+export const resolveController = ({ p1, p2 }: NesVueProps) => {
   const options: Options = {}
   keys.forEach(key => {
     options[p1[key] as string] = {

@@ -1,8 +1,11 @@
 # Change log
+v1.1.1
+
+* Activity resize
 
 v1.1.0
 
-* feat: Save and load state
+* Save and load state
 
 v1.0.2
 

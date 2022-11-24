@@ -100,7 +100,7 @@ p2 = {
 | -------------------------------------------- | -------------------------------------------- |
 | `@fps -> function(fps: number)`              | Emitted per second when the game is running. |
 | `@success -> function()`                     | Emitted when the ROM is loaded successfully. |
-| `@error -> funciont(message: string)`        | Emitted when ROM load error occurs.          |
+| `@error -> funciont({code, message})`        | Emitted when ROM load error occurs.          |
 | `@saved ->  function({id, message, target})` | Emitted when the state has been saved        |
 | `@loaded -> function({id, message, target})` | Emitted when the state has been loaded       |
 

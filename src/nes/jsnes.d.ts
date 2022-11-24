@@ -1,5 +1,5 @@
 declare module "jsnes" {
-  class NES {
+  export class NES {
     constructor(nesOptions: NesOptions)
     romData: any
     cpu: {
