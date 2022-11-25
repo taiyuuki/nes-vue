@@ -137,11 +137,11 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  cursor: pointer;
   transition: border-color 0.25s;
 }
 
-button:hover {
+button:not(:disabled):hover{
+  cursor: pointer;
   border-color: #646cff;
 }
 </style>
