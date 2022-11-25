@@ -3,6 +3,7 @@ export const HEIGHT = 240
 let animationframeID: number
 let framebuffer_u8 = {} as Uint8ClampedArray, framebuffer_u32 = {} as Uint32Array
 let canvas_ctx = {} as CanvasRenderingContext2D
+
 export const onFrame = (framebuffer_24: Buffer) => {
   let i = 0
   for (let y = 0; y < HEIGHT; ++y) {
@@ -15,7 +16,7 @@ export const onFrame = (framebuffer_24: Buffer) => {
 
 export const animationFram = (cvs: HTMLCanvasElement) => {
   canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
-  const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT) as ImageData
+  const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT)
 
   canvas_ctx.fillStyle = 'black'
   canvas_ctx.fillRect(0, 0, WIDTH, HEIGHT)
@@ -49,6 +50,12 @@ export const fitInParent = (cvs: HTMLCanvasElement) => {
 
 export const animationStop = () => {
   cancelAnimationFrame(animationframeID)
-  canvas_ctx.fillStyle = 'black'
-  canvas_ctx.fillRect(0, 0, WIDTH, HEIGHT)
+  const fillData = new ImageData(WIDTH, HEIGHT)
+  canvas_ctx.putImageData(fillData, 0, 0)
+}
+
+export const cut = (cvs: HTMLCanvasElement) => {
+  const image = new Image()
+  image.src = cvs.toDataURL('image/png')
+  return image
 }

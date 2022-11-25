@@ -115,47 +115,121 @@ function getFPS(fps){
 
 ### 方法
 
-| Methods                           |
-| --------------------------------- |
-| `gameStart(url?: string) => void` |
-| `gameReset() => void`             |
-| `gameStop() => void`              |
-| `save(id: string) => void`        |
-| `load(id: string) => void`        |
+| Methods                                              |
+| ---------------------------------------------------- |
+| `gameStart(url?: string) => void`                    |
+| `gameReset() => void`                                |
+| `gameStop() => void`                                 |
+| `save(id: string) => void`                           |
+| `load(id: string) => void`                           |
+| `screenshot(download?: boolean) => HTMLImageElement` |
 
-**注意**：只有在游戏运行时才能进行保存、读取操作，读取游戏还需要确保运行的游戏与读取的游戏是一致的。
+#### gameStart
 
-> 默认情况下，存档是保存在 indexedDB，你可以设置storage属性让其保存在localStorage。
->
-> 根据不同的浏览器localStorage能保存**2 MB**至**10 MB** 的数据，每个游戏的保存数据大约在**0.5MB** 至 **2MB**不等。
->
-> 如果你需要保存较多的数据，建议你使用默认的 indexedDB。
+```ts
+gameStart(url?: string) => void
+```
+
+通常情况下**不需要url** ，gameStart一般是用于开始停止状态的游戏。
+
+如果要切换游戏，只需要用响应式数据绑定url，然后修改url的值即可。
+
+**注意**: 如果你一定要用gameStart来切换游戏, 那就必须要使用 **v-model **指令绑定url属性，这样nes-vue组件才会更新url的值：
 
 ```vue
 <template>
-    <nes-vue ref="nes" url="example.com/xxx.nes" />
-	<div @click="save">Save</div>
-	<div @click="load">Load</div>
+  <nes-vue ref="nes" v-model:url="gameURL" auto-start :width="512" :height="480" />
 </template>
-<script setup>
-import { ref } from 'vue'
-    
-cosnt nes = ref(null)
-const id = 'example'
 
-// 保存游戏
-function save(){
-	if(nes.value){
-		nes.value.save(id)
-	}
-}
-    
-// 读取游戏
-function load(){
-	if(nes.value){
-        nes.value.load(id)
-    }
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { NesVue } from 'nes-vue'
+const gameURL = ref('example.com/aaa.nes')
+const nes = ref<NesVueInstance | null>(null)
+
+function switch() {
+  if (nes.value) {
+    // 这会将gameURL的值改为'example.com/bbb.nes'
+    nes.value.gameStart('example.com/bbb.nes')
+  }
 }
 </script>
 ```
+
+#### gameReset
+
+```ts
+gameReset() => void
+```
+
+重新运行当前游戏。
+
+#### gameStop
+
+```ts
+gameStop() => void
+```
+
+#### save
+
+```ts
+save(id: string) => void
+```
+
+默认情况下，存档是保存在 indexedDB，你可以设置[storage](#属性)属性让其保存在localStorage。
+
+根据不同的浏览器localStorage能保存**2 MB**至**10 MB** 的数据，每个游戏的保存数据大约在**0.5MB** 至 **2MB**不等。
+
+如果你需要保存较多的数据，建议你使用默认的 indexedDB。
+
+#### load
+
+```ts
+load(id: string) => void
+```
+
+**注意**: 只有在游戏运行时才能进行保存、读取操作，读取游戏还需要确保运行的游戏与读取的游戏是一致的。
+
+```vue
+<template>
+  <nes-vue ref="nes" v-model:url="example.com/xxx.nes" auto-start :width="512" :height="480" />
+  <button @click="save">Save</button>
+  <button @click="load">Load</button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { NesVue } from 'nes-vue'
+
+const gameURL = ref('example.com/aaa.nes')
+const nes = ref<NesVueInstance | null>(null)
+const id = 'example'
+
+function save() {
+  if (nes.value) {
+    // Save state
+    nes.value.save(id)
+  }
+}
+
+function load() {
+  if (nes.value) {
+    // Load state
+    nes.value.load(id)
+  }
+}
+</script>
+```
+
+#### screenshot
+
+```ts
+screenshot(download?: boolean) => HTMLImageElement
+```
+
+调用`screenshot(true)` 会在浏览器中开始下载游戏截图。
+
+返回值是截图的image元素。
 

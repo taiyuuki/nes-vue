@@ -9,7 +9,7 @@
     <div
       v-if="stop"
       style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
-      @click="gameStart(url as string)"
+      @click="gameStart()"
     >
       {{ label }}
     </div>
@@ -25,10 +25,11 @@ import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from 'vue'
 import { saveData, loadData, putData } from 'src/db'
-import type {  EmitErrorObj, Controller } from './types'
+import type {  EmitErrorObj, Controller, SavedOrLoaded } from './types'
 import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop } from 'src/audio'
-import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent } from 'src/animation'
+import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
+import { getNow } from 'src/utils'
 
 const props = withDefaults(defineProps<{
   url: string
@@ -67,7 +68,20 @@ const props = withDefaults(defineProps<{
   }),
 })
 
-const emits = defineEmits(['fps', 'success', 'error', 'saved', 'loaded'])
+const emits = defineEmits<NesVueEmits>()
+
+if (!props.url) {
+  throw 'nes-vue missing props: url.'
+}
+
+interface NesVueEmits {
+  (e: 'fps', fps: number): void
+  (e: 'success'): void
+  (e: 'error', error: EmitErrorObj): void
+  (e: 'saved', saved: SavedOrLoaded): void
+  (e: 'loaded', loaded: SavedOrLoaded): void
+  (e: 'update:url', path: string): void
+}
 
 const controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
@@ -105,6 +119,10 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
 function gameStart(path: string = <string>props.url) {
   stop = false
   if (!cvs) {
+    return
+  }
+  if (path !== props.url) {
+    emits('update:url', path)
     return
   }
   animationFram(cvs)
@@ -160,7 +178,7 @@ function gameReset() {
     gameStop()
   }
   if (props.url) {
-    gameStart(props.url)
+    gameStart()
   }
 }
 
@@ -270,7 +288,7 @@ function saveIndexedDB(id: string) {
       emits('saved', {
         id,
         message: 'The state has been saved in IndexedDB',
-        target: 'IndexedDB',
+        target: 'indexedDB',
       })
     },
     onError(code: number | undefined) {
@@ -279,7 +297,9 @@ function saveIndexedDB(id: string) {
           data,
           onSuccess: () => {
             emits('saved', {
-              id, message: 'Overwritten saved', target: 'IndexedDB',
+              id,
+              message: 'Overwritten saved',
+              target: 'indexedDB',
             })
           },
         })
@@ -353,12 +373,21 @@ function load(id: string) {
   }
 }
 
-onMounted(() => {
-  if (!props.url) {
-    throw 'nes-vue missing props: url.'
+function screenshot(download?: boolean) {
+  if (!cvs) {return}
+  const img = cut(cvs)
+  if (download) {
+    const a = document.createElement('a')
+    a.href = img.src
+    a.download = getNow()
+    a.click()
   }
-  else if (props.autoStart) {
-    gameStart(props.url as string)
+  return img
+}
+
+onMounted(() => {
+  if (props.autoStart) {
+    gameStart()
   }
 })
 
@@ -382,5 +411,6 @@ defineExpose({
   gameStop,
   save,
   load,
+  shortcut: screenshot,
 })
 </script>

@@ -1,5 +1,9 @@
 # Change log
 
+v1.1.4
+
+* Screenshot
+
 v1.1.3
 
 * Fix bugs

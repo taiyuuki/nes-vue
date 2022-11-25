@@ -16,7 +16,6 @@ export default defineConfig({
       outputDir: 'dist',
       staticImport: true,
       insertTypesEntry: true,
-      include: ['src/index.ts'],
     }),
     vue({ reactivityTransform: true }),
   ],

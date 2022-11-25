@@ -37,3 +37,11 @@ export interface NesVueProps {
   p1: Controller
   p2: Controller
 }
+
+export interface NesVueEmits {
+  (e: 'fps', fps: number): void
+  (e: 'success'): void
+  (e: 'error', error: EmitErrorObj): void
+  (e: 'saved', saved: SavedOrLoaded): void
+  (e: 'loaded', loaded: SavedOrLoaded): void
+}
