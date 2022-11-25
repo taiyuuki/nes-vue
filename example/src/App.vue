@@ -1,11 +1,11 @@
 <template>
   <div>
-    <DemoEux />
+    <NesDemo />
   </div>
 </template>
 
 <script setup lang="ts">
-import DemoEux from './components/DemoEux.vue'
+import NesDemo from './components/NesDemo.vue'
 </script>
 <style>
 #app {
@@ -15,9 +15,5 @@ import DemoEux from './components/DemoEux.vue'
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-}
-
-body {
-  background: radial-gradient(circle, #35a2ff 0%, #014a88 100%);
 }
 </style>

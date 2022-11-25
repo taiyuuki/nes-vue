@@ -44,12 +44,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { EmitErrorObj, SavedOrLoaded } from 'nes-vue'
+import type { EmitErrorObj, SavedOrLoaded, NesVueInstance } from 'nes-vue'
 import { NesVue } from 'nes-vue'
 
-type NesVueComponent = typeof NesVue
-
-const nes = ref<NesVueComponent | null>(null)
+const nes = ref<NesVueInstance | null>(null)
 const gameList = ['Wanpaku Duck Yume Bouken 2.nes', 'Chip to Dale no Dai Sakusen 2.nes']
 const gameUrl = ref<string>(gameList[0])
 const currentFPS = ref<string>('0')
@@ -132,15 +130,18 @@ function onLoaded({ id }: SavedOrLoaded) {
 
 button {
   margin: 0 10px;
-  color: #014a88;
+  color: #646cff;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
 }
 </style>
