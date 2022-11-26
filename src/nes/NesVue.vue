@@ -1,5 +1,5 @@
 <template>
-  <div :style="`width:${width}px;height:${height}px;background-color:#000;margin:auto;position:relative`">
+  <div :style="canvasStyle">
     <canvas
       ref="cvs"
       :width="WIDTH"
@@ -23,7 +23,7 @@ export default { name: 'nes-vue' }
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
-import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick } from 'vue'
+import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick, computed } from 'vue'
 import { saveData, loadData, putData } from 'src/db'
 import type {  EmitErrorObj, Controller, SavedOrLoaded } from './types'
 import { resolveController } from 'src/controller'
@@ -43,8 +43,8 @@ const props = withDefaults(defineProps<{
   p2?: Controller
 }>(), {
   autoStart: false,
-  width: 256,
-  height: 240,
+  width: '256px',
+  height: '240px',
   label: 'Game Start',
   storage: false,
   debugger: false,
@@ -83,7 +83,7 @@ interface NesVueEmits {
   (e: 'update:url', path: string): void
 }
 
-const controller = resolveController(props)
+let controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
 let stop = $ref<boolean>(true)
 
@@ -154,7 +154,6 @@ function gameStart(path: string = <string>props.url) {
       else {
         reject(`${path} loading Error: ${req.statusText}.`)
       }
-      // animationframeID = requestAnimationFrame(onAnimationFrame)
     }
     document.addEventListener('keydown', downKeyboardEvent)
     document.addEventListener('keyup', upKeyboardEvent)
@@ -385,18 +384,34 @@ function screenshot(download?: boolean) {
   return img
 }
 
-onMounted(() => {
-  if (props.autoStart) {
-    gameStart()
+const canvasStyle = computed(() => {
+  const pure = /^\d*$/
+  let width = props.width
+  let height = props.height
+  if (cvs) {
+    nextTick(() => {
+      fitInParent(cvs)
+    })
   }
+  if (pure.test(String(width))) {
+    width += 'px'
+  }
+  if (pure.test(String(height))) {
+    height += 'px'
+  }
+  return `width:${width};height:${height};background-color:#000;margin:auto;position:relative`
 })
 
 watch(() => props.url, gameReset)
 watchEffect(() => {
-  if (cvs && props.width > 0 && props.height > 0) {
-    nextTick(() => {
-      fitInParent(cvs)
-    })
+  if (props.p1 || props.p2) {
+    controller = resolveController(props)
+  }
+})
+
+onMounted(() => {
+  if (props.autoStart) {
+    gameStart()
   }
 })
 
@@ -411,6 +426,6 @@ defineExpose({
   gameStop,
   save,
   load,
-  shortcut: screenshot,
+  screenshot,
 })
 </script>

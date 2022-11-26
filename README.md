@@ -61,8 +61,8 @@ Then:
 | Property    | Description                                       | Type    | Default      |
 | ----------- | ------------------------------------------------- | ------- | ------------ |
 | `url`       | URL of the nes ROM. Required!!!                   | string  |              |
-| `width`     | Game screen width                                 | number  | 256          |
-| `height`    | Game screen height                                | number  | 240          |
+| `width`     | Game screen width                                 | string  | ‘256px’      |
+| `height`    | Game screen height                                | string  | ‘240px’      |
 | `label`     | Text of the game screen, show only before running | string  | ‘Game Start’ |
 | `autoStart` | Auto start when the component on mounted          | boolean | false        |
 | `storage`   | Use `localStorage `to save the game state         | boolean | false        |

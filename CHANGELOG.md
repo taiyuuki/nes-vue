@@ -1,5 +1,9 @@
 # Change log
 
+v1.1.5
+
+* Width and height property can be used as a string
+
 v1.1.4
 
 * Screenshot

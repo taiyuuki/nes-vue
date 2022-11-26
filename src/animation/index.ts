@@ -50,8 +50,6 @@ export const fitInParent = (cvs: HTMLCanvasElement) => {
 
 export const animationStop = () => {
   cancelAnimationFrame(animationframeID)
-  const fillData = new ImageData(WIDTH, HEIGHT)
-  canvas_ctx.putImageData(fillData, 0, 0)
 }
 
 export const cut = (cvs: HTMLCanvasElement) => {

@@ -59,8 +59,8 @@ createApp(App).use(nes).mount("#app");
 | Property    | Description                  | Type    | Default      |
 | ----------- | ---------------------------- | ------- | ------------ |
 | `url`       | nes游戏的rom地址，必须！！！ | string  |              |
-| `width`     | 游戏画面宽度                 | number  | 256          |
-| `height`    | 游戏画面高度                 | number  | 240          |
+| `width`     | 游戏画面宽度                 | string  | ‘256px’      |
+| `height`    | 游戏画面高度                 | string  | ‘240px’      |
 | `label`     | 游戏运行前画面上的显示文字   | string  | ‘Game Start’ |
 | `autoStart` | 组件挂载后自动开始游戏       | boolean | false        |
 | `p1`        | 玩家 1 控制器                | object  | 见下文       |

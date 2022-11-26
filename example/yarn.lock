@@ -375,8 +375,8 @@ nanoid@^3.3.4:
   resolved "https://mirrors.cloud.tencent.com/npm/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
-nes-vue@^1.1.4:
-  version "1.1.4"
+nes-vue@^1.1.5:
+  version "1.1.5"
   resolved "https://mirrors.cloud.tencent.com/npm/nes-vue/-/nes-vue-1.1.4.tgz#c2564f552eae00ff71cda112d5e5fd3b0c3dd8f6"
   integrity sha512-JpNiaV2G5KavVaxLsk5Vl79y+SX0YmG69QBUYP1E7LkGeeHbsC/ZI5VVp2Wo3GXu4050+Jps9p54K0lLGJbn9Q==
   dependencies:
