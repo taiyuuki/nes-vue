@@ -3,6 +3,7 @@ import { ignoreSourceError } from 'src/utils'
 
 let audio_ctx = {} as AudioContext
 let script_processor: ScriptProcessorNode
+let gain = 1
 const AUDIO_BUFFERING = 512
 const SAMPLE_COUNT = 4 * 1024
 const SAMPLE_MASK = SAMPLE_COUNT - 1
@@ -36,17 +37,15 @@ export const audioFrame = (nes: NES) => {
   script_processor.onaudioprocess = (event: AudioProcessingEvent) => {
     const dst = event.outputBuffer
     const len = dst.length
-
     if (audio_remain() < AUDIO_BUFFERING) {
       ignoreSourceError(nes.frame)
     }
-
     const dst_l = dst.getChannelData(0)
     const dst_r = dst.getChannelData(1)
     for (let i = 0; i < len; i++) {
       const src_idx = (audio_read_cursor + i) & SAMPLE_MASK
-      dst_l[i] = audio_samples_L[src_idx]
-      dst_r[i] = audio_samples_R[src_idx]
+      dst_l[i] = audio_samples_L[src_idx] * gain
+      dst_r[i] = audio_samples_R[src_idx] * gain
     }
 
     audio_read_cursor = (audio_read_cursor + len) & SAMPLE_MASK
@@ -62,4 +61,28 @@ export const audioStop = () => {
   if ('close' in audio_ctx) {
     audio_ctx.close()
   }
+}
+
+/**
+ * 🎮: Pause
+ */
+export function pause() {
+  audio_ctx.suspend()
+}
+
+/**
+ * 🎮: Play
+ */
+export function play() {
+  audio_ctx.resume()
+}
+
+export function setGain(n: number) {
+  if (n > 100) {
+    n = 100
+  }
+  if (n < 0) {
+    n = 0
+  }
+  gain = n / 100
 }

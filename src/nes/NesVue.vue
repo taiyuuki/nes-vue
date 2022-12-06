@@ -23,11 +23,11 @@ export default { name: 'nes-vue' }
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
-import { onMounted, onBeforeUnmount, watch, watchEffect, nextTick, computed } from 'vue'
+import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import { saveData, loadData, putData } from 'src/db'
 import type {  EmitErrorObj, Controller, SavedOrLoaded } from './types'
 import { resolveController } from 'src/controller'
-import { onAudioSample, getSampleRate, audioFrame, audioStop } from 'src/audio'
+import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
 import { getNow } from 'src/utils'
 
@@ -37,6 +37,7 @@ const props = withDefaults(defineProps<{
   width?: number | string
   height?: number | string
   label?: string
+  gain?: number
   storage?: boolean
   debugger?: boolean
   p1?: Controller
@@ -46,6 +47,7 @@ const props = withDefaults(defineProps<{
   width: '256px',
   height: '240px',
   label: 'Game Start',
+  gain: 100,
   storage: false,
   debugger: false,
   p1: () => ({
@@ -116,23 +118,37 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
   keyboardEvents(nes.buttonUp, event)
 }
 
-function gameStart(path: string = <string>props.url) {
-  stop = false
+/**
+ * 🎮: Start the game in the stopped state. Normally, url is not required.
+ * @param url Rom url
+ */
+function gameStart(url: string = <string>props.url) {
   if (!cvs) {
     return
   }
-  if (path !== props.url) {
-    emits('update:url', path)
+  if (stop) {
+    stop = false
+  }
+  else {
+    audioStop()
+    animationStop()
+    clearInterval(fpsStamp)
+  }
+  if (url !== props.url) {
+    emits('update:url', url)
     return
   }
   animationFram(cvs)
 
   const rp = new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
-    req.open('GET', path)
+    req.open('GET', url)
     req.overrideMimeType('text/plain; charset=x-user-defined')
     req.onerror = () => {
-      reject(`${path} loading Error: ${req.statusText}`)
+      reject({
+        code: 404,
+        message: `${url} loading Error: ${req.statusText}`,
+      })
     }
 
     req.onload = function () {
@@ -147,12 +163,18 @@ function gameStart(path: string = <string>props.url) {
           resolve('success')
         }
         catch (_) {
-          reject(`${path} loading Error: Probably the ROM is unsupported.`)
-          gameStop()
+          reject({
+            code: 0,
+            message: `${url} loading Error: Probably the ROM is unsupported.`,
+          })
+          stop = true
         }
       }
       else {
-        reject(`${path} loading Error: ${req.statusText}.`)
+        reject({
+          code: 404,
+          message: `${url} loading Error: ${req.statusText}`,
+        })
       }
     }
     document.addEventListener('keydown', downKeyboardEvent)
@@ -165,13 +187,13 @@ function gameStart(path: string = <string>props.url) {
     audioFrame(nes)
     emits('success')
   }, reason => {
-    emitError({
-      code: 0,
-      message: reason,
-    })
+    emitError(reason)
   })
 }
 
+/**
+ * 🎮: Restart the current game
+ */
 function gameReset() {
   if (!stop) {
     gameStop()
@@ -181,6 +203,9 @@ function gameReset() {
   }
 }
 
+/**
+ * 🎮: Stop the game
+ */
 function gameStop() {
   if (stop) {
     return
@@ -340,6 +365,25 @@ function loadIndexedDB(id: string) {
   })
 }
 
+/**
+ * 🎮: Save game state
+ * @param id Game state id
+ * @example
+ * ```ts
+ * import { ref } from 'vue'
+ * import type { NesVueInstance } from 'nes-vue'
+ * import { NesVue } from 'nes-vue'
+ *
+ * const nes = ref<NesVueInstance | null>(null)
+ * const id = 'example'
+ * function save() {
+ *  if (nes.value) {
+ *   // Save state
+ *   nes.value.save(id)
+ *  }
+ * }
+ * ```
+ */
 function save(id: string) {
   if (!nes.cpu.irqRequested) {
     emitError({
@@ -356,6 +400,25 @@ function save(id: string) {
   }
 }
 
+/**
+ * 🎮: Load game state
+ * @param id Game state id
+ * @example
+ * ```ts
+ * import { ref } from 'vue'
+ * import type { NesVueInstance } from 'nes-vue'
+ * import { NesVue } from 'nes-vue'
+ *
+ * const nes = ref<NesVueInstance | null>(null)
+ * const id = 'example'
+ * function load() {
+ *  if (nes.value) {
+ *   // Load state
+ *   nes.value.load(id)
+ *  }
+ * }
+ * ```
+ */
 function load(id: string) {
   if (!nes.cpu.irqRequested) {
     emitError({
@@ -372,8 +435,12 @@ function load(id: string) {
   }
 }
 
+/**
+ * 🎮: Screenshot
+ * @param download True will start downloading the image inside the browser.
+ */
 function screenshot(download?: boolean) {
-  if (!cvs) {return}
+  if (!cvs || stop) {return}
   const img = cut(cvs)
   if (download) {
     const a = document.createElement('a')
@@ -403,21 +470,20 @@ const canvasStyle = computed(() => {
 })
 
 watch(() => props.url, gameReset)
-watchEffect(() => {
-  if (props.p1 || props.p2) {
-    controller = resolveController(props)
-  }
-})
+watch(() => props.gain, () => { setGain(props.gain) })
+watch(() => [props.p1, props.p2], () => {controller = resolveController(props)}, { deep: true })
 
 onMounted(() => {
   if (props.autoStart) {
     gameStart()
   }
+  setGain(props.gain)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', downKeyboardEvent)
   document.removeEventListener('keyup', upKeyboardEvent)
+  gameStop()
 })
 
 defineExpose({
@@ -427,5 +493,8 @@ defineExpose({
   save,
   load,
   screenshot,
+  pause,
+  play,
+  setGain,
 })
 </script>

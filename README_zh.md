@@ -56,18 +56,20 @@ createApp(App).use(nes).mount("#app");
 
 ### 属性
 
-| Property    | Description                  | Type    | Default      |
-| ----------- | ---------------------------- | ------- | ------------ |
-| `url`       | nes游戏的rom地址，必须！！！ | string  |              |
-| `width`     | 游戏画面宽度                 | string  | ‘256px’      |
-| `height`    | 游戏画面高度                 | string  | ‘240px’      |
-| `label`     | 游戏运行前画面上的显示文字   | string  | ‘Game Start’ |
-| `autoStart` | 组件挂载后自动开始游戏       | boolean | false        |
-| `p1`        | 玩家 1 控制器                | object  | 见下文       |
-| `p2`        | 玩家 2 控制器                | object  | 见下文       |
-| `storage`   | 游戏保存时使用localStorage   | boolean | false        |
+| Property    | Description                                         | Type             | Default             |
+| ----------- | --------------------------------------------------- | ---------------- | ------------------- |
+| `url`       | nes游戏的rom地址，必须！！！                        | string           |                     |
+| `width`     | 游戏画面宽度，可以有单位，默认是px                  | string \| number | 256                 |
+| `height`    | 游戏画面高度，可以有单位，默认是px                  | string \| number | 240                 |
+| `label`     | 游戏运行前画面上的显示文字                          | string           | ‘Game Start’        |
+| `gain`      | 游戏音量 介于[0, 100]之间                           | number           | 100                 |
+| `autoStart` | 组件挂载后自动开始游戏                              | boolean          | false               |
+| `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save). | boolean          | false               |
+| `debugger`  | 错误信息输出到控制台                                | boolean          | false               |
+| `p1`        | 玩家 1 控制器                                       | object           | 见[控制器](#控制器) |
+| `p2`        | 玩家 2 控制器                                       | object           | 见[控制器](#控制器) |
 
-关于保存游戏，详细说明在[方法](#方法).
+#### 控制器
 
 控制器各属性值是 [KeyboardEvent.code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code), 默认值: 
 
@@ -92,23 +94,42 @@ p2 = {
 }
 ```
 
+如果你需要以其他方式操作游戏，比如通过button元素的触摸事件操作方向键“上”，示例如下：
+
+```vue
+<template>
+  <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
+  <button @touchstart="upstart" @touchend="upend">UP</button>
+</template>
+<script setup>
+const upEventStart = new KeyboardEvent('keydown', { code: 'KeyW' })
+const upEventEnd = new KeyboardEvent('keyup', { code: 'KeyW' })
+function upstart() {
+  document.dispatchEvent(upEventStart)
+}
+function upend() {
+  document.dispatchEvent(upEventEnd)
+}
+</script>
+```
+
 ### 事件
 
 | events                                       | Description        |
 | -------------------------------------------- | ------------------ |
 | `@fps -> function(fps: number)`              | 每秒触发一次       |
 | `@success -> function()`                     | rom加载成功时触发  |
-| `@error -> funciont({code, message})`   | rom读取错误时触发  |
+| `@error -> funciont({code, message})`        | 发生错误时触发     |
 | `@saved ->  function({id, message, target})` | 游戏保存后触发     |
 | `@loaded -> function({id, message, target})` | 读取游戏存档后触发 |
 
 ```vue
 <template>
-    <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
+  <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
 </template>
 <script setup>
 function getFPS(fps){
-    console.log(fps.toFixed(2))
+  console.log(fps.toFixed(2))
 }
 </script>
 ```
@@ -130,15 +151,33 @@ function getFPS(fps){
 gameStart(url?: string) => void
 ```
 
-通常情况下**不需要url** ，gameStart一般是用于开始停止状态的游戏。
+通常情况下**不需要url** ，gameStart主要是用于开始停止状态的游戏。
 
-如果要切换游戏，只需要用响应式数据绑定url，然后修改url的值即可。
+如果要切换游戏，只需要用响应式数据绑定组件上的url属性，然后修改url的值即可：
 
-**注意**: 如果你一定要用gameStart来切换游戏, 那就必须要使用 **v-model **指令绑定url属性，这样nes-vue组件才会更新url的值：
+```vue
+<template>
+  <nes-vue :url="gameURL" auto-start :width="512" :height="480" />
+  <button @click="switch">Switch</button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+const gameURL = ref('example.com/aaa.nes')
+
+function switch() {
+  gameURL.value = 'example.com/bbb.nes'
+}
+</script>
+```
+
+**注意**: 如果你一定要用gameStart来切换游戏, 那就必须使用 **v-model** 指令绑定url属性，这样nes-vue组件才会更新url的值：
 
 ```vue
 <template>
   <nes-vue ref="nes" v-model:url="gameURL" auto-start :width="512" :height="480" />
+  <button @click="switch">Switch</button>
 </template>
 
 <script setup lang="ts">
@@ -193,7 +232,7 @@ load(id: string) => void
 
 ```vue
 <template>
-  <nes-vue ref="nes" v-model:url="example.com/xxx.nes" auto-start :width="512" :height="480" />
+  <nes-vue ref="nes" url="example.com/xxx.nes" auto-start :width="512" :height="480" />
   <button @click="save">Save</button>
   <button @click="load">Load</button>
 </template>
@@ -203,20 +242,19 @@ import { ref } from 'vue'
 import type { NesVueInstance } from 'nes-vue'
 import { NesVue } from 'nes-vue'
 
-const gameURL = ref('example.com/aaa.nes')
 const nes = ref<NesVueInstance | null>(null)
 const id = 'example'
 
 function save() {
   if (nes.value) {
-    // Save state
+    // 保存游戏
     nes.value.save(id)
   }
 }
 
 function load() {
   if (nes.value) {
-    // Load state
+    // 读取游戏
     nes.value.load(id)
   }
 }

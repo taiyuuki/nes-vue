@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import type { EmitErrorObj, SavedOrLoaded, NesVueInstance } from 'nes-vue'
 import { NesVue } from 'nes-vue'
 
