@@ -155,7 +155,7 @@ function getFPS(fps){
 start(url?: string) => void
 ```
 
-通常情况下**不需要url** ，gameStart主要是用于开始停止状态的游戏。
+通常情况下**不需要url** ，`start`主要是用于开始停止状态的游戏。
 
 如果要切换游戏，只需要用响应式数据绑定组件上的url属性，然后修改url的值即可：
 
@@ -176,7 +176,7 @@ function switch() {
 </script>
 ```
 
-**注意**: 如果你一定要用gameStart来切换游戏, 那就必须使用 **v-model** 指令绑定url属性，这样nes-vue组件才会更新url的值：
+**注意**: 如果你一定要用`start`来切换游戏, 那就必须使用 **v-model** 指令绑定url属性，这样nes-vue组件才会更新url的值：
 
 ```vue
 <template>

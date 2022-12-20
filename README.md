@@ -155,7 +155,7 @@ function getFPS(fps){
 ```ts
 start(url?: string) => void
 ```
-Normally, **url is not required**, gameStart method is used to start the game in the stopped state.
+Normally, **url is not required**, `start` method is used to start the game in the stopped state.
 
 If you want to switch games, you just need to bind the url property with a reactive value, and then change the value.
 
@@ -176,7 +176,7 @@ function switch() {
 </script>
 ```
 
-**WARNING**: If you have to switch the game via gameStart methord, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
+**WARNING**: If you have to switch the game via `start` methord, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
 
 ```vue
 <template>
