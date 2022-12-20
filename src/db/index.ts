@@ -41,6 +41,11 @@ export interface PutDataOptions {
   onSuccess: () => any
 }
 
+export interface RemoveDataOptions {
+  id: string | number
+  onSuccess: (this: IDBRequest<undefined>, ev: Event) => any
+}
+
 export function saveData({ data, onSuccess, onError }: SaveDataOptions) {
   const res = db.transaction([storeName], 'readwrite').objectStore(storeName).add(data)
   res.onsuccess = onSuccess
@@ -62,4 +67,11 @@ export function loadData({ id, onSuccess, onError }: LoadDataOptions) {
     onSuccess(res)
   }
   transaction.onerror = onError
+}
+
+export function removeData({ id, onSuccess }: RemoveDataOptions) {
+  const transaction = db.transaction([storeName], 'readwrite')
+  const objectStore = transaction.objectStore(storeName)
+  const res = objectStore.delete(id)
+  res.onsuccess = onSuccess
 }

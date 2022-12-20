@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import rollupDelete from 'rollup-plugin-delete'
-import rollupDts from 'vite-plugin-dts'
+import dts from 'vite-plugin-dts'
 import path from 'path'
 
 function resolve(dir: string) {
@@ -10,9 +10,8 @@ function resolve(dir: string) {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // base: './',
   plugins: [
-    rollupDts({
+    dts({
       outputDir: 'dist',
       staticImport: true,
       insertTypesEntry: true,

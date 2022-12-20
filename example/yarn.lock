@@ -346,11 +346,6 @@ is-core-module@^2.9.0:
   dependencies:
     has "^1.0.3"
 
-jsnes@^1.2.1:
-  version "1.2.1"
-  resolved "https://mirrors.cloud.tencent.com/npm/jsnes/-/jsnes-1.2.1.tgz#ca3718b7b28c00741142a73b88e39e177d14b1ce"
-  integrity sha512-Gn+lnv5B5c/TVwFSc8vzo7amiSogRyfMI9UL7VjYgKDrlTLf7GKuK2WD+t0gEcLbzh/NfMpkIlopzN/3cq760A==
-
 magic-string@^0.25.7:
   version "0.25.9"
   resolved "https://mirrors.cloud.tencent.com/npm/magic-string/-/magic-string-0.25.9.tgz#de7f9faf91ef8a1c91d02c2e5314c8277dbcdd1c"
@@ -375,12 +370,10 @@ nanoid@^3.3.4:
   resolved "https://mirrors.cloud.tencent.com/npm/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
-nes-vue@1.2.0:
-  version "1.2.0"
-  resolved "https://mirrors.cloud.tencent.com/npm/nes-vue/-/nes-vue-1.2.0.tgz#c2fa6382fca3099cd09469935651d2f57c8f2d8c"
-  integrity sha512-uyWcYarucEVWSewDCg51AyTRv0w48MFcz8QlpPViEU/MchOcdZ6aFQIhmGnQ7tH7UEYmPJOrW2Uux+MX2Mzq3w==
-  dependencies:
-    jsnes "^1.2.1"
+nes-vue@^1.2.4:
+  version "1.2.4"
+  resolved "https://mirrors.cloud.tencent.com/npm/nes-vue/-/nes-vue-1.2.4.tgz#04679ce60bf3ba6e5d2f38ca8617b5b3cfef080e"
+  integrity sha512-Vi2XG71RwaOe53u2gJK5Ku5VNCtX17y7N++fY2A1rUfqeE9V9Ax8YfUds0YmOtlPF0SbUlcooo10W50LFXlfng==
 
 path-parse@^1.0.7:
   version "1.0.7"

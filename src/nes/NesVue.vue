@@ -7,9 +7,9 @@
       style="display:inline-block"
     />
     <div
-      v-if="stop"
+      v-if="isStop"
       style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
-      @click="gameStart()"
+      @click="start()"
     >
       {{ label }}
     </div>
@@ -24,8 +24,8 @@ export default { name: 'nes-vue' }
 import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
-import { saveData, loadData, putData } from 'src/db'
-import type {  EmitErrorObj, Controller, SavedOrLoaded } from './types'
+import { saveData, loadData, putData, removeData } from 'src/db'
+import type { EmitErrorObj, Controller, SavedOrLoaded } from './types'
 import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
@@ -83,11 +83,12 @@ interface NesVueEmits {
   (e: 'saved', saved: SavedOrLoaded): void
   (e: 'loaded', loaded: SavedOrLoaded): void
   (e: 'update:url', path: string): void
+  (e: 'removed', id: string): void
 }
 
 let controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
-let stop = $ref<boolean>(true)
+let isStop = $ref<boolean>(true)
 
 let fpsStamp: NodeJS.Timeout
 
@@ -96,6 +97,7 @@ function emitError(errorObj: EmitErrorObj) {
     console.error(errorObj.message)
   }
   emits('error', errorObj)
+  return false
 }
 
 const nes = new jsnes.NES({
@@ -122,12 +124,12 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
  * 🎮: Start the game in the stopped state. Normally, url is not required.
  * @param url Rom url
  */
-function gameStart(url: string = <string>props.url) {
+function start(url: string = <string>props.url) {
   if (!cvs) {
     return
   }
-  if (stop) {
-    stop = false
+  if (isStop) {
+    isStop = false
   }
   else {
     audioStop()
@@ -167,7 +169,7 @@ function gameStart(url: string = <string>props.url) {
             code: 0,
             message: `${url} loading Error: Probably the ROM is unsupported.`,
           })
-          stop = true
+          isStop = true
         }
       }
       else {
@@ -187,44 +189,55 @@ function gameStart(url: string = <string>props.url) {
     audioFrame(nes)
     emits('success')
   }, reason => {
-    emitError(reason)
+    return emitError(reason)
   })
 }
 
 /**
  * 🎮: Restart the current game
  */
-function gameReset() {
-  if (!stop) {
-    gameStop()
+function reset() {
+  if (!isStop) {
+    stop()
   }
   if (props.url) {
-    gameStart()
+    start()
   }
 }
 
 /**
  * 🎮: Stop the game
  */
-function gameStop() {
-  if (stop) {
+function stop() {
+  if (isStop) {
     return
   }
   audioStop()
   animationStop()
   clearInterval(fpsStamp)
   nes.reset()
-  stop = true
+  isStop = true
+}
+
+function checkId(id: string | number | undefined) {
+  if (id === void 0) {
+    return emitError({
+      code: 4,
+      message: 'TypeError: id is undefined.',
+    })
+  }
+  else {
+    return false
+  }
 }
 
 function loadGameData(data: string) {
   const saveData = JSON.parse(data)
   if (saveData.path !== props.url) {
-    emitError({
+    return emitError({
       code: 2,
       message: `Load Error: The saved data is inconsistent with the current game, saved: ${saveData.path}, current: ${props.url}.`,
     })
-    return
   }
   try {
     nes.ppu.reset()
@@ -234,7 +247,7 @@ function loadGameData(data: string) {
     nes.ppu.fromJSON(saveData.data.ppu)
   }
   catch (_) {
-    emitError({
+    return emitError({
       code: 2,
       message: 'Load Error: The saved data is invalid.',
     })
@@ -242,12 +255,7 @@ function loadGameData(data: string) {
 }
 
 function saveInStorage(id: string) {
-  if (typeof id === 'undefined') {
-    emitError({
-      code: 1,
-      message: 'Save Error: missing save id.',
-    })
-  }
+  if (checkId(id)) {return}
   try {
     localStorage.setItem(id, JSON.stringify({
       path: props.url,
@@ -261,7 +269,7 @@ function saveInStorage(id: string) {
   }
   catch (e: any) {
     if (e.name === 'QuotaExceededError') {
-      emitError({
+      return emitError({
         code: 1,
         message: 'Save Error: localStorage out of memory.',
       })
@@ -270,19 +278,13 @@ function saveInStorage(id: string) {
 }
 
 function loadInStorage(id: string) {
-  if (typeof id === 'undefined') {
-    emitError({
-      code: 2,
-      message: 'Load Error: missing save id.',
-    })
-  }
+  if (checkId(id)) {return}
   const saveDataJSON = localStorage.getItem(id)
   if (!saveDataJSON) {
-    emitError({
+    return emitError({
       code: 2,
       message: 'Load Error: nothing to load.',
     })
-    return
   }
   loadGameData(saveDataJSON)
   emits('loaded', {
@@ -293,12 +295,7 @@ function loadInStorage(id: string) {
 }
 
 function saveIndexedDB(id: string) {
-  if (typeof id === 'undefined') {
-    emitError({
-      code: 1,
-      message: 'Save Error: missing save id.',
-    })
-  }
+  if (checkId(id)) {return}
   const data = {
     id,
     nes: JSON.stringify({
@@ -329,7 +326,7 @@ function saveIndexedDB(id: string) {
         })
         return
       }
-      emitError({
+      return emitError({
         code: 1,
         message: 'Save Error: Unable to save data to indexedDB.',
       })
@@ -338,6 +335,7 @@ function saveIndexedDB(id: string) {
 }
 
 function loadIndexedDB(id: string) {
+  if (checkId(id)) {return}
   loadData({
     id,
     onSuccess(res) {
@@ -350,14 +348,14 @@ function loadIndexedDB(id: string) {
         })
       }
       else {
-        emitError({
+        return emitError({
           code: 2,
           message: 'Load Error: Nothing to load.',
         })
       }
     },
     onError() {
-      emitError({
+      return emitError({
         code: 2,
         message: 'Load Error: Nothing to load, probably the save data has been removed or invalidated.',
       })
@@ -385,12 +383,12 @@ function loadIndexedDB(id: string) {
  * ```
  */
 function save(id: string) {
+  if (checkId(id)) {return}
   if (!nes.cpu.irqRequested) {
-    emitError({
+    return emitError({
       code: 1,
       message: 'Save Error: Can only be saved while the game is running.',
     })
-    return
   }
   if (props.storage) {
     saveInStorage(id)
@@ -420,12 +418,12 @@ function save(id: string) {
  * ```
  */
 function load(id: string) {
+  if (checkId(id)) {return}
   if (!nes.cpu.irqRequested) {
-    emitError({
+    return emitError({
       code: 2,
       message: 'Load Error: Can only be loaded when the game is running.',
     })
-    return
   }
   if (props.storage) {
     loadInStorage(id)
@@ -435,12 +433,27 @@ function load(id: string) {
   }
 }
 
-/**
- * 🎮: Screenshot
+function remove(id: string) {
+  if (checkId(id)) {return}
+  if (props.storage) {
+    localStorage.removeItem(id)
+  }
+  else {
+    removeData({
+      id,
+      onSuccess() {
+        emits('removed', id)
+      },
+    })
+  }
+}
+
+/** },
+  }🎮: Screenshot
  * @param download True will start downloading the image inside the browser.
  */
 function screenshot(download?: boolean) {
-  if (!cvs || stop) {return}
+  if (!cvs || isStop) {return}
   const img = cut(cvs)
   if (download) {
     const a = document.createElement('a')
@@ -469,13 +482,13 @@ const canvasStyle = computed(() => {
   return `width:${width};height:${height};background-color:#000;margin:auto;position:relative`
 })
 
-watch(() => props.url, gameReset)
+watch(() => props.url, reset)
 watch(() => props.gain, () => { setGain(props.gain) })
 watch(() => [props.p1, props.p2], () => {controller = resolveController(props)}, { deep: true })
 
 onMounted(() => {
   if (props.autoStart) {
-    gameStart()
+    start()
   }
   setGain(props.gain)
 })
@@ -483,18 +496,18 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', downKeyboardEvent)
   document.removeEventListener('keyup', upKeyboardEvent)
-  gameStop()
+  stop()
 })
 
 defineExpose({
-  gameStart,
-  gameReset,
-  gameStop,
-  save,
-  load,
-  screenshot,
+  start,
+  reset,
+  stop,
   pause,
   play,
-  setGain,
+  save,
+  load,
+  remove,
+  screenshot,
 })
 </script>

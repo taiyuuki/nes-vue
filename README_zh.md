@@ -37,7 +37,7 @@ createApp(App).use(nes).mount("#app");
 
 ```vue
 <template>
-    <nes-vue url="example.com/xxx.nes" auto-start :width="512" :height="480" />
+  <nes-vue url="example.com/xxx.nes" auto-start :width="512" :height="480" />
 </template>
 ```
 
@@ -98,7 +98,7 @@ p2 = {
 
 ```vue
 <template>
-  <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
+  <nes-vue url="example.com/xxx.nes" />
   <button @touchstart="upstart" @touchend="upend">UP</button>
 </template>
 <script setup>
@@ -122,6 +122,7 @@ function upend() {
 | `@error -> funciont({code, message})`        | 发生错误时触发     |
 | `@saved ->  function({id, message, target})` | 游戏保存后触发     |
 | `@loaded -> function({id, message, target})` | 读取游戏存档后触发 |
+| `@removed -> function(id)`                   | 删除存档后触发     |
 
 ```vue
 <template>
@@ -138,17 +139,20 @@ function getFPS(fps){
 
 | Methods                                              |
 | ---------------------------------------------------- |
-| `gameStart(url?: string) => void`                    |
-| `gameReset() => void`                                |
-| `gameStop() => void`                                 |
+| `start(url?: string) => void`                        |
+| `reset() => void`                                    |
+| `stop() => void`                                     |
+| `pause() => void`                                    |
+| `play() => void`                                     |
 | `save(id: string) => void`                           |
 | `load(id: string) => void`                           |
+| `remove(id: string) => void`                         |
 | `screenshot(download?: boolean) => HTMLImageElement` |
 
-#### gameStart
+#### start
 
 ```ts
-gameStart(url?: string) => void
+start(url?: string) => void
 ```
 
 通常情况下**不需要url** ，gameStart主要是用于开始停止状态的游戏。
@@ -190,24 +194,24 @@ const nes = ref<NesVueInstance | null>(null)
 function switch() {
   if (nes.value) {
     // 这会将gameURL的值改为'example.com/bbb.nes'
-    nes.value.gameStart('example.com/bbb.nes')
+    nes.value.start('example.com/bbb.nes')
   }
 }
 </script>
 ```
 
-#### gameReset
+#### reset
 
 ```ts
-gameReset() => void
+reset() => void
 ```
 
 重新运行当前游戏。
 
-#### gameStop
+#### stop
 
 ```ts
-gameStop() => void
+stop() => void
 ```
 
 #### save
@@ -260,6 +264,14 @@ function load() {
 }
 </script>
 ```
+
+#### remove
+
+```ts
+remove(id: string) => void
+```
+
+删除保存的游戏状态.
 
 #### screenshot
 

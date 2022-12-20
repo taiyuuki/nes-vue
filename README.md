@@ -100,7 +100,7 @@ If you need to control the game in other ways, such as triggering the direction 
 
 ```vue
 <template>
-  <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
+  <nes-vue url="example.com/xxx.nes" />
   <button @touchstart="upstart" @touchend="upend">UP</button>
 </template>
 <script setup>
@@ -124,6 +124,7 @@ function upend() {
 | `@error -> funciont({code, message})`        | Emitted when error occurs.                    |
 | `@saved ->  function({id, message, target})` | Emitted when the state has been saved         |
 | `@loaded -> function({id, message, target})` | Emitted when the state has been loaded        |
+| `@removed -> function(id)`                   | Emitted when the saved state has been removed |
 
 ```vue
 <template>
@@ -140,16 +141,19 @@ function getFPS(fps){
 
 | Methods                                              |
 | ---------------------------------------------------- |
-| `gameStart(url?: string) => void`                    |
-| `gameReset() => void`                                |
-| `gameStop() => void`                                 |
+| `start(url?: string) => void`                        |
+| `reset() => void`                                    |
+| `stop() => void`                                     |
+| `pause() => void`                                    |
+| `play() => void`                                     |
 | `save(id: string) => void`                           |
 | `load(id: string) => void`                           |
+| `remove(id: string) => void`                         |
 | `screenshot(download?: boolean) => HTMLImageElement` |
 
-#### gameStart
+#### start
 ```ts
-gameStart(url?: string) => void
+start(url?: string) => void
 ```
 Normally, **url is not required**, gameStart method is used to start the game in the stopped state.
 
@@ -190,25 +194,43 @@ const nes = ref<NesVueInstance | null>(null)
 function switch() {
   if (nes.value) {
     // this will be update the gameURL to 'example.com/bbb.nes'
-    nes.value.gameStart('example.com/bbb.nes')
+    nes.value.start('example.com/bbb.nes')
   }
 }
 </script>
 ```
 
-#### gameReset
+#### reset
 
 ```ts
-gameReset() => void
+reset() => void
 ```
 
 Restart the current game.
 
-#### gameStop
+#### stop
 
 ```ts
-gameStop() => void
+stop() => void
 ```
+
+Game stop.
+
+#### pause
+
+```ts
+pause() => void
+```
+
+Game pause.
+
+#### play
+
+```ts
+play() => void
+```
+
+Paused game continues.
 
 #### save
 
@@ -260,6 +282,14 @@ function load() {
 }
 </script>
 ```
+
+#### remove
+
+```ts
+remove(id: string) => void
+```
+
+Remove saved data.
 
 #### screenshot
 

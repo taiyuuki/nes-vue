@@ -1,7 +1,7 @@
 {
   "name": "nes-vue-example",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/node": "^18.0.0",
-    "nes-vue": "1.2.0",
+    "nes-vue": "^1.2.4",
     "vue": "3.2.45"
   },
   "devDependencies": {

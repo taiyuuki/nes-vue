@@ -68,7 +68,7 @@ function getFps(fps: number) {
 
 function resetGame() {
   if (nes.value) {
-    nes.value.gameReset()
+    nes.value.reset()
   }
 }
 
@@ -76,7 +76,7 @@ function stopGame() {
   saveable.value = true
   currentFPS.value = '0'
   if (nes.value) {
-    nes.value.gameStop()
+    nes.value.stop()
   }
 }
 
