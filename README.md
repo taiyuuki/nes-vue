@@ -68,8 +68,9 @@ import { NesVue } from 'nes-vue';
 | `autoStart` | Auto start when the component on mounted                     | boolean          | false                         |
 | `storage`   | Use `localStorage ` to save the game state, see [Methods - save](#save). | boolean          | false                         |
 | `debugger`  | The error message is output in the console                   | boolean          | false                         |
-| `p1`        | player 1 controller                                          | object           | see [Controller](#Controller) |
-| `p2`        | player 2 controller                                          | object           | see [Controller](#Controller) |
+| `persecond` | Mashing speed per second, between [5, 20]                    | number           | 16                            |
+| `p1`        | Player 1 controller                                          | object           | see [Controller](#Controller) |
+| `p2`        | Player 2 controller                                          | object           | see [Controller](#Controller) |
 
 #### Controller
 
@@ -83,6 +84,8 @@ p1 = {
     RIGHT: 'KeyD',
     A: 'KeyK',
     B: 'KeyJ',
+    C: 'KeyI',// Turbo(A)
+    D: 'KeyU',// Turbo(B)
     SELECT: 'Digit2',
     START: 'Digit1'
 }
@@ -92,7 +95,9 @@ p2 = {
     LEFT: 'ArrowLeft',
     RIGHT: 'ArrowRight',
     A: 'Numpad2',
-    B: 'Numpad1'
+    B: 'Numpad1',
+    C: 'Numpad5',
+    D: 'Numpad4'
 }
 ```
 

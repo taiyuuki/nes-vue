@@ -66,6 +66,7 @@ createApp(App).use(nes).mount("#app");
 | `autoStart` | 组件挂载后自动开始游戏                              | boolean          | false               |
 | `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save). | boolean          | false               |
 | `debugger`  | 错误信息输出到控制台                                | boolean          | false               |
+| `persecond` | 每秒连发速度 介于[5, 20]之间                        | number           | 16                  |
 | `p1`        | 玩家 1 控制器                                       | object           | 见[控制器](#控制器) |
 | `p2`        | 玩家 2 控制器                                       | object           | 见[控制器](#控制器) |
 
@@ -81,6 +82,8 @@ p1 = {
     RIGHT: 'KeyD',
     A: 'KeyK',
     B: 'KeyJ',
+    C: 'KeyI',
+    D: 'KeyU',
     SELECT: 'Digit2',
     START: 'Digit1'
 }
@@ -90,7 +93,9 @@ p2 = {
     LEFT: 'ArrowLeft',
     RIGHT: 'ArrowRight',
     A: 'Numpad2',
-    B: 'Numpad1'
+    B: 'Numpad1',
+    C: 'Numpad5',
+    D: 'Numpad4'
 }
 ```
 
@@ -213,6 +218,22 @@ reset() => void
 ```ts
 stop() => void
 ```
+
+#### pause
+
+```ts
+pause() => void
+```
+
+游戏暂停
+
+#### play
+
+```ts
+play() => void
+```
+
+暂停时继续
 
 #### save
 

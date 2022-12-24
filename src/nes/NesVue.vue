@@ -25,7 +25,7 @@ import jsnes from 'jsnes'
 import { $ref } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import { saveData, loadData, putData, removeData } from 'src/db'
-import type { EmitErrorObj, Controller, SavedOrLoaded } from './types'
+import type { EmitErrorObj, Controller, SavedOrLoaded, Automatic } from './types'
 import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
@@ -40,6 +40,7 @@ const props = withDefaults(defineProps<{
   gain?: number
   storage?: boolean
   debugger?: boolean
+  persecond?: number
   p1?: Controller
   p2?: Controller
 }>(), {
@@ -50,6 +51,7 @@ const props = withDefaults(defineProps<{
   gain: 100,
   storage: false,
   debugger: false,
+  persecond: 16,
   p1: () => ({
     UP: 'KeyW',
     DOWN: 'KeyS',
@@ -57,6 +59,8 @@ const props = withDefaults(defineProps<{
     RIGHT: 'KeyD',
     A: 'KeyK',
     B: 'KeyJ',
+    C: 'KeyI',
+    D: 'KeyU',
     SELECT: 'Digit2',
     START: 'Digit1',
   }),
@@ -67,6 +71,8 @@ const props = withDefaults(defineProps<{
     RIGHT: 'ArrowRight',
     A: 'Numpad2',
     B: 'Numpad1',
+    C: 'Numpad5',
+    D: 'Numpad4',
   }),
 })
 
@@ -106,18 +112,85 @@ const nes = new jsnes.NES({
   sampleRate: getSampleRate(),
 })
 
-function keyboardEvents(callback: CallableFunction, event: KeyboardEvent) {
-  const keyMap = controller[event.code]
-  if (keyMap) {
-    callback(keyMap.p, jsnes.Controller[keyMap.value])
-  }
+const automatic: { [key: string]: { [key: string]: Automatic } } = {
+  p1: {
+    C: {
+      timeout: 0,
+      beDown: false,
+      once: true,
+    },
+    D: {
+      timeout: 0,
+      beDown: false,
+      once: true,
+    },
+  },
+  p2: {
+    C: {
+      timeout: 0,
+      beDown: false,
+      once: true,
+    },
+    D: {
+      timeout: 0,
+      beDown: false,
+      once: true,
+    },
+  },
 }
 
+function getInterval() {
+  let interval = (1000 / (2 * props.persecond))
+  if (interval < 25) {
+    interval = 25
+  }
+  if (interval > 100) {
+    interval = 100
+  }
+  return interval
+}
+
+let interval = getInterval()
+watch(() => props.persecond, () => {
+  interval = getInterval()
+})
 const downKeyboardEvent = function (event: KeyboardEvent) {
-  keyboardEvents(nes.buttonDown, event)
+  const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
+  const keyMap = controller[event.code]
+  if (autoList.includes(event.code)) {
+    const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
+    if (autoObj.once) {
+      nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+      autoObj.timeout = window.setInterval(() => {
+        if (autoObj.beDown) {
+          nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+        }
+        else {
+          nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
+        }
+        autoObj.beDown = !autoObj.beDown
+      }, interval)
+      autoObj.once = false
+    }
+    return
+  }
+  if (keyMap) {
+    nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+  }
 }
 const upKeyboardEvent = function (event: KeyboardEvent) {
-  keyboardEvents(nes.buttonUp, event)
+  const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
+  const keyMap = controller[event.code]
+  if (autoList.includes(event.code)) {
+    const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
+    clearInterval(autoObj.timeout)
+    autoObj.once = true
+    nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
+    return
+  }
+  if (keyMap) {
+    nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
+  }
 }
 
 /**

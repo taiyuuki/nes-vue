@@ -7,6 +7,8 @@ const keyMaps = {
   RIGHT: 'BUTTON_RIGHT',
   A: 'BUTTON_A',
   B: 'BUTTON_B',
+  C: 'BUTTON_A',
+  D: 'BUTTON_B',
   SELECT: 'BUTTON_SELECT',
   START: 'BUTTON_START',
 }
@@ -16,11 +18,13 @@ export const resolveController = ({ p1, p2 }: NesVueProps) => {
   const options: ControllerOptions = {}
   keys.forEach(key => {
     options[p1[key] as string] = {
+      key,
       p: 1,
       value: keyMaps[key],
     }
     if (key in p2) {
       options[p2[key] as string] = {
+        key,
         p: 2,
         value: keyMaps[key],
       }

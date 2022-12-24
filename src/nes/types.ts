@@ -10,12 +10,15 @@ export interface Controller {
   RIGHT: string
   A: string
   B: string
+  C: string
+  D: string
   SELECT?: string
   START?: string
 }
 
 export interface ControllerOptions {
   [key: string]: {
+    key: string
     p: number
     value: string
   }
@@ -44,4 +47,10 @@ export interface NesVueEmits {
   (e: 'error', error: EmitErrorObj): void
   (e: 'saved', saved: SavedOrLoaded): void
   (e: 'loaded', loaded: SavedOrLoaded): void
+}
+
+export interface Automatic {
+  timeout: number
+  beDown: boolean
+  once: boolean
 }
