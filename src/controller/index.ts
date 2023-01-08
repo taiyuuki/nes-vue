@@ -1,4 +1,4 @@
-import type { Controller, ControllerOptions, NesVueProps } from 'src/nes/types'
+import type { Controller, ControllerOptions } from 'src/nes/types'
 
 const keyMaps = {
   UP: 'BUTTON_UP',
@@ -14,7 +14,7 @@ const keyMaps = {
 }
 const keys = Object.keys(keyMaps) as (keyof Controller)[]
 
-export const resolveController = ({ p1, p2 }: NesVueProps) => {
+export const resolveController = (p1: Controller, p2: Controller) => {
   const options: ControllerOptions = {}
   keys.forEach(key => {
     options[p1[key] as string] = {

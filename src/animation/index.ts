@@ -14,7 +14,7 @@ export const onFrame = (framebuffer_24: Buffer) => {
   }
 }
 
-export const animationFram = (cvs: HTMLCanvasElement) => {
+export const animationFram = (cvs: HTMLCanvasElement, padding: number) => {
   canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
   const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT)
 
@@ -28,23 +28,25 @@ export const animationFram = (cvs: HTMLCanvasElement) => {
   function onAnimationFrame() {
     requestAnimationFrame(onAnimationFrame)
     image.data.set(framebuffer_u8)
-    canvas_ctx.putImageData(image, 0, 0)
+    canvas_ctx.putImageData(image, padding, padding)
   }
 }
 
-export const fitInParent = (cvs: HTMLCanvasElement) => {
+export const fitInParent = (cvs: HTMLCanvasElement, dense: boolean) => {
   const parent = cvs.parentNode as HTMLElement
   const parentWidth = parent.clientWidth
   const parentHeight = parent.clientHeight
   const parentRatio = parentWidth / parentHeight
   const desiredRatio = WIDTH / HEIGHT
   if (desiredRatio < parentRatio) {
-    cvs.style.width = `${Math.round(parentHeight * desiredRatio)}px`
-    cvs.style.height = `${parentHeight}px`
+    const addition = parentHeight * (dense ? 0.0625 : 0)
+    cvs.style.height = `${parentHeight + addition}px`
+    cvs.style.width = `${Math.round(parentHeight + desiredRatio) * addition}px`
   }
   else {
-    cvs.style.width = `${parentWidth}px`
-    cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
+    const addition = Math.round(parentWidth / desiredRatio) * (dense ? 0.0625 : 0)
+    cvs.style.width = `${parentWidth + addition}px`
+    cvs.style.height = `${Math.round(parentWidth / desiredRatio) + addition}px`
   }
 }
 

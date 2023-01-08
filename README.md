@@ -160,7 +160,7 @@ function getFPS(fps){
 ```ts
 start(url?: string) => void
 ```
-Normally, **url is not required**, `start` method is used to start the game in the stopped state.
+Normally, **url is not required**, the `start` method is used to start the game in the stopped state.
 
 If you want to switch games, you just need to bind the url property with a reactive value, and then change the value.
 
@@ -181,7 +181,7 @@ function switch() {
 </script>
 ```
 
-**WARNING**: If you have to switch the game via `start` methord, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
+**WARNING**: If you have to switch the game via the `start` method, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
 
 ```vue
 <template>
@@ -243,9 +243,9 @@ Paused game continues.
 save(id: string) => void
 ```
 
-By default, game state is saved in indexedDB, you can also save it in localStorage via [storage](#props) property. 
+By default, the game state is saved in indexedDB, you can also save it in localStorage via [storage](#props) property. 
 
-The localStorage can store from **2 MB** to **10 MB** size of data depending upon the browser use, each game state archive requires about **0.5MB** to **2MB**.
+The localStorage can store from **2 MB** to **10 MB** size of data depending upon the browser used, each game state archive requires about **0.5MB** to **2MB**.
 
 If you need to save more data, it’s recommended to use indexedDB.
 
@@ -304,5 +304,4 @@ screenshot(download?: boolean) => HTMLImageElement
 
 `screenshot(true)` will start downloading the  screenshot inside the browser.
 
-The return value is a image element of the screenshot.
-
+The return value is an image element of the screenshot.

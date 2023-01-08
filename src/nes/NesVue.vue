@@ -7,6 +7,10 @@
       style="display:inline-block"
     />
     <div
+      v-show="isStop"
+      style="position: absolute;top: 0;left: 0%; background-color: #000;width: 100%; height: 100%;"
+    />
+    <div
       v-if="isStop"
       style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
       @click="start()"
@@ -22,14 +26,14 @@ export default { name: 'nes-vue' }
 
 <script setup lang="ts">
 import jsnes from 'jsnes'
-import { $ref } from 'vue/macros'
+import { $ref, $computed } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import { saveData, loadData, putData, removeData } from 'src/db'
 import type { EmitErrorObj, Controller, SavedOrLoaded, Automatic } from './types'
 import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
-import { getNow } from 'src/utils'
+import { getNow, isNotNull } from 'src/utils'
 
 const props = withDefaults(defineProps<{
   url: string
@@ -38,6 +42,7 @@ const props = withDefaults(defineProps<{
   height?: number | string
   label?: string
   gain?: number
+  dense?: boolean
   storage?: boolean
   debugger?: boolean
   persecond?: number
@@ -49,6 +54,7 @@ const props = withDefaults(defineProps<{
   height: '240px',
   label: 'Game Start',
   gain: 100,
+  dense: false,
   storage: false,
   debugger: false,
   persecond: 16,
@@ -92,7 +98,6 @@ interface NesVueEmits {
   (e: 'removed', id: string): void
 }
 
-let controller = resolveController(props)
 const cvs = $ref<HTMLCanvasElement | null>(null)
 let isStop = $ref<boolean>(true)
 
@@ -139,56 +144,56 @@ const automatic: { [key: string]: { [key: string]: Automatic } } = {
   },
 }
 
-function getInterval() {
-  let interval = (1000 / (2 * props.persecond))
-  if (interval < 25) {
-    interval = 25
+const interval = $computed(() => {
+  let time = (1000 / (2 * props.persecond))
+  if (time < 20) {
+    time = 20
   }
-  if (interval > 100) {
-    interval = 100
+  if (time > 100) {
+    time = 100
   }
-  return interval
-}
-
-let interval = getInterval()
-watch(() => props.persecond, () => {
-  interval = getInterval()
+  return time
 })
+
+const controller = $computed(() => {
+  return resolveController(props.p1, props.p2)
+})
+
 const downKeyboardEvent = function (event: KeyboardEvent) {
   const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
   const keyMap = controller[event.code]
-  if (autoList.includes(event.code)) {
-    const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
-    if (autoObj.once) {
-      nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
-      autoObj.timeout = window.setInterval(() => {
-        if (autoObj.beDown) {
-          nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
-        }
-        else {
-          nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
-        }
-        autoObj.beDown = !autoObj.beDown
-      }, interval)
-      autoObj.once = false
+  if (isNotNull(keyMap)) {
+    if (autoList.includes(event.code)) {
+      const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
+      if (autoObj.once) {
+        nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+        autoObj.timeout = window.setInterval(() => {
+          if (autoObj.beDown) {
+            nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+          }
+          else {
+            nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
+          }
+          autoObj.beDown = !autoObj.beDown
+        }, interval)
+        autoObj.once = false
+      }
+      return
     }
-    return
-  }
-  if (keyMap) {
-    nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+    else {
+      nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
+    }
   }
 }
 const upKeyboardEvent = function (event: KeyboardEvent) {
   const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
   const keyMap = controller[event.code]
-  if (autoList.includes(event.code)) {
-    const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
-    clearInterval(autoObj.timeout)
-    autoObj.once = true
-    nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
-    return
-  }
-  if (keyMap) {
+  if (isNotNull(keyMap)) {
+    if (autoList.includes(event.code)) {
+      const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
+      clearInterval(autoObj.timeout)
+      autoObj.once = true
+    }
     nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
   }
 }
@@ -198,7 +203,7 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
  * @param url Rom url
  */
 function start(url: string = <string>props.url) {
-  if (!cvs) {
+  if (!isNotNull(cvs)) {
     return
   }
   if (isStop) {
@@ -213,7 +218,8 @@ function start(url: string = <string>props.url) {
     emits('update:url', url)
     return
   }
-  animationFram(cvs)
+  const padding = props.dense ? -7 : 0
+  animationFram(cvs, padding)
 
   const rp = new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -230,7 +236,7 @@ function start(url: string = <string>props.url) {
       if (this.status === 200) {
         try {
           nes.loadROM(this.responseText)
-          fitInParent(cvs)
+          fitInParent(cvs, props.dense)
           fpsStamp = setInterval(() => {
             const fps = nes.getFPS()
             emits('fps', fps ? fps : 0)
@@ -543,7 +549,7 @@ const canvasStyle = computed(() => {
   let height = props.height
   if (cvs) {
     nextTick(() => {
-      fitInParent(cvs)
+      fitInParent(cvs, props.dense)
     })
   }
   if (pure.test(String(width))) {
@@ -552,12 +558,11 @@ const canvasStyle = computed(() => {
   if (pure.test(String(height))) {
     height += 'px'
   }
-  return `width:${width};height:${height};background-color:#000;margin:auto;position:relative`
+  return `width: ${width};height: ${height};background-color: #000;margin: auto;position: relative;overflow: hidden;`
 })
 
 watch(() => props.url, reset)
 watch(() => props.gain, () => { setGain(props.gain) })
-watch(() => [props.p1, props.p2], () => {controller = resolveController(props)}, { deep: true })
 
 onMounted(() => {
   if (props.autoStart) {
