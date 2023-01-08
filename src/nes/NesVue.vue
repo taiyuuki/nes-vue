@@ -531,13 +531,13 @@ function remove(id: string) {
   }🎮: Screenshot
  * @param download True will start downloading the image inside the browser.
  */
-function screenshot(download?: boolean) {
+function screenshot(download?: boolean, imageName?: string) {
   if (!cvs || isStop) {return}
   const img = cut(cvs)
   if (download) {
     const a = document.createElement('a')
     a.href = img.src
-    a.download = getNow()
+    a.download = imageName ?? getNow()
     a.click()
   }
   return img

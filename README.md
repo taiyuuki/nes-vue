@@ -61,16 +61,17 @@ import { NesVue } from 'nes-vue';
 | Property    | Description                                                  | Type             | Default                       |
 | ----------- | ------------------------------------------------------------ | ---------------- | ----------------------------- |
 | `url`       | URL of the nes ROM. Required!!!                              | string           |                               |
-| `width`     | Game screen width                                            | string \| number | 256                           |
-| `height`    | Game screen height                                           | string \| number | 240                           |
-| `label`     | Text of the game screen, show only before running            | string           | ‘Game Start’                  |
-| `gain`      | The game volume between [0, 100]                             | number           | 100                           |
-| `autoStart` | Auto start when the component on mounted                     | boolean          | false                         |
+| `width`     | Game screen width.                                           | string \| number | 256                           |
+| `height`    | Game screen height.                                          | string \| number | 240                           |
+| `label`     | Text of the game screen, show only before running.           | string           | ‘Game Start’                  |
+| `gain`      | The game volume between [0, 100].                            | number           | 100                           |
+| `dense`     | Dense mode, less padding.                                    | boolean          | false                         |
+| `autoStart` | Auto start when the component on mounted.                    | boolean          | false                         |
 | `storage`   | Use `localStorage ` to save the game state, see [Methods - save](#save). | boolean          | false                         |
-| `debugger`  | The error message is output in the console                   | boolean          | false                         |
-| `persecond` | Mashing speed per second, between [5, 20]                    | number           | 16                            |
-| `p1`        | Player 1 controller                                          | object           | see [Controller](#Controller) |
-| `p2`        | Player 2 controller                                          | object           | see [Controller](#Controller) |
+| `debugger`  | The error message is output in the console.                  | boolean          | false                         |
+| `persecond` | Mashing speed per second, between [5, 20].                   | number           | 16                            |
+| `p1`        | Player 1 controller.                                         | object           | see [Controller](#Controller) |
+| `p2`        | Player 2 controller.                                         | object           | see [Controller](#Controller) |
 
 #### Controller
 
@@ -299,7 +300,7 @@ Remove saved data.
 #### screenshot
 
 ```ts
-screenshot(download?: boolean) => HTMLImageElement
+screenshot(download?: boolean, imageName?: string) => HTMLImageElement
 ```
 
 `screenshot(true)` will start downloading the  screenshot inside the browser.

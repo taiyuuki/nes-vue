@@ -56,19 +56,20 @@ createApp(App).use(nes).mount("#app");
 
 ### 属性
 
-| Property    | Description                                         | Type             | Default             |
-| ----------- | --------------------------------------------------- | ---------------- | ------------------- |
-| `url`       | nes游戏的rom地址，必须！！！                        | string           |                     |
-| `width`     | 游戏画面宽度，可以有单位，默认是px                  | string \| number | 256                 |
-| `height`    | 游戏画面高度，可以有单位，默认是px                  | string \| number | 240                 |
-| `label`     | 游戏运行前画面上的显示文字                          | string           | ‘Game Start’        |
-| `gain`      | 游戏音量 介于[0, 100]之间                           | number           | 100                 |
-| `autoStart` | 组件挂载后自动开始游戏                              | boolean          | false               |
-| `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save). | boolean          | false               |
-| `debugger`  | 错误信息输出到控制台                                | boolean          | false               |
-| `persecond` | 每秒连发速度 介于[5, 20]之间                        | number           | 16                  |
-| `p1`        | 玩家 1 控制器                                       | object           | 见[控制器](#控制器) |
-| `p2`        | 玩家 2 控制器                                       | object           | 见[控制器](#控制器) |
+| Property    | Description                                        | Type             | Default             |
+| ----------- | -------------------------------------------------- | ---------------- | ------------------- |
+| `url`       | nes游戏的rom地址，必须！！！                       | string           |                     |
+| `width`     | 游戏画面宽度，可以有单位，默认是px。               | string \| number | 256                 |
+| `height`    | 游戏画面高度，可以有单位，默认是px。               | string \| number | 240                 |
+| `label`     | 游戏运行前画面上的显示文字。                       | string           | ‘Game Start’        |
+| `gain`      | 游戏音量 介于[0, 100]之间。                        | number           | 100                 |
+| `dense`     | 紧凑模式，填充更少的内边距。                       | boolean          | false               |
+| `autoStart` | 组件挂载后自动开始游戏                             | boolean          | false               |
+| `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save) | boolean          | false               |
+| `debugger`  | 错误信息输出到控制台                               | boolean          | false               |
+| `persecond` | 每秒连发速度 介于[5, 20]之间                       | number           | 16                  |
+| `p1`        | 玩家 1 控制器                                      | object           | 见[控制器](#控制器) |
+| `p2`        | 玩家 2 控制器                                      | object           | 见[控制器](#控制器) |
 
 #### 控制器
 
@@ -219,6 +220,8 @@ reset() => void
 stop() => void
 ```
 
+停止游戏。
+
 #### pause
 
 ```ts
@@ -243,7 +246,7 @@ save(id: string) => void
 
 默认情况下，存档是保存在 indexedDB，你可以设置[storage](#属性)属性让其保存在localStorage。
 
-根据不同的浏览器localStorage能保存**2 MB**至**10 MB** 的数据，每个游戏的保存数据大约在**0.5MB** 至 **2MB**不等。
+根据不同的浏览器，localStorage能保存**2 MB**至**10 MB** 的数据，每个游戏的保存数据大约在**0.5MB** 至 **2MB**不等。
 
 如果你需要保存较多的数据，建议你使用默认的 indexedDB。
 
@@ -292,12 +295,12 @@ function load() {
 remove(id: string) => void
 ```
 
-删除保存的游戏状态.
+删除保存的游戏状态。
 
 #### screenshot
 
 ```ts
-screenshot(download?: boolean) => HTMLImageElement
+screenshot(download?: boolean, imageName?: string) => HTMLImageElement
 ```
 
 调用`screenshot(true)` 会在浏览器中开始下载游戏截图。
