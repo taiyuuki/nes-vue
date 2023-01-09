@@ -223,7 +223,7 @@ function start(url: string = <string>props.url) {
     return
   }
   const padding = 0
-  animationFram(cvs, padding)
+  animationFram(cvs)
 
   const rp = new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()

@@ -370,10 +370,10 @@ nanoid@^3.3.4:
   resolved "https://mirrors.cloud.tencent.com/npm/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
-nes-vue@^1.3.0:
-  version "1.3.0"
-  resolved "https://mirrors.cloud.tencent.com/npm/nes-vue/-/nes-vue-1.3.0.tgz#683f18deacf67473e1666498b37323e9eab03eab"
-  integrity sha512-lc6SkaLSzbj7Z14d/pbsTO7rOviPBNDtzzlHK6J1LSMLpO9T+E8I4nownR3ZP4SUEZ8gcvwhREWWTZvyCxG8EA==
+nes-vue@^1.3.3:
+  version "1.3.3"
+  resolved "https://mirrors.cloud.tencent.com/npm/nes-vue/-/nes-vue-1.3.3.tgz#37c53cc9cd312aeac5f27520b4ff308368306610"
+  integrity sha512-+uV2GHAspAqdieg8ol7NF2TuohOc3qnAyuMX37ZTL7t8+mgSncQ6YNdEvmCNBZPus9gNbSuBRBt8X19QCc3Dsw==
 
 path-parse@^1.0.7:
   version "1.0.7"

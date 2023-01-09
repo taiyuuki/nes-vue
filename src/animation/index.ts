@@ -14,7 +14,7 @@ export const onFrame = (framebuffer_24: Buffer) => {
   }
 }
 
-export const animationFram = (cvs: HTMLCanvasElement, padding: number) => {
+export const animationFram = (cvs: HTMLCanvasElement) => {
   canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
   const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT)
 
@@ -28,7 +28,7 @@ export const animationFram = (cvs: HTMLCanvasElement, padding: number) => {
   function onAnimationFrame() {
     requestAnimationFrame(onAnimationFrame)
     image.data.set(framebuffer_u8)
-    canvas_ctx.putImageData(image, padding, padding)
+    canvas_ctx.putImageData(image, 0, 0)
   }
 }
 
