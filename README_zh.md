@@ -56,20 +56,20 @@ createApp(App).use(nes).mount("#app");
 
 ### 属性
 
-| Property    | Description                                        | Type             | Default             |
-| ----------- | -------------------------------------------------- | ---------------- | ------------------- |
-| `url`       | nes游戏的rom地址，必须！！！                       | string           |                     |
-| `width`     | 游戏画面宽度，可以有单位，默认是px。               | string \| number | 256                 |
-| `height`    | 游戏画面高度，可以有单位，默认是px。               | string \| number | 240                 |
-| `label`     | 游戏运行前画面上的显示文字。                       | string           | ‘Game Start’        |
-| `gain`      | 游戏音量 介于[0, 100]之间。                        | number           | 100                 |
-| `dense`     | 紧凑模式，填充更少的内边距。                       | boolean          | false               |
-| `autoStart` | 组件挂载后自动开始游戏                             | boolean          | false               |
-| `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save) | boolean          | false               |
-| `debugger`  | 错误信息输出到控制台                               | boolean          | false               |
-| `persecond` | 每秒连发速度 介于[5, 20]之间                       | number           | 16                  |
-| `p1`        | 玩家 1 控制器                                      | object           | 见[控制器](#控制器) |
-| `p2`        | 玩家 2 控制器                                      | object           | 见[控制器](#控制器) |
+| Property    | Description                                                  | Type             | Default             |
+| ----------- | ------------------------------------------------------------ | ---------------- | ------------------- |
+| `url`       | nes游戏的rom地址，必须！！！                                 | string           |                     |
+| `width`     | 游戏画面宽度，可以有单位，默认是px。                         | string \| number | 256                 |
+| `height`    | 游戏画面高度，可以有单位，默认是px。                         | string \| number | 240                 |
+| `label`     | 游戏运行前画面上的显示文字。                                 | string           | ‘Game Start’        |
+| `gain`      | 游戏音量 介于[0, 100]之间。                                  | number           | 100                 |
+| `dense`     | 紧凑模式，false=游戏画面的四周剪切8像素，true=不剪切。<br />紧凑模式可以解决部分游戏画面边缘显示不全的问题，且画面紧凑没有黑边，但也会造成很多游戏画面边缘材质闪烁，请酌情使用。 | boolean          | false               |
+| `autoStart` | 组件挂载后自动开始游戏                                       | boolean          | false               |
+| `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save)           | boolean          | false               |
+| `debugger`  | 错误信息输出到控制台                                         | boolean          | false               |
+| `persecond` | 每秒连发速度 介于[5, 25]之间                                 | number           | 16                  |
+| `p1`        | 玩家 1 控制器                                                | object           | 见[控制器](#控制器) |
+| `p2`        | 玩家 2 控制器                                                | object           | 见[控制器](#控制器) |
 
 #### 控制器
 
@@ -143,17 +143,17 @@ function getFPS(fps){
 
 ### 方法
 
-| Methods                                              |
-| ---------------------------------------------------- |
-| `start(url?: string) => void`                        |
-| `reset() => void`                                    |
-| `stop() => void`                                     |
-| `pause() => void`                                    |
-| `play() => void`                                     |
-| `save(id: string) => void`                           |
-| `load(id: string) => void`                           |
-| `remove(id: string) => void`                         |
-| `screenshot(download?: boolean) => HTMLImageElement` |
+| Methods                                                      |
+| ------------------------------------------------------------ |
+| `start(url?: string) => void`                                |
+| `reset() => void`                                            |
+| `stop() => void`                                             |
+| `pause() => void`                                            |
+| `play() => void`                                             |
+| `save(id: string) => void`                                   |
+| `load(id: string) => void`                                   |
+| `remove(id: string) => void`                                 |
+| `screenshot(download?: boolean, imageName?: string) => HTMLImageElement` |
 
 #### start
 

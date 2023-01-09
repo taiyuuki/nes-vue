@@ -32,21 +32,21 @@ export const animationFram = (cvs: HTMLCanvasElement, padding: number) => {
   }
 }
 
-export const fitInParent = (cvs: HTMLCanvasElement, dense: boolean) => {
+export const fitInParent = (cvs: HTMLCanvasElement) => {
   const parent = cvs.parentNode as HTMLElement
   const parentWidth = parent.clientWidth
   const parentHeight = parent.clientHeight
   const parentRatio = parentWidth / parentHeight
   const desiredRatio = WIDTH / HEIGHT
   if (desiredRatio < parentRatio) {
-    const addition = parentHeight * (dense ? 0.0625 : 0)
-    cvs.style.height = `${parentHeight + addition}px`
-    cvs.style.width = `${Math.round(parentHeight + desiredRatio) * addition}px`
+    // const addition = parentHeight * (dense ? 0.0625 : 0)
+    cvs.style.height = `${parentHeight}px`
+    cvs.style.width = `${Math.round(parentHeight + desiredRatio)}px`
   }
   else {
-    const addition = Math.round(parentWidth / desiredRatio) * (dense ? 0.0625 : 0)
-    cvs.style.width = `${parentWidth + addition}px`
-    cvs.style.height = `${Math.round(parentWidth / desiredRatio) + addition}px`
+    // const addition = Math.round(parentWidth / desiredRatio) * (dense ? 0.0625 : 0)
+    cvs.style.width = `${parentWidth}px`
+    cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
   }
 }
 

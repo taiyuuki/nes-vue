@@ -14,6 +14,9 @@ declare module "jsnes" {
     ppu: {
       fromJSON(ppu:any): void,
       reset(): void,
+      clipToTvSize: boolean
+      f_spClipping: number
+      f_bgClipping: number
     }
     loadROM(buffer: Buffer | string): void
     frame(): void

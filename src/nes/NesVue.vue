@@ -27,7 +27,7 @@ export default { name: 'nes-vue' }
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { $ref, $computed } from 'vue/macros'
-import { onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
+import { onMounted, onBeforeUnmount, watch, nextTick, computed, effect } from 'vue'
 import { saveData, loadData, putData, removeData } from 'src/db'
 import type { EmitErrorObj, Controller, SavedOrLoaded, Automatic } from './types'
 import { resolveController } from 'src/controller'
@@ -115,6 +115,10 @@ const nes = new jsnes.NES({
   onFrame,
   onAudioSample,
   sampleRate: getSampleRate(),
+})
+
+effect(() => {
+  nes.ppu.clipToTvSize = !props.dense
 })
 
 const automatic: { [key: string]: { [key: string]: Automatic } } = {
@@ -218,7 +222,7 @@ function start(url: string = <string>props.url) {
     emits('update:url', url)
     return
   }
-  const padding = props.dense ? -7 : 0
+  const padding = 0
   animationFram(cvs, padding)
 
   const rp = new Promise((resolve, reject) => {
@@ -236,7 +240,7 @@ function start(url: string = <string>props.url) {
       if (this.status === 200) {
         try {
           nes.loadROM(this.responseText)
-          fitInParent(cvs, props.dense)
+          fitInParent(cvs)
           fpsStamp = setInterval(() => {
             const fps = nes.getFPS()
             emits('fps', fps ? fps : 0)
@@ -549,7 +553,7 @@ const canvasStyle = computed(() => {
   let height = props.height
   if (cvs) {
     nextTick(() => {
-      fitInParent(cvs, props.dense)
+      fitInParent(cvs)
     })
   }
   if (pure.test(String(width))) {

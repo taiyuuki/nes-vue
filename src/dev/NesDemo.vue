@@ -6,7 +6,7 @@
       label="Click to Start"
       width="512"
       height="480"
-      dense
+      :dense="clip"
       debugger
       @error="onError"
     />
@@ -30,6 +30,11 @@
     >
       Load
     </button>
+    <button
+      @click="dense"
+    >
+      Dense
+    </button>
   </div>
 </template>
 
@@ -40,10 +45,12 @@ import NesVue from '../nes/NesVue.vue'
 import { isNotNull } from '../utils'
 
 const nes = ref<NesVueInstance | null>(null)
-const gameUrl = ref<string>('SuperContra')
+const gameUrl = ref<string>('SuperContra.nes')
 const saveable = ref(true)
+const clip = ref(true)
 
 function resetGame() {
+  saveable.value = false
   if (isNotNull(nes.value)) {
     nes.value.reset()
   }
@@ -66,6 +73,10 @@ function load() {
   if (isNotNull(nes.value)) {
     nes.value.load(gameUrl.value)
   }
+}
+
+function dense() {
+  clip.value = !clip.value
 }
 
 function onError(error: EmitErrorObj) {
