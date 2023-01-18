@@ -6,7 +6,7 @@
       label="Click to Start"
       width="512"
       height="480"
-      :dense="clip"
+      :clip="clip"
       debugger
       @error="onError"
     />

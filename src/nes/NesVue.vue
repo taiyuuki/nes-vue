@@ -42,10 +42,10 @@ const props = withDefaults(defineProps<{
   height?: number | string
   label?: string
   gain?: number
-  dense?: boolean
+  clip?: boolean
   storage?: boolean
   debugger?: boolean
-  persecond?: number
+  turbo?: number
   p1?: Controller
   p2?: Controller
 }>(), {
@@ -54,10 +54,10 @@ const props = withDefaults(defineProps<{
   height: '240px',
   label: 'Game Start',
   gain: 100,
-  dense: false,
+  clip: false,
   storage: false,
   debugger: false,
-  persecond: 16,
+  turbo: 16,
   p1: () => ({
     UP: 'KeyW',
     DOWN: 'KeyS',
@@ -100,6 +100,7 @@ interface NesVueEmits {
 
 const cvs = $ref<HTMLCanvasElement | null>(null)
 let isStop = $ref<boolean>(true)
+let romBuffer: null | string = null
 
 let fpsStamp: NodeJS.Timeout
 
@@ -118,7 +119,7 @@ const nes = new jsnes.NES({
 })
 
 effect(() => {
-  nes.ppu.clipToTvSize = !props.dense
+  nes.ppu.clipToTvSize = !props.clip
 })
 
 const automatic: { [key: string]: { [key: string]: Automatic } } = {
@@ -149,7 +150,7 @@ const automatic: { [key: string]: { [key: string]: Automatic } } = {
 }
 
 const interval = $computed(() => {
-  let time = (1000 / (2 * props.persecond))
+  let time = (1000 / (2 * props.turbo))
   if (time < 20) {
     time = 20
   }
@@ -202,6 +203,14 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
   }
 }
 
+function loadRom(buffer: string) {
+  nes.loadROM(buffer)
+  fpsStamp = setInterval(() => {
+    const fps = nes.getFPS()
+    emits('fps', fps ? fps : 0)
+  }, 1000)
+}
+
 /**
  * 🎮: Start the game in the stopped state. Normally, url is not required.
  * @param url Rom url
@@ -219,53 +228,54 @@ function start(url: string = <string>props.url) {
     clearInterval(fpsStamp)
   }
   if (url !== props.url) {
+    romBuffer = null
     emits('update:url', url)
     return
   }
-  const padding = 0
   animationFram(cvs)
 
   const rp = new Promise((resolve, reject) => {
-    const req = new XMLHttpRequest()
-    req.open('GET', url)
-    req.overrideMimeType('text/plain; charset=x-user-defined')
-    req.onerror = () => {
-      reject({
-        code: 404,
-        message: `${url} loading Error: ${req.statusText}`,
-      })
+    if (isNotNull(romBuffer)) {
+      loadRom(romBuffer)
+      resolve('success')
     }
-
-    req.onload = function () {
-      if (this.status === 200) {
-        try {
-          nes.loadROM(this.responseText)
-          fitInParent(cvs)
-          fpsStamp = setInterval(() => {
-            const fps = nes.getFPS()
-            emits('fps', fps ? fps : 0)
-          }, 1000)
-          resolve('success')
-        }
-        catch (_) {
-          reject({
-            code: 0,
-            message: `${url} loading Error: Probably the ROM is unsupported.`,
-          })
-          isStop = true
-        }
-      }
-      else {
+    else {
+      const req = new XMLHttpRequest()
+      req.open('GET', url)
+      req.overrideMimeType('text/plain; charset=x-user-defined')
+      req.onerror = () => {
         reject({
           code: 404,
           message: `${url} loading Error: ${req.statusText}`,
         })
       }
+      req.onload = function () {
+        if (this.status === 200) {
+          romBuffer = this.responseText
+          try {
+            loadRom(romBuffer)
+            resolve('success')
+          }
+          catch (_) {
+            reject({
+              code: 0,
+              message: `${url} loading Error: Probably the ROM is unsupported.`,
+            })
+            isStop = true
+          }
+        }
+        else {
+          reject({
+            code: 404,
+            message: `${url} loading Error: ${req.statusText}`,
+          })
+        }
+      }
+      req.send()
     }
+    fitInParent(cvs)
     document.addEventListener('keydown', downKeyboardEvent)
     document.addEventListener('keyup', upKeyboardEvent)
-
-    req.send()
   })
 
   rp.then(() => {

@@ -65,11 +65,11 @@ import { NesVue } from 'nes-vue';
 | `height`    | Game screen height.                                          | string \| number | 240                           |
 | `label`     | Text of the game screen, show only before running.           | string           | ‘Game Start’                  |
 | `gain`      | The game volume between [0, 100].                            | number           | 100                           |
-| `dense`     | Background clipping, false=BG invisible in left 8-pixel column, true=No clipping.<br />Dense mode can solve the problem that the edges of some game BG are not fully displayed, and the background will not have black edges, but it will also cause the edge materials of most game BG to flicker. Please use it as appropriate. | boolean          | false                         |
+| `clip`     | Background clipping, false=BG invisible in left 8-pixel column, true=No clipping.<br />Dense mode can solve the problem that the edges of some game BG are not fully displayed, and the background will not have black edges, but it will also cause the edge materials of most game BG to flicker. Please use it as appropriate. | boolean          | false                         |
 | `autoStart` | Auto start when the component on mounted.                    | boolean          | false                         |
 | `storage`   | Use `localStorage ` to save the game state, see [Methods - save](#save). | boolean          | false                         |
 | `debugger`  | The error message is output in the console.                  | boolean          | false                         |
-| `persecond` | Mashing speed per second, between [5, 20].                   | number           | 16                            |
+| `turbo` | Mashing speed per second, between [5, 20].                   | number           | 16                            |
 | `p1`        | Player 1 controller.                                         | object           | see [Controller](#Controller) |
 | `p2`        | Player 2 controller.                                         | object           | see [Controller](#Controller) |
 
