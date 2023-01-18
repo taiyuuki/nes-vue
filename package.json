@@ -1,6 +1,6 @@
 {
   "name": "nes-vue",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "A NES(FC) emulator component for Vue 3",
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",

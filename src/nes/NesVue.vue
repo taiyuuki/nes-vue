@@ -203,14 +203,6 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
   }
 }
 
-function loadRom(buffer: string) {
-  nes.loadROM(buffer)
-  fpsStamp = setInterval(() => {
-    const fps = nes.getFPS()
-    emits('fps', fps ? fps : 0)
-  }, 1000)
-}
-
 /**
  * 🎮: Start the game in the stopped state. Normally, url is not required.
  * @param url Rom url
@@ -235,9 +227,25 @@ function start(url: string = <string>props.url) {
   animationFram(cvs)
 
   const rp = new Promise((resolve, reject) => {
+    function loadROM(buffer: string) {
+      try {
+        nes.loadROM(buffer)
+        fpsStamp = setInterval(() => {
+          const fps = nes.getFPS()
+          emits('fps', fps ? fps : 0)
+        }, 1000)
+        resolve('success')
+      }
+      catch (_) {
+        reject({
+          code: 0,
+          message: `${url} loading Error: Probably the ROM is unsupported.`,
+        })
+        isStop = true
+      }
+    }
     if (isNotNull(romBuffer)) {
-      loadRom(romBuffer)
-      resolve('success')
+      loadROM(romBuffer)
     }
     else {
       const req = new XMLHttpRequest()
@@ -252,17 +260,7 @@ function start(url: string = <string>props.url) {
       req.onload = function () {
         if (this.status === 200) {
           romBuffer = this.responseText
-          try {
-            loadRom(romBuffer)
-            resolve('success')
-          }
-          catch (_) {
-            reject({
-              code: 0,
-              message: `${url} loading Error: Probably the ROM is unsupported.`,
-            })
-            isStop = true
-          }
+          loadROM(romBuffer)
         }
         else {
           reject({
