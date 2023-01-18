@@ -575,7 +575,10 @@ const canvasStyle = computed(() => {
   return `width: ${width};height: ${height};background-color: #000;margin: auto;position: relative;overflow: hidden;`
 })
 
-watch(() => props.url, reset)
+watch(() => props.url, () => {
+  romBuffer = null
+  reset()
+})
 watch(() => props.gain, () => { setGain(props.gain) })
 
 onMounted(() => {
