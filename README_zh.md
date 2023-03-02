@@ -8,12 +8,11 @@
 <p align="center">
 <a href="https://www.npmjs.com/package/nes-vue"><img alt="GitHub package.json version" src="https://img.shields.io/npm/v/nes-vue?color=green&logo=npm"></a>
 </p>
+## Playground
 
-## Demo
+🚀[Playground](https://taiyuuki.github.io/nes-vue)
 
-🚀[Demo](https://taiyuuki.github.io/nes-vue)
-
-Demo 就在本项目的 `example/` 目录下
+Playground就在本仓库 `playground/` 目录下。
 
 ## 使用
 
@@ -296,6 +295,14 @@ remove(id: string) => void
 ```
 
 删除保存的游戏状态。
+
+#### clear
+
+```ts
+clear() => void
+```
+
+清空所有保存的游戏状态。
 
 #### screenshot
 

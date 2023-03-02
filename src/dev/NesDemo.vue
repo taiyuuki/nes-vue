@@ -19,21 +19,19 @@
       Stop
     </button>
     <button
-      :disabled="saveable"
       @click="save"
     >
       Save
     </button>
     <button
-      :disabled="saveable"
       @click="load"
     >
       Load
     </button>
     <button
-      @click="dense"
+      @click="clear"
     >
-      Dense
+      Clear
     </button>
   </div>
 </template>
@@ -42,7 +40,7 @@
 import { ref } from 'vue'
 import type { EmitErrorObj, NesVueInstance } from '../'
 import NesVue from '../nes/NesVue.vue'
-import { isNotNull } from '../utils'
+import { isNotVoid } from '@taiyuuki/utils'
 
 const nes = ref<NesVueInstance | null>(null)
 const gameUrl = ref<string>('SuperContra.nes')
@@ -51,32 +49,34 @@ const clip = ref(true)
 
 function resetGame() {
   saveable.value = false
-  if (isNotNull(nes.value)) {
+  if (isNotVoid(nes.value)) {
     nes.value.reset()
   }
 }
 
 function stopGame() {
   saveable.value = true
-  if (isNotNull(nes.value)) {
+  if (isNotVoid(nes.value)) {
     nes.value.stop()
   }
 }
 
 function save() {
-  if (isNotNull(nes.value)) {
+  if (isNotVoid(nes.value)) {
     nes.value.save(gameUrl.value)
   }
 }
 
 function load() {
-  if (isNotNull(nes.value)) {
+  if (isNotVoid(nes.value)) {
     nes.value.load(gameUrl.value)
   }
 }
 
-function dense() {
-  clip.value = !clip.value
+function clear() {
+  if (isNotVoid(nes.value)) {
+    nes.value.clear()
+  }
 }
 
 function onError(error: EmitErrorObj) {

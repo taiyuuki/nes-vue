@@ -11,11 +11,11 @@ A NES (FC)🎮 emulator component for Vue 3.
 
 :cn:[中文](./README_zh.md)
 
-## Demo
+## Playground
 
-🚀[Demo](https://taiyuuki.github.io/nes-vue)
+🚀[Playground](https://taiyuuki.github.io/nes-vue)
 
-Demo is in the `example/` directory of this repository.
+Playground is in the `playground/` directory of this repository.
 
 ## Usage
 
@@ -155,6 +155,7 @@ function getFPS(fps){
 | `save(id: string) => void`                                   |
 | `load(id: string) => void`                                   |
 | `remove(id: string) => void`                                 |
+| `clear() => void`                                            |
 | `screenshot(download?: boolean, imageName?: string) => HTMLImageElement` |
 
 #### start
@@ -296,6 +297,14 @@ remove(id: string) => void
 ```
 
 Remove saved data.
+
+#### clear
+
+```ts
+clear() => void
+```
+
+Clear all saved data.
 
 #### screenshot
 

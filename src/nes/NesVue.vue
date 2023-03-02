@@ -28,12 +28,13 @@ export default { name: 'nes-vue' }
 import jsnes from 'jsnes'
 import { $ref, $computed } from 'vue/macros'
 import { onMounted, onBeforeUnmount, watch, nextTick, computed, effect } from 'vue'
-import { saveData, loadData, putData, removeData } from 'src/db'
+import { saveData, loadData, putData, removeData, clearData } from 'src/db'
 import type { EmitErrorObj, Controller, SavedOrLoaded, Automatic } from './types'
 import { resolveController } from 'src/controller'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
-import { getNow, isNotNull } from 'src/utils'
+// import { getNow } from 'src/utils'
+import { isNotVoid, isVoid, dateNow } from '@taiyuuki/utils'
 
 const props = withDefaults(defineProps<{
   url: string
@@ -167,7 +168,7 @@ const controller = $computed(() => {
 const downKeyboardEvent = function (event: KeyboardEvent) {
   const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
   const keyMap = controller[event.code]
-  if (isNotNull(keyMap)) {
+  if (isNotVoid(keyMap)) {
     if (autoList.includes(event.code)) {
       const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
       if (autoObj.once) {
@@ -193,7 +194,7 @@ const downKeyboardEvent = function (event: KeyboardEvent) {
 const upKeyboardEvent = function (event: KeyboardEvent) {
   const autoList = [props.p1.C, props.p1.D, props.p2.C, props.p2.D]
   const keyMap = controller[event.code]
-  if (isNotNull(keyMap)) {
+  if (isNotVoid(keyMap)) {
     if (autoList.includes(event.code)) {
       const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
       clearInterval(autoObj.timeout)
@@ -208,7 +209,7 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
  * @param url Rom url
  */
 function start(url: string = <string>props.url) {
-  if (!isNotNull(cvs)) {
+  if (isVoid(cvs)) {
     return
   }
   if (isStop) {
@@ -244,7 +245,7 @@ function start(url: string = <string>props.url) {
         isStop = true
       }
     }
-    if (isNotNull(romBuffer)) {
+    if (isNotVoid(romBuffer)) {
       loadROM(romBuffer)
     }
     else {
@@ -549,10 +550,14 @@ function screenshot(download?: boolean, imageName?: string) {
   if (download) {
     const a = document.createElement('a')
     a.href = img.src
-    a.download = imageName ?? getNow()
+    a.download = imageName ?? dateNow('yyyy-MM-dd_HH-mm-ss')
     a.click()
   }
   return img
+}
+
+function clear() {
+  clearData()
 }
 
 const canvasStyle = computed(() => {
@@ -601,6 +606,7 @@ defineExpose({
   save,
   load,
   remove,
+  clear,
   screenshot,
 })
 </script>

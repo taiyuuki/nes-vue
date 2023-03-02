@@ -39,12 +39,10 @@ export const fitInParent = (cvs: HTMLCanvasElement) => {
   const parentRatio = parentWidth / parentHeight
   const desiredRatio = WIDTH / HEIGHT
   if (desiredRatio < parentRatio) {
-    // const addition = parentHeight * (dense ? 0.0625 : 0)
     cvs.style.height = `${parentHeight}px`
     cvs.style.width = `${Math.round(parentHeight + desiredRatio)}px`
   }
   else {
-    // const addition = Math.round(parentWidth / desiredRatio) * (dense ? 0.0625 : 0)
     cvs.style.width = `${parentWidth}px`
     cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
   }

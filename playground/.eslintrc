@@ -1,0 +1,18 @@
+{
+  "root": true,
+  "extends": "@taiyuuki/eslint-config-vue-unimport",
+
+  "rules": {
+    "import/no-unresolved":
+      ["error", {
+        "ignore": [
+          "~pages",
+          "virtual:generated-layouts",
+          "virtual:generated-pages",
+          "virtual:vue-component-preview",
+          ""
+        ]
+      }]
+  }
+
+}

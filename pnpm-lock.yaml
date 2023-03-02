@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@taiyuuki/eslint-config-vue-unimport': ^0.0.5
+  '@taiyuuki/utils': ^0.1.4
   '@types/node': ^18.0.0
   '@vitejs/plugin-vue': ^3.2.0
   eslint: ^8.27.0
@@ -14,6 +15,9 @@ specifiers:
   vitest: ^0.25.3
   vue: ^3.2.45
   vue-tsc: ^1.0.9
+
+dependencies:
+  '@taiyuuki/utils': 0.1.4
 
 devDependencies:
   '@taiyuuki/eslint-config-vue-unimport': 0.0.5_dcpv4nbdr5ks2h5677xdltrk6e
@@ -259,6 +263,10 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
     dev: true
+
+  /@taiyuuki/utils/0.1.4:
+    resolution: {integrity: sha512-YHc3j3dVj+qa3xrcltW6lysDFNmpJrYQQxbXMmVt0xItZt/q0Kk7ckqUunrQFqWoMK6eOZAeTJCpUTFULaYKgQ==}
+    dev: false
 
   /@ts-morph/common/0.17.0:
     resolution: {integrity: sha512-RMSSvSfs9kb0VzkvQ2NWobwnj7TxCA9vI/IjR9bDHqgAyVbu2T0DN4wiKVqomyDWqO7dPr/tErSfq7urQ1Q37g==}

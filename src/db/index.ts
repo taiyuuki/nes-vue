@@ -75,3 +75,9 @@ export function removeData({ id, onSuccess }: RemoveDataOptions) {
   const res = objectStore.delete(id)
   res.onsuccess = onSuccess
 }
+
+export function clearData() {
+  const transaction = db.transaction([storeName], 'readwrite')
+  const objectStore = transaction.objectStore(storeName)
+  objectStore.clear()
+}
