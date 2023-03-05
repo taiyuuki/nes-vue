@@ -1,18 +1,42 @@
 <template>
   <header class="header">
     <div>NesVue Playground</div>
-    <div
-      class="icon"
-      @click="dark.on = !dark.on"
-    >
-      <Moon v-if="isDark" />
-      <Sun v-else />
+    <div class="icons">
+      <div
+        class="icon"
+        title="Download project files"
+        @click="download"
+      >
+        <IconDownload />
+      </div>
+      <div
+        class="icon"
+        @click="dark.on = !dark.on"
+      >
+        <IconMoon v-if="isDark" />
+        <IconSun v-else />
+      </div>
+      <div class="icon">
+        <a
+          :href="repoURL"
+          target="_blank"
+          title="View in repository"
+        >
+          <IconGitee v-if="isGitee" />
+          <IconGithub v-else />
+        </a>
+      </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import type { ReplStore } from '@vue/repl'
 import { useDark } from 'src/stores/dark'
+import { downloadProject } from 'src/download'
+import { isGitee, repoURL } from 'src/template'
+
+const props = defineProps<{ store: ReplStore }>()
 
 const dark = useDark()
 const isDark = computed(() => {
@@ -25,6 +49,18 @@ const isDark = computed(() => {
   }
   return dark.on
 })
+
+let iaDownloading = false
+async function download() {
+  if (iaDownloading) {
+    alert('Already downloading')
+  }
+  else {
+    iaDownloading = true
+    await downloadProject(props.store)
+    iaDownloading = false
+  }
+}
 </script>
 
 <style>
@@ -43,13 +79,19 @@ const isDark = computed(() => {
   box-shadow: inset 0 0 1px #fff;
 }
 
-.header .icon {
-  width: 20px;
-  cursor: pointer;
-  opacity: 0.8;
+.icons {
+  display: flex;
 }
 
-.header .icon:hover {
+.icon {
+  width: 30px;
+  margin-left: 5px;
+  transform: scale(0.6);
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.icon:hover {
   opacity: 1;
 }
 </style>

@@ -1,10 +1,12 @@
+import { roms } from './download/roms'
+
 const template = `<template>
   <div class="box">
     <nes-vue
       ref="nes"
       :url="gameURL"
-      :width="384"
-      :height="360"
+      :width="512"
+      :height="480"
     />
   </div>
   <div class="btns">
@@ -42,13 +44,7 @@ let script = `
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
-const gameList = [
-  'Contra.nes',
-  'Super Mario Bros.nes',
-  'Super Mario Bros 3.nes',
-  'Chip n Dale Rescue Rangers 2.nes',
-  'Duck Tales 2.nes',
-]
+const gameList = ${JSON.stringify(roms, null, 2)}
 const gameURL = ref(gameList[0])
 const nes = ref(null)
 const slt = ref(null)
@@ -97,6 +93,12 @@ button, select, input {
 }
 </style>
 `
+
+export const isGitee = location.href.includes('gitee')
+
+export const repoURL = isGitee
+  ? 'https://gitee.com/taiyuuki/nes-vue'
+  : 'https://github.com/taiyuuki/nes-vue'
 
 export {
   template, script, style,

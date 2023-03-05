@@ -8,9 +8,10 @@
 <p align="center">
 <a href="https://www.npmjs.com/package/nes-vue"><img alt="GitHub package.json version" src="https://img.shields.io/npm/v/nes-vue?color=green&logo=npm"></a>
 </p>
-## Playground
 
-🚀[Playground](https://taiyuuki.github.io/nes-vue)
+## 游乐场
+
+🚀[Playground](https://taiyuuki.gitee.io/nes-vue)
 
 Playground就在本仓库 `playground/` 目录下。
 

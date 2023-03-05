@@ -7,10 +7,13 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    IconDownload: typeof import('./components/Icon/IconDownload.vue')['default']
+    IconGitee: typeof import('./components/Icon/IconGitee.vue')['default']
+    IconGithub: typeof import('./components/Icon/IconGithub.vue')['default']
+    IconMoon: typeof import('./components/Icon/IconMoon.vue')['default']
+    IconSun: typeof import('./components/Icon/IconSun.vue')['default']
     MainHeader: typeof import('./components/MainHeader.vue')['default']
-    Moon: typeof import('./components/Moon.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Sun: typeof import('./components/Sun.vue')['default']
   }
 }
