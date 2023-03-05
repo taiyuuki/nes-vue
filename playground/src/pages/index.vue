@@ -12,7 +12,7 @@ const store = new ReplStore()
 
 store.state.files['App.vue'].code = template + script + style
 
-store.setImportMap({ imports: { 'nes-vue': 'https://cdn.jsdelivr.net/npm/nes-vue@1.3.7/dist/nes-vue.es.js' } })
+store.setImportMap({ imports: { 'nes-vue': './nes-vue.es.js' } })
 </script>
 
 <style>
