@@ -20,7 +20,7 @@
         <a
           :href="repoURL"
           target="_blank"
-          title="View in repository"
+          title="View on repository"
         >
           <IconGitee v-if="isGitee" />
           <IconGithub v-else />
