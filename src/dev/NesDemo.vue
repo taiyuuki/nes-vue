@@ -1,3 +1,52 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { EmitErrorObj, NesVueInstance } from '../'
+import NesVue from '../nes/NesVue.vue'
+import { is_not_void } from '@taiyuuki/utils'
+
+const nes = ref<NesVueInstance | null>(null)
+const gameUrl = ref<string>('SuperContra.nes')
+const saveable = ref(true)
+const clip = ref(true)
+const p1 = ref({
+    C: 'KeyO',
+})
+
+function resetGame() {
+    saveable.value = false
+    if (is_not_void(nes.value)) {
+        nes.value.reset()
+    }
+}
+
+function stopGame() {
+    saveable.value = true
+    if (is_not_void(nes.value)) {
+        nes.value.stop()
+    }
+}
+
+function save() {
+    if (is_not_void(nes.value)) {
+        nes.value.save(gameUrl.value)
+    }
+}
+
+function load() {
+    if (is_not_void(nes.value)) {
+        nes.value.load(gameUrl.value)
+    }
+}
+
+function test() {
+    p1.value.C = 'KeyI'
+}
+
+function onError(error: EmitErrorObj) {
+    console.log(error.message)
+}
+</script>
+
 <template>
   <div class="box">
     <nes-vue
@@ -8,6 +57,7 @@
       height="480"
       :clip="clip"
       debugger
+      :p1="p1"
       @error="onError"
     />
   </div>
@@ -29,60 +79,12 @@
       Load
     </button>
     <button
-      @click="clear"
+      @click="test"
     >
-      Clear
+      Test
     </button>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import type { EmitErrorObj, NesVueInstance } from '../'
-import NesVue from '../nes/NesVue.vue'
-import { isNotVoid } from '@taiyuuki/utils'
-
-const nes = ref<NesVueInstance | null>(null)
-const gameUrl = ref<string>('SuperContra.nes')
-const saveable = ref(true)
-const clip = ref(true)
-
-function resetGame() {
-  saveable.value = false
-  if (isNotVoid(nes.value)) {
-    nes.value.reset()
-  }
-}
-
-function stopGame() {
-  saveable.value = true
-  if (isNotVoid(nes.value)) {
-    nes.value.stop()
-  }
-}
-
-function save() {
-  if (isNotVoid(nes.value)) {
-    nes.value.save(gameUrl.value)
-  }
-}
-
-function load() {
-  if (isNotVoid(nes.value)) {
-    nes.value.load(gameUrl.value)
-  }
-}
-
-function clear() {
-  if (isNotVoid(nes.value)) {
-    nes.value.clear()
-  }
-}
-
-function onError(error: EmitErrorObj) {
-  console.log(error.message)
-}
-</script>
 
 <style>
 .box {

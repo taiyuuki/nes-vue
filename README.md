@@ -15,8 +15,6 @@ A NES (FC)🎮 emulator component for Vue 3.
 
 🚀[Playground](https://taiyuuki.github.io/nes-vue)
 
-Playground is in the `playground/` directory of this repository.
-
 ## Usage
 
 ### install

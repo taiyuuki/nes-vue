@@ -1,8 +1,3 @@
-<template>
-  <MainHeader :store="store" />
-  <Repl :store="store" />
-</template>
-
 <script setup lang="ts">
 import { Repl, ReplStore } from '@vue/repl'
 import '@vue/repl/style.css'
@@ -14,6 +9,11 @@ store.state.files['App.vue'].code = template + script + style
 
 store.setImportMap({ imports: { 'nes-vue': './nes-vue.es.js' } })
 </script>
+
+<template>
+  <MainHeader :store="store" />
+  <Repl :store="store" />
+</template>
 
 <style>
 .vue-repl {

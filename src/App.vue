@@ -1,12 +1,12 @@
+<script setup lang="ts">
+import NesDemo from './dev/NesDemo.vue'
+</script>
+
 <template>
   <div>
     <NesDemo />
   </div>
 </template>
-
-<script setup lang="ts">
-import NesDemo from './dev/NesDemo.vue'
-</script>
 
 <style>
 #app {

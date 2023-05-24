@@ -1,3 +1,36 @@
+<script setup lang="ts">
+import type { ReplStore } from '@vue/repl'
+import { useDark } from 'src/stores/dark'
+import { downloadProject } from 'src/download'
+import { isGitee, repoURL } from 'src/template'
+
+const props = defineProps<{ store: ReplStore }>()
+
+const dark = useDark()
+const isDark = computed(() => {
+    const cls = document.documentElement.classList
+    if (dark.on) {
+        cls.add('dark')
+    }
+    else {
+        cls.remove('dark')
+    }
+    return dark.on
+})
+
+let iaDownloading = false
+async function download() {
+    if (iaDownloading) {
+        alert('Already downloading')
+    }
+    else {
+        iaDownloading = true
+        await downloadProject(props.store)
+        iaDownloading = false
+    }
+}
+</script>
+
 <template>
   <header class="header">
     <div>NesVue Playground</div>
@@ -29,39 +62,6 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-import type { ReplStore } from '@vue/repl'
-import { useDark } from 'src/stores/dark'
-import { downloadProject } from 'src/download'
-import { isGitee, repoURL } from 'src/template'
-
-const props = defineProps<{ store: ReplStore }>()
-
-const dark = useDark()
-const isDark = computed(() => {
-  const cls = document.documentElement.classList
-  if (dark.on) {
-    cls.add('dark')
-  }
-  else {
-    cls.remove('dark')
-  }
-  return dark.on
-})
-
-let iaDownloading = false
-async function download() {
-  if (iaDownloading) {
-    alert('Already downloading')
-  }
-  else {
-    iaDownloading = true
-    await downloadProject(props.store)
-    iaDownloading = false
-  }
-}
-</script>
 
 <style>
 .header {

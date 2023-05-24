@@ -97,9 +97,9 @@ button, select, input {
 export const isGitee = location.href.includes('gitee')
 
 export const repoURL = isGitee
-  ? 'https://gitee.com/taiyuuki/nes-vue'
-  : 'https://github.com/taiyuuki/nes-vue'
+    ? 'https://gitee.com/taiyuuki/nes-vue'
+    : 'https://github.com/taiyuuki/nes-vue'
 
 export {
-  template, script, style,
+    template, script, style,
 }

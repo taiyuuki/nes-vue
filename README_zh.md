@@ -13,8 +13,6 @@
 
 🚀[Playground](https://taiyuuki.gitee.io/nes-vue)
 
-Playground就在本仓库 `playground/` 目录下。
-
 ## 使用
 
 ### 安装

@@ -1,18 +1,21 @@
-import { defineComponent as Xt, ref as j, effect as Yt, computed as G, nextTick as Ht, watch as $, onMounted as Wt, onBeforeUnmount as Ut, openBlock as Q, createElementBlock as tt, normalizeStyle as Zt, unref as q, createElementVNode as it, withDirectives as Jt, vShow as Kt, toDisplayString as zt, createCommentVNode as jt } from "vue";
-var C = function() {
+var zt = Object.defineProperty;
+var jt = (t, i, e) => i in t ? zt(t, i, { enumerable: !0, configurable: !0, writable: !0, value: e }) : t[i] = e;
+var v = (t, i, e) => (jt(t, typeof i != "symbol" ? i + "" : i, e), e);
+import { computed as O, onMounted as xt, onBeforeUnmount as St, defineComponent as $t, ref as tt, effect as Qt, nextTick as ti, watch as it, openBlock as st, createElementBlock as et, normalizeStyle as ii, createElementVNode as ht, unref as rt, withDirectives as si, vShow as ei, toDisplayString as hi, createCommentVNode as ri } from "vue";
+var g = function() {
   this.state = new Array(8);
   for (var t = 0; t < this.state.length; t++)
     this.state[t] = 64;
 };
-C.BUTTON_A = 0;
-C.BUTTON_B = 1;
-C.BUTTON_SELECT = 2;
-C.BUTTON_START = 3;
-C.BUTTON_UP = 4;
-C.BUTTON_DOWN = 5;
-C.BUTTON_LEFT = 6;
-C.BUTTON_RIGHT = 7;
-C.prototype = {
+g.BUTTON_A = 0;
+g.BUTTON_B = 1;
+g.BUTTON_SELECT = 2;
+g.BUTTON_START = 3;
+g.BUTTON_UP = 4;
+g.BUTTON_DOWN = 5;
+g.BUTTON_LEFT = 6;
+g.BUTTON_RIGHT = 7;
+g.prototype = {
   buttonDown: function(t) {
     this.state[t] = 65;
   },
@@ -20,7 +23,7 @@ C.prototype = {
     this.state[t] = 64;
   }
 };
-var ct = C, U = {
+var dt = g, J = {
   copyArrayElements: function(t, i, e, s, n) {
     for (var a = 0; a < n; ++a)
       e[s + a] = t[i + a];
@@ -37,10 +40,10 @@ var ct = C, U = {
       i[t.JSON_PROPERTIES[e]] = t[t.JSON_PROPERTIES[e]];
     return i;
   }
-}, st = U, mt = function(t) {
+}, nt = J, gt = function(t) {
   this.nes = t, this.mem = null, this.REG_ACC = null, this.REG_X = null, this.REG_Y = null, this.REG_SP = null, this.REG_PC = null, this.REG_PC_NEW = null, this.REG_STATUS = null, this.F_CARRY = null, this.F_DECIMAL = null, this.F_INTERRUPT = null, this.F_INTERRUPT_NEW = null, this.F_OVERFLOW = null, this.F_SIGN = null, this.F_ZERO = null, this.F_NOTUSED = null, this.F_NOTUSED_NEW = null, this.F_BRK = null, this.F_BRK_NEW = null, this.opdata = null, this.cyclesToHalt = null, this.crash = null, this.irqRequested = null, this.irqType = null, this.reset();
 };
-mt.prototype = {
+gt.prototype = {
   IRQ_NORMAL: 0,
   IRQ_NMI: 1,
   IRQ_RESET: 2,
@@ -54,7 +57,7 @@ mt.prototype = {
     }
     for (var s = 8193; s < this.mem.length; s++)
       this.mem[s] = 0;
-    this.REG_ACC = 0, this.REG_X = 0, this.REG_Y = 0, this.REG_SP = 511, this.REG_PC = 32768 - 1, this.REG_PC_NEW = 32768 - 1, this.REG_STATUS = 40, this.setStatus(40), this.F_CARRY = 0, this.F_DECIMAL = 0, this.F_INTERRUPT = 1, this.F_INTERRUPT_NEW = 1, this.F_OVERFLOW = 0, this.F_SIGN = 0, this.F_ZERO = 1, this.F_NOTUSED = 1, this.F_NOTUSED_NEW = 1, this.F_BRK = 1, this.F_BRK_NEW = 1, this.opdata = new Rt().opdata, this.cyclesToHalt = 0, this.crash = !1, this.irqRequested = !1, this.irqType = null;
+    this.REG_ACC = 0, this.REG_X = 0, this.REG_Y = 0, this.REG_SP = 511, this.REG_PC = 32768 - 1, this.REG_PC_NEW = 32768 - 1, this.REG_STATUS = 40, this.setStatus(40), this.F_CARRY = 0, this.F_DECIMAL = 0, this.F_INTERRUPT = 1, this.F_INTERRUPT_NEW = 1, this.F_OVERFLOW = 0, this.F_SIGN = 0, this.F_ZERO = 1, this.F_NOTUSED = 1, this.F_NOTUSED_NEW = 1, this.F_BRK = 1, this.F_BRK_NEW = 1, this.opdata = new At().opdata, this.cyclesToHalt = 0, this.crash = !1, this.irqRequested = !1, this.irqType = null;
   },
   emulate: function() {
     var t, i;
@@ -492,13 +495,13 @@ mt.prototype = {
     "F_BRK_NEW"
   ],
   toJSON: function() {
-    return st.toJSON(this);
+    return nt.toJSON(this);
   },
   fromJSON: function(t) {
-    st.fromJSON(this, t);
+    nt.fromJSON(this, t);
   }
 };
-var Rt = function() {
+var At = function() {
   this.opdata = new Array(256);
   for (var t = 0; t < 256; t++)
     this.opdata[t] = 255;
@@ -775,7 +778,7 @@ var Rt = function() {
     "Indirect Absolute   "
   );
 };
-Rt.prototype = {
+At.prototype = {
   INS_ADC: 0,
   INS_AND: 1,
   INS_ASL: 2,
@@ -864,10 +867,10 @@ Rt.prototype = {
     this.opdata[i] = t & 255 | (e & 255) << 8 | (s & 255) << 16 | (n & 255) << 24;
   }
 };
-var $t = mt, _t = function() {
+var ni = gt, Ct = function() {
   this.pix = new Array(64), this.fbIndex = null, this.tIndex = null, this.x = null, this.y = null, this.w = null, this.h = null, this.incX = null, this.incY = null, this.palIndex = null, this.tpri = null, this.c = null, this.initialized = !1, this.opaque = new Array(8);
 };
-_t.prototype = {
+Ct.prototype = {
   setBuffer: function(t) {
     for (this.y = 0; this.y < 8; this.y++)
       this.setScanline(this.y, t[this.y], t[this.y + 8]);
@@ -876,30 +879,30 @@ _t.prototype = {
     for (this.initialized = !0, this.tIndex = t << 3, this.x = 0; this.x < 8; this.x++)
       this.pix[this.tIndex + this.x] = (i >> 7 - this.x & 1) + ((e >> 7 - this.x & 1) << 1), this.pix[this.tIndex + this.x] === 0 && (this.opaque[t] = !1);
   },
-  render: function(t, i, e, s, n, a, r, h, f, c, x, R, m) {
+  render: function(t, i, e, s, n, a, r, h, u, _, m, f, R) {
     if (!(a < -7 || a >= 256 || r < -7 || r >= 240))
-      if (this.w = s - i, this.h = n - e, a < 0 && (i -= a), a + s >= 256 && (s = 256 - a), r < 0 && (e -= r), r + n >= 240 && (n = 240 - r), !c && !x)
+      if (this.w = s - i, this.h = n - e, a < 0 && (i -= a), a + s >= 256 && (s = 256 - a), r < 0 && (e -= r), r + n >= 240 && (n = 240 - r), !_ && !m)
         for (this.fbIndex = (r << 8) + a, this.tIndex = 0, this.y = 0; this.y < 8; this.y++) {
           for (this.x = 0; this.x < 8; this.x++)
-            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = m[this.fbIndex], this.palIndex !== 0 && R <= (this.tpri & 255) && (t[this.fbIndex] = f[this.palIndex + h], this.tpri = this.tpri & 3840 | R, m[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex++;
+            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = R[this.fbIndex], this.palIndex !== 0 && f <= (this.tpri & 255) && (t[this.fbIndex] = u[this.palIndex + h], this.tpri = this.tpri & 3840 | f, R[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex++;
           this.fbIndex -= 8, this.fbIndex += 256;
         }
-      else if (c && !x)
+      else if (_ && !m)
         for (this.fbIndex = (r << 8) + a, this.tIndex = 7, this.y = 0; this.y < 8; this.y++) {
           for (this.x = 0; this.x < 8; this.x++)
-            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = m[this.fbIndex], this.palIndex !== 0 && R <= (this.tpri & 255) && (t[this.fbIndex] = f[this.palIndex + h], this.tpri = this.tpri & 3840 | R, m[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex--;
+            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = R[this.fbIndex], this.palIndex !== 0 && f <= (this.tpri & 255) && (t[this.fbIndex] = u[this.palIndex + h], this.tpri = this.tpri & 3840 | f, R[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex--;
           this.fbIndex -= 8, this.fbIndex += 256, this.tIndex += 16;
         }
-      else if (x && !c)
+      else if (m && !_)
         for (this.fbIndex = (r << 8) + a, this.tIndex = 56, this.y = 0; this.y < 8; this.y++) {
           for (this.x = 0; this.x < 8; this.x++)
-            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = m[this.fbIndex], this.palIndex !== 0 && R <= (this.tpri & 255) && (t[this.fbIndex] = f[this.palIndex + h], this.tpri = this.tpri & 3840 | R, m[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex++;
+            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = R[this.fbIndex], this.palIndex !== 0 && f <= (this.tpri & 255) && (t[this.fbIndex] = u[this.palIndex + h], this.tpri = this.tpri & 3840 | f, R[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex++;
           this.fbIndex -= 8, this.fbIndex += 256, this.tIndex -= 16;
         }
       else
         for (this.fbIndex = (r << 8) + a, this.tIndex = 63, this.y = 0; this.y < 8; this.y++) {
           for (this.x = 0; this.x < 8; this.x++)
-            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = m[this.fbIndex], this.palIndex !== 0 && R <= (this.tpri & 255) && (t[this.fbIndex] = f[this.palIndex + h], this.tpri = this.tpri & 3840 | R, m[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex--;
+            this.x >= i && this.x < s && this.y >= e && this.y < n && (this.palIndex = this.pix[this.tIndex], this.tpri = R[this.fbIndex], this.palIndex !== 0 && f <= (this.tpri & 255) && (t[this.fbIndex] = u[this.palIndex + h], this.tpri = this.tpri & 3840 | f, R[this.fbIndex] = this.tpri)), this.fbIndex++, this.tIndex--;
           this.fbIndex -= 8, this.fbIndex += 256;
         }
   },
@@ -916,10 +919,10 @@ _t.prototype = {
     this.opaque = t.opaque, this.pix = t.pix;
   }
 };
-var xt = _t, Qt = xt, et = U, St = function(t) {
+var Dt = Ct, ai = Dt, at = J, It = function(t) {
   this.nes = t, this.vramMem = null, this.spriteMem = null, this.vramAddress = null, this.vramTmpAddress = null, this.vramBufferedReadValue = null, this.firstWrite = null, this.sramAddress = null, this.currentMirroring = null, this.requestEndFrame = null, this.nmiOk = null, this.dummyCycleToggle = null, this.validTileData = null, this.nmiCounter = null, this.scanlineAlreadyRendered = null, this.f_nmiOnVblank = null, this.f_spriteSize = null, this.f_bgPatternTable = null, this.f_spPatternTable = null, this.f_addrInc = null, this.f_nTblAddress = null, this.f_color = null, this.f_spVisibility = null, this.f_bgVisibility = null, this.f_spClipping = null, this.f_bgClipping = null, this.f_dispType = null, this.cntFV = null, this.cntV = null, this.cntH = null, this.cntVT = null, this.cntHT = null, this.regFV = null, this.regV = null, this.regH = null, this.regVT = null, this.regHT = null, this.regFH = null, this.regS = null, this.curNt = null, this.attrib = null, this.buffer = null, this.bgbuffer = null, this.pixrendered = null, this.validTileData = null, this.scantile = null, this.scanline = null, this.lastRenderedScanline = null, this.curX = null, this.sprX = null, this.sprY = null, this.sprTile = null, this.sprCol = null, this.vertFlip = null, this.horiFlip = null, this.bgPriority = null, this.spr0HitX = null, this.spr0HitY = null, this.hitSpr0 = null, this.sprPalette = null, this.imgPalette = null, this.ptTile = null, this.ntable1 = null, this.currentMirroring = null, this.nameTable = null, this.vramMirrorTable = null, this.palTable = null, this.showSpr0Hit = !1, this.clipToTvSize = !0, this.reset();
 };
-St.prototype = {
+It.prototype = {
   STATUS_VRAMWRITE: 4,
   STATUS_SLSPRITECOUNT: 5,
   STATUS_SPRITE0HIT: 6,
@@ -931,12 +934,12 @@ St.prototype = {
     for (t = 0; t < this.spriteMem.length; t++)
       this.spriteMem[t] = 0;
     for (this.vramAddress = null, this.vramTmpAddress = null, this.vramBufferedReadValue = 0, this.firstWrite = !0, this.sramAddress = 0, this.currentMirroring = -1, this.requestEndFrame = !1, this.nmiOk = !1, this.dummyCycleToggle = !1, this.validTileData = !1, this.nmiCounter = 0, this.scanlineAlreadyRendered = null, this.f_nmiOnVblank = 0, this.f_spriteSize = 0, this.f_bgPatternTable = 0, this.f_spPatternTable = 0, this.f_addrInc = 0, this.f_nTblAddress = 0, this.f_color = 0, this.f_spVisibility = 0, this.f_bgVisibility = 0, this.f_spClipping = 0, this.f_bgClipping = 0, this.f_dispType = 0, this.cntFV = 0, this.cntV = 0, this.cntH = 0, this.cntVT = 0, this.cntHT = 0, this.regFV = 0, this.regV = 0, this.regH = 0, this.regVT = 0, this.regHT = 0, this.regFH = 0, this.regS = 0, this.curNt = null, this.attrib = new Array(32), this.buffer = new Array(256 * 240), this.bgbuffer = new Array(256 * 240), this.pixrendered = new Array(256 * 240), this.validTileData = null, this.scantile = new Array(32), this.scanline = 0, this.lastRenderedScanline = -1, this.curX = 0, this.sprX = new Array(64), this.sprY = new Array(64), this.sprTile = new Array(64), this.sprCol = new Array(64), this.vertFlip = new Array(64), this.horiFlip = new Array(64), this.bgPriority = new Array(64), this.spr0HitX = 0, this.spr0HitY = 0, this.hitSpr0 = !1, this.sprPalette = new Array(16), this.imgPalette = new Array(16), this.ptTile = new Array(512), t = 0; t < 512; t++)
-      this.ptTile[t] = new Qt();
+      this.ptTile[t] = new ai();
     for (this.ntable1 = new Array(4), this.currentMirroring = -1, this.nameTable = new Array(4), t = 0; t < 4; t++)
-      this.nameTable[t] = new dt(32, 32, "Nt" + t);
+      this.nameTable[t] = new bt(32, 32, "Nt" + t);
     for (this.vramMirrorTable = new Array(32768), t = 0; t < 32768; t++)
       this.vramMirrorTable[t] = t;
-    this.palTable = new gt(), this.palTable.loadNTSCPalette(), this.updateControlReg1(0), this.updateControlReg2(0);
+    this.palTable = new Nt(), this.palTable.loadNTSCPalette(), this.updateControlReg1(0), this.updateControlReg2(0);
   },
   setMirroring: function(t) {
     if (t !== this.currentMirroring) {
@@ -1127,25 +1130,25 @@ St.prototype = {
   renderBgScanline: function(t, i) {
     var e = this.regS === 0 ? 0 : 256, s = (i << 8) - this.regFH;
     if (this.curNt = this.ntable1[this.cntV + this.cntV + this.cntH], this.cntHT = this.regHT, this.cntH = this.regH, this.curNt = this.ntable1[this.cntV + this.cntV + this.cntH], i < 240 && i - this.cntFV >= 0) {
-      for (var n = this.cntFV << 3, a = this.scantile, r = this.attrib, h = this.ptTile, f = this.nameTable, c = this.imgPalette, x = this.pixrendered, R = t ? this.bgbuffer : this.buffer, m, T, b, N, A = 0; A < 32; A++) {
+      for (var n = this.cntFV << 3, a = this.scantile, r = this.attrib, h = this.ptTile, u = this.nameTable, _ = this.imgPalette, m = this.pixrendered, f = t ? this.bgbuffer : this.buffer, R, F, D, M, x = 0; x < 32; x++) {
         if (i >= 0) {
           if (this.validTileData) {
-            if (m = a[A], typeof m > "u")
+            if (R = a[x], typeof R > "u")
               continue;
-            T = m.pix, b = r[A];
+            F = R.pix, D = r[x];
           } else {
-            if (m = h[e + f[this.curNt].getTileIndex(this.cntHT, this.cntVT)], typeof m > "u")
+            if (R = h[e + u[this.curNt].getTileIndex(this.cntHT, this.cntVT)], typeof R > "u")
               continue;
-            T = m.pix, b = f[this.curNt].getAttrib(this.cntHT, this.cntVT), a[A] = m, r[A] = b;
+            F = R.pix, D = u[this.curNt].getAttrib(this.cntHT, this.cntVT), a[x] = R, r[x] = D;
           }
-          var g = 0, S = (A << 3) - this.regFH;
-          if (S > -8)
-            if (S < 0 && (s -= S, g = -S), m.opaque[this.cntFV])
-              for (; g < 8; g++)
-                R[s] = c[T[n + g] + b], x[s] |= 256, s++;
+          var d = 0, I = (x << 3) - this.regFH;
+          if (I > -8)
+            if (I < 0 && (s -= I, d = -I), R.opaque[this.cntFV])
+              for (; d < 8; d++)
+                f[s] = _[F[n + d] + D], m[s] |= 256, s++;
             else
-              for (; g < 8; g++)
-                N = T[n + g], N !== 0 && (R[s] = c[N + b], x[s] |= 256), s++;
+              for (; d < 8; d++)
+                M = F[n + d], M !== 0 && (f[s] = _[M + D], m[s] |= 256), s++;
         }
         ++this.cntHT === 32 && (this.cntHT = 0, this.cntH++, this.cntH %= 2, this.curNt = this.ntable1[(this.cntV << 1) + this.cntH]);
       }
@@ -1356,7 +1359,7 @@ St.prototype = {
     "scanlineAlreadyRendered"
   ],
   toJSON: function() {
-    var t, i = et.toJSON(this);
+    var t, i = at.toJSON(this);
     for (i.nameTable = [], t = 0; t < this.nameTable.length; t++)
       i.nameTable[t] = this.nameTable[t].toJSON();
     for (i.ptTile = [], t = 0; t < this.ptTile.length; t++)
@@ -1365,7 +1368,7 @@ St.prototype = {
   },
   fromJSON: function(t) {
     var i;
-    for (et.fromJSON(this, t), i = 0; i < this.nameTable.length; i++)
+    for (at.fromJSON(this, t), i = 0; i < this.nameTable.length; i++)
       this.nameTable[i].fromJSON(t.nameTable[i]);
     for (i = 0; i < this.ptTile.length; i++)
       this.ptTile[i].fromJSON(t.ptTile[i]);
@@ -1373,12 +1376,12 @@ St.prototype = {
       this.spriteRamWriteUpdate(i, this.spriteMem[i]);
   }
 };
-var dt = function(t, i, e) {
+var bt = function(t, i, e) {
   this.width = t, this.height = i, this.name = e, this.tile = new Array(t * i), this.attrib = new Array(t * i);
   for (var s = 0; s < t * i; s++)
     this.tile[s] = 0, this.attrib[s] = 0;
 };
-dt.prototype = {
+bt.prototype = {
   getTileIndex: function(t, i) {
     return this.tile[i * this.width + t];
   },
@@ -1386,12 +1389,12 @@ dt.prototype = {
     return this.attrib[i * this.width + t];
   },
   writeAttrib: function(t, i) {
-    for (var e = t % 8 * 4, s = Math.floor(t / 8) * 4, n, a, r, h, f = 0; f < 2; f++)
-      for (var c = 0; c < 2; c++) {
-        n = i >> 2 * (f * 2 + c) & 3;
-        for (var x = 0; x < 2; x++)
-          for (var R = 0; R < 2; R++)
-            a = e + c * 2 + R, r = s + f * 2 + x, h = r * this.width + a, this.attrib[h] = n << 2 & 12;
+    for (var e = t % 8 * 4, s = Math.floor(t / 8) * 4, n, a, r, h, u = 0; u < 2; u++)
+      for (var _ = 0; _ < 2; _++) {
+        n = i >> 2 * (u * 2 + _) & 3;
+        for (var m = 0; m < 2; m++)
+          for (var f = 0; f < 2; f++)
+            a = e + _ * 2 + f, r = s + u * 2 + m, h = r * this.width + a, this.attrib[h] = n << 2 & 12;
       }
   },
   toJSON: function() {
@@ -1404,10 +1407,10 @@ dt.prototype = {
     this.tile = t.tile, this.attrib = t.attrib;
   }
 };
-var gt = function() {
+var Nt = function() {
   this.curTable = new Array(64), this.emphTable = new Array(8), this.currentEmph = -1;
 };
-gt.prototype = {
+Nt.prototype = {
   reset: function() {
     this.setEmphasis(0);
   },
@@ -1418,9 +1421,9 @@ gt.prototype = {
     this.curTable = [5395026, 11796480, 10485760, 11599933, 7602281, 91, 95, 6208, 12048, 543240, 26368, 1196544, 7153664, 0, 0, 0, 12899815, 16728064, 14421538, 16729963, 14090399, 6818519, 6588, 21681, 27227, 35843, 43776, 2918400, 10777088, 0, 0, 0, 16316664, 16755516, 16742785, 16735173, 16730354, 14633471, 4681215, 46327, 57599, 58229, 259115, 7911470, 15065624, 7895160, 0, 0, 16777215, 16773822, 16300216, 16300248, 16758527, 16761855, 13095423, 10148607, 8973816, 8650717, 12122296, 16119980, 16777136, 16308472, 0, 0], this.makeTables(), this.setEmphasis(0);
   },
   makeTables: function() {
-    for (var t, i, e, s, n, a, r, h, f = 0; f < 8; f++)
-      for (a = 1, r = 1, h = 1, (f & 1) !== 0 && (a = 0.75, h = 0.75), (f & 2) !== 0 && (a = 0.75, r = 0.75), (f & 4) !== 0 && (r = 0.75, h = 0.75), this.emphTable[f] = new Array(64), n = 0; n < 64; n++)
-        s = this.curTable[n], t = Math.floor(this.getRed(s) * a), i = Math.floor(this.getGreen(s) * r), e = Math.floor(this.getBlue(s) * h), this.emphTable[f][n] = this.getRgb(t, i, e);
+    for (var t, i, e, s, n, a, r, h, u = 0; u < 8; u++)
+      for (a = 1, r = 1, h = 1, (u & 1) !== 0 && (a = 0.75, h = 0.75), (u & 2) !== 0 && (a = 0.75, r = 0.75), (u & 4) !== 0 && (r = 0.75, h = 0.75), this.emphTable[u] = new Array(64), n = 0; n < 64; n++)
+        s = this.curTable[n], t = Math.floor(this.getRed(s) * a), i = Math.floor(this.getGreen(s) * r), e = Math.floor(this.getBlue(s) * h), this.emphTable[u][n] = this.getRgb(t, i, e);
   },
   setEmphasis: function(t) {
     if (t !== this.currentEmph) {
@@ -1448,16 +1451,16 @@ gt.prototype = {
     this.curTable[0] = this.getRgb(117, 117, 117), this.curTable[1] = this.getRgb(39, 27, 143), this.curTable[2] = this.getRgb(0, 0, 171), this.curTable[3] = this.getRgb(71, 0, 159), this.curTable[4] = this.getRgb(143, 0, 119), this.curTable[5] = this.getRgb(171, 0, 19), this.curTable[6] = this.getRgb(167, 0, 0), this.curTable[7] = this.getRgb(127, 11, 0), this.curTable[8] = this.getRgb(67, 47, 0), this.curTable[9] = this.getRgb(0, 71, 0), this.curTable[10] = this.getRgb(0, 81, 0), this.curTable[11] = this.getRgb(0, 63, 23), this.curTable[12] = this.getRgb(27, 63, 95), this.curTable[13] = this.getRgb(0, 0, 0), this.curTable[14] = this.getRgb(0, 0, 0), this.curTable[15] = this.getRgb(0, 0, 0), this.curTable[16] = this.getRgb(188, 188, 188), this.curTable[17] = this.getRgb(0, 115, 239), this.curTable[18] = this.getRgb(35, 59, 239), this.curTable[19] = this.getRgb(131, 0, 243), this.curTable[20] = this.getRgb(191, 0, 191), this.curTable[21] = this.getRgb(231, 0, 91), this.curTable[22] = this.getRgb(219, 43, 0), this.curTable[23] = this.getRgb(203, 79, 15), this.curTable[24] = this.getRgb(139, 115, 0), this.curTable[25] = this.getRgb(0, 151, 0), this.curTable[26] = this.getRgb(0, 171, 0), this.curTable[27] = this.getRgb(0, 147, 59), this.curTable[28] = this.getRgb(0, 131, 139), this.curTable[29] = this.getRgb(0, 0, 0), this.curTable[30] = this.getRgb(0, 0, 0), this.curTable[31] = this.getRgb(0, 0, 0), this.curTable[32] = this.getRgb(255, 255, 255), this.curTable[33] = this.getRgb(63, 191, 255), this.curTable[34] = this.getRgb(95, 151, 255), this.curTable[35] = this.getRgb(167, 139, 253), this.curTable[36] = this.getRgb(247, 123, 255), this.curTable[37] = this.getRgb(255, 119, 183), this.curTable[38] = this.getRgb(255, 119, 99), this.curTable[39] = this.getRgb(255, 155, 59), this.curTable[40] = this.getRgb(243, 191, 63), this.curTable[41] = this.getRgb(131, 211, 19), this.curTable[42] = this.getRgb(79, 223, 75), this.curTable[43] = this.getRgb(88, 248, 152), this.curTable[44] = this.getRgb(0, 235, 219), this.curTable[45] = this.getRgb(0, 0, 0), this.curTable[46] = this.getRgb(0, 0, 0), this.curTable[47] = this.getRgb(0, 0, 0), this.curTable[48] = this.getRgb(255, 255, 255), this.curTable[49] = this.getRgb(171, 231, 255), this.curTable[50] = this.getRgb(199, 215, 255), this.curTable[51] = this.getRgb(215, 203, 255), this.curTable[52] = this.getRgb(255, 199, 255), this.curTable[53] = this.getRgb(255, 199, 219), this.curTable[54] = this.getRgb(255, 191, 179), this.curTable[55] = this.getRgb(255, 219, 171), this.curTable[56] = this.getRgb(255, 231, 163), this.curTable[57] = this.getRgb(227, 255, 163), this.curTable[58] = this.getRgb(171, 243, 191), this.curTable[59] = this.getRgb(179, 255, 207), this.curTable[60] = this.getRgb(159, 255, 243), this.curTable[61] = this.getRgb(0, 0, 0), this.curTable[62] = this.getRgb(0, 0, 0), this.curTable[63] = this.getRgb(0, 0, 0), this.makeTables(), this.setEmphasis(0);
   }
 };
-var ti = St, ii = 17897725e-1, At = function(t) {
-  this.nes = t, this.square1 = new Y(this, !0), this.square2 = new Y(this, !1), this.triangle = new It(this), this.noise = new Dt(this), this.dmc = new Ct(this), this.frameIrqCounter = null, this.frameIrqCounterMax = 4, this.initCounter = 2048, this.channelEnableValue = null, this.sampleRate = 44100, this.lengthLookup = null, this.dmcFreqLookup = null, this.noiseWavelengthLookup = null, this.square_table = null, this.tnd_table = null, this.frameIrqEnabled = !1, this.frameIrqActive = null, this.frameClockNow = null, this.startedPlaying = !1, this.recordOutput = !1, this.initingHardware = !1, this.masterFrameCounter = null, this.derivedFrameCounter = null, this.countSequence = null, this.sampleTimer = null, this.frameTime = null, this.sampleTimerMax = null, this.sampleCount = null, this.triValue = 0, this.smpSquare1 = null, this.smpSquare2 = null, this.smpTriangle = null, this.smpDmc = null, this.accCount = null, this.prevSampleL = 0, this.prevSampleR = 0, this.smpAccumL = 0, this.smpAccumR = 0, this.dacRange = 0, this.dcValue = 0, this.masterVolume = 256, this.stereoPosLSquare1 = null, this.stereoPosLSquare2 = null, this.stereoPosLTriangle = null, this.stereoPosLNoise = null, this.stereoPosLDMC = null, this.stereoPosRSquare1 = null, this.stereoPosRSquare2 = null, this.stereoPosRTriangle = null, this.stereoPosRNoise = null, this.stereoPosRDMC = null, this.extraCycles = null, this.maxSample = null, this.minSample = null, this.panning = [80, 170, 100, 150, 128], this.setPanning(this.panning), this.initLengthLookup(), this.initDmcFrequencyLookup(), this.initNoiseWavelengthLookup(), this.initDACtables();
+var oi = It, li = 17897725e-1, Et = function(t) {
+  this.nes = t, this.square1 = new U(this, !0), this.square2 = new U(this, !1), this.triangle = new Ft(this), this.noise = new Ot(this), this.dmc = new Tt(this), this.frameIrqCounter = null, this.frameIrqCounterMax = 4, this.initCounter = 2048, this.channelEnableValue = null, this.sampleRate = 44100, this.lengthLookup = null, this.dmcFreqLookup = null, this.noiseWavelengthLookup = null, this.square_table = null, this.tnd_table = null, this.frameIrqEnabled = !1, this.frameIrqActive = null, this.frameClockNow = null, this.startedPlaying = !1, this.recordOutput = !1, this.initingHardware = !1, this.masterFrameCounter = null, this.derivedFrameCounter = null, this.countSequence = null, this.sampleTimer = null, this.frameTime = null, this.sampleTimerMax = null, this.sampleCount = null, this.triValue = 0, this.smpSquare1 = null, this.smpSquare2 = null, this.smpTriangle = null, this.smpDmc = null, this.accCount = null, this.prevSampleL = 0, this.prevSampleR = 0, this.smpAccumL = 0, this.smpAccumR = 0, this.dacRange = 0, this.dcValue = 0, this.masterVolume = 256, this.stereoPosLSquare1 = null, this.stereoPosLSquare2 = null, this.stereoPosLTriangle = null, this.stereoPosLNoise = null, this.stereoPosLDMC = null, this.stereoPosRSquare1 = null, this.stereoPosRSquare2 = null, this.stereoPosRTriangle = null, this.stereoPosRNoise = null, this.stereoPosRDMC = null, this.extraCycles = null, this.maxSample = null, this.minSample = null, this.panning = [80, 170, 100, 150, 128], this.setPanning(this.panning), this.initLengthLookup(), this.initDmcFrequencyLookup(), this.initNoiseWavelengthLookup(), this.initDACtables();
   for (var i = 0; i < 20; i++)
     i === 16 ? this.writeReg(16400, 16) : this.writeReg(16384 + i, 0);
   this.reset();
 };
-At.prototype = {
+Et.prototype = {
   reset: function() {
     this.sampleRate = this.nes.opts.sampleRate, this.sampleTimerMax = Math.floor(
-      1024 * ii * this.nes.opts.preferredFrameRate / (this.sampleRate * 60)
+      1024 * li * this.nes.opts.preferredFrameRate / (this.sampleRate * 60)
     ), this.frameTime = Math.floor(
       14915 * this.nes.opts.preferredFrameRate / 60
     ), this.sampleTimer = 0, this.updateChannelEnable(0), this.masterFrameCounter = 0, this.derivedFrameCounter = 0, this.countSequence = 0, this.sampleCount = 0, this.initCounter = 2048, this.frameIrqEnabled = !1, this.initingHardware = !1, this.resetCounter(), this.square1.reset(), this.square2.reset(), this.triangle.reset(), this.noise.reset(), this.dmc.reset(), this.accCount = 0, this.smpSquare1 = 0, this.smpSquare2 = 0, this.smpTriangle = 0, this.smpDmc = 0, this.frameIrqEnabled = !1, this.frameIrqCounterMax = 4, this.channelEnableValue = 255, this.startedPlaying = !1, this.prevSampleL = 0, this.prevSampleR = 0, this.smpAccumL = 0, this.smpAccumR = 0, this.maxSample = -5e5, this.minSample = 5e5;
@@ -1590,10 +1593,10 @@ At.prototype = {
     this.dacRange = s + n, this.dcValue = this.dacRange / 2;
   }
 };
-var Ct = function(t) {
+var Tt = function(t) {
   this.papu = t, this.MODE_NORMAL = 0, this.MODE_LOOP = 1, this.MODE_IRQ = 2, this.isEnabled = null, this.hasSample = null, this.irqGenerated = !1, this.playMode = null, this.dmaFrequency = null, this.dmaCounter = null, this.deltaCounter = null, this.playStartAddress = null, this.playAddress = null, this.playLength = null, this.playLengthCounter = null, this.shiftCounter = null, this.reg4012 = null, this.reg4013 = null, this.sample = null, this.dacLsb = null, this.data = null, this.reset();
 };
-Ct.prototype = {
+Tt.prototype = {
   clockDmc: function() {
     this.hasSample && ((this.data & 1) === 0 ? this.deltaCounter > 0 && this.deltaCounter-- : this.deltaCounter < 63 && this.deltaCounter++, this.sample = this.isEnabled ? (this.deltaCounter << 1) + this.dacLsb : 0, this.data >>= 1), this.dmaCounter--, this.dmaCounter <= 0 && (this.hasSample = !1, this.endOfSample(), this.dmaCounter = 8), this.irqGenerated && this.papu.nes.cpu.requestIrq(this.papu.nes.cpu.IRQ_NORMAL);
   },
@@ -1619,10 +1622,10 @@ Ct.prototype = {
     this.isEnabled = !1, this.irqGenerated = !1, this.playMode = this.MODE_NORMAL, this.dmaFrequency = 0, this.dmaCounter = 0, this.deltaCounter = 0, this.playStartAddress = 0, this.playAddress = 0, this.playLength = 0, this.playLengthCounter = 0, this.sample = 0, this.dacLsb = 0, this.shiftCounter = 0, this.reg4012 = 0, this.reg4013 = 0, this.data = 0;
   }
 };
-var Dt = function(t) {
+var Ot = function(t) {
   this.papu = t, this.isEnabled = null, this.envDecayDisable = null, this.envDecayLoopEnable = null, this.lengthCounterEnable = null, this.envReset = null, this.shiftNow = null, this.lengthCounter = null, this.progTimerCount = null, this.progTimerMax = null, this.envDecayRate = null, this.envDecayCounter = null, this.envVolume = null, this.masterVolume = null, this.shiftReg = 1 << 14, this.randomBit = null, this.randomMode = null, this.sampleValue = null, this.accValue = 0, this.accCount = 1, this.tmp = null, this.reset();
 };
-Dt.prototype = {
+Ot.prototype = {
   reset: function() {
     this.progTimerCount = 0, this.progTimerMax = 0, this.isEnabled = !1, this.lengthCounter = 0, this.lengthCounterEnable = !1, this.envDecayDisable = !1, this.envDecayLoopEnable = !1, this.shiftNow = !1, this.envDecayRate = 0, this.envDecayCounter = 0, this.envVolume = 0, this.masterVolume = 0, this.shiftReg = 1, this.randomBit = 0, this.randomMode = 0, this.sampleValue = 0, this.tmp = 0;
   },
@@ -1645,7 +1648,7 @@ Dt.prototype = {
     return this.lengthCounter === 0 || !this.isEnabled ? 0 : 1;
   }
 };
-var Y = function(t, i) {
+var U = function(t, i) {
   this.papu = t, this.dutyLookup = [
     0,
     1,
@@ -1714,7 +1717,7 @@ var Y = function(t, i) {
     0
   ], this.sqr1 = i, this.isEnabled = null, this.lengthCounterEnable = null, this.sweepActive = null, this.envDecayDisable = null, this.envDecayLoopEnable = null, this.envReset = null, this.sweepCarry = null, this.updateSweepPeriod = null, this.progTimerCount = null, this.progTimerMax = null, this.lengthCounter = null, this.squareCounter = null, this.sweepCounter = null, this.sweepCounterMax = null, this.sweepMode = null, this.sweepShiftAmount = null, this.envDecayRate = null, this.envDecayCounter = null, this.envVolume = null, this.masterVolume = null, this.dutyMode = null, this.sweepResult = null, this.sampleValue = null, this.vol = null, this.reset();
 };
-Y.prototype = {
+U.prototype = {
   reset: function() {
     this.progTimerCount = 0, this.progTimerMax = 0, this.lengthCounter = 0, this.squareCounter = 0, this.sweepCounter = 0, this.sweepCounterMax = 0, this.sweepMode = 0, this.sweepShiftAmount = 0, this.envDecayRate = 0, this.envDecayCounter = 0, this.envVolume = 0, this.masterVolume = 0, this.dutyMode = 0, this.vol = 0, this.isEnabled = !1, this.lengthCounterEnable = !1, this.sweepActive = !1, this.sweepCarry = !1, this.envDecayDisable = !1, this.envDecayLoopEnable = !1;
   },
@@ -1741,10 +1744,10 @@ Y.prototype = {
     return this.lengthCounter === 0 || !this.isEnabled ? 0 : 1;
   }
 };
-var It = function(t) {
+var Ft = function(t) {
   this.papu = t, this.isEnabled = null, this.sampleCondition = null, this.lengthCounterEnable = null, this.lcHalt = null, this.lcControl = null, this.progTimerCount = null, this.progTimerMax = null, this.triangleCounter = null, this.lengthCounter = null, this.linearCounter = null, this.lcLoadValue = null, this.sampleValue = null, this.tmp = null, this.reset();
 };
-It.prototype = {
+Ft.prototype = {
   reset: function() {
     this.progTimerCount = 0, this.progTimerMax = 0, this.triangleCounter = 0, this.isEnabled = !1, this.sampleCondition = !1, this.lengthCounter = 0, this.lengthCounterEnable = !1, this.linearCounter = 0, this.lcLoadValue = 0, this.lcHalt = !0, this.lcControl = !1, this.tmp = 0, this.sampleValue = 15;
   },
@@ -1778,7 +1781,7 @@ It.prototype = {
     this.sampleCondition = this.isEnabled && this.progTimerMax > 7 && this.linearCounter > 0 && this.lengthCounter > 0;
   }
 };
-var si = At, O = U, o = {};
+var pi = Et, T = J, o = {};
 o[0] = function(t) {
   this.nes = t;
 };
@@ -1957,11 +1960,11 @@ o[0].prototype = {
   loadBatteryRam: function() {
     if (this.nes.rom.batteryRam) {
       var t = this.nes.rom.batteryRam;
-      t !== null && t.length === 8192 && O.copyArrayElements(t, 0, this.nes.cpu.mem, 24576, 8192);
+      t !== null && t.length === 8192 && T.copyArrayElements(t, 0, this.nes.cpu.mem, 24576, 8192);
     }
   },
   loadRomBank: function(t, i) {
-    t %= this.nes.rom.romCount, O.copyArrayElements(
+    t %= this.nes.rom.romCount, T.copyArrayElements(
       this.nes.rom.rom[t],
       0,
       this.nes.cpu.mem,
@@ -1971,7 +1974,7 @@ o[0].prototype = {
   },
   loadVromBank: function(t, i) {
     if (this.nes.rom.vromCount !== 0) {
-      this.nes.ppu.triggerRendering(), O.copyArrayElements(
+      this.nes.ppu.triggerRendering(), T.copyArrayElements(
         this.nes.rom.vrom[t % this.nes.rom.vromCount],
         0,
         this.nes.ppu.vramMem,
@@ -1979,7 +1982,7 @@ o[0].prototype = {
         4096
       );
       var e = this.nes.rom.vromTile[t % this.nes.rom.vromCount];
-      O.copyArrayElements(
+      T.copyArrayElements(
         e,
         0,
         this.nes.ppu.ptTile,
@@ -2001,7 +2004,7 @@ o[0].prototype = {
     if (this.nes.rom.vromCount !== 0) {
       this.nes.ppu.triggerRendering();
       var e = Math.floor(t / 4) % this.nes.rom.vromCount, s = t % 4 * 1024;
-      O.copyArrayElements(
+      T.copyArrayElements(
         this.nes.rom.vrom[e],
         s,
         this.nes.ppu.vramMem,
@@ -2016,7 +2019,7 @@ o[0].prototype = {
     if (this.nes.rom.vromCount !== 0) {
       this.nes.ppu.triggerRendering();
       var e = Math.floor(t / 2) % this.nes.rom.vromCount, s = t % 2 * 2048;
-      O.copyArrayElements(
+      T.copyArrayElements(
         this.nes.rom.vrom[e],
         s,
         this.nes.ppu.vramMem,
@@ -2029,7 +2032,7 @@ o[0].prototype = {
   },
   load8kRomBank: function(t, i) {
     var e = Math.floor(t / 2) % this.nes.rom.romCount, s = t % 2 * 8192;
-    O.copyArrayElements(
+    T.copyArrayElements(
       this.nes.rom.rom[e],
       s,
       this.nes.cpu.mem,
@@ -2419,13 +2422,13 @@ o[180].prototype.loadROM = function() {
     throw new Error("Mapper 180: Invalid ROM! Unable to load.");
   this.loadRomBank(0, 32768), this.loadRomBank(this.nes.rom.romCount - 1, 49152), this.loadCHRROM(), this.nes.cpu.requestIrq(this.nes.cpu.IRQ_RESET);
 };
-var ei = o, ht = ei, hi = xt, bt = function(t) {
+var ui = o, ot = ui, fi = Dt, Mt = function(t) {
   this.nes = t, this.mapperName = new Array(92);
   for (var i = 0; i < 92; i++)
     this.mapperName[i] = "Unknown Mapper";
   this.mapperName[0] = "Direct Access", this.mapperName[1] = "Nintendo MMC1", this.mapperName[2] = "UNROM", this.mapperName[3] = "CNROM", this.mapperName[4] = "Nintendo MMC3", this.mapperName[5] = "Nintendo MMC5", this.mapperName[6] = "FFE F4xxx", this.mapperName[7] = "AOROM", this.mapperName[8] = "FFE F3xxx", this.mapperName[9] = "Nintendo MMC2", this.mapperName[10] = "Nintendo MMC4", this.mapperName[11] = "Color Dreams Chip", this.mapperName[12] = "FFE F6xxx", this.mapperName[15] = "100-in-1 switch", this.mapperName[16] = "Bandai chip", this.mapperName[17] = "FFE F8xxx", this.mapperName[18] = "Jaleco SS8806 chip", this.mapperName[19] = "Namcot 106 chip", this.mapperName[20] = "Famicom Disk System", this.mapperName[21] = "Konami VRC4a", this.mapperName[22] = "Konami VRC2a", this.mapperName[23] = "Konami VRC2a", this.mapperName[24] = "Konami VRC6", this.mapperName[25] = "Konami VRC4b", this.mapperName[32] = "Irem G-101 chip", this.mapperName[33] = "Taito TC0190/TC0350", this.mapperName[34] = "32kB ROM switch", this.mapperName[64] = "Tengen RAMBO-1 chip", this.mapperName[65] = "Irem H-3001 chip", this.mapperName[66] = "GNROM switch", this.mapperName[67] = "SunSoft3 chip", this.mapperName[68] = "SunSoft4 chip", this.mapperName[69] = "SunSoft5 FME-7 chip", this.mapperName[71] = "Camerica chip", this.mapperName[78] = "Irem 74HC161/32-based", this.mapperName[91] = "Pirate HK-SF3 chip";
 };
-bt.prototype = {
+Mt.prototype = {
   VERTICAL_MIRRORING: 0,
   HORIZONTAL_MIRRORING: 1,
   FOURSCREEN_MIRRORING: 2,
@@ -2473,7 +2476,7 @@ bt.prototype = {
     }
     for (this.vromTile = new Array(this.vromCount), i = 0; i < this.vromCount; i++)
       for (this.vromTile[i] = new Array(256), e = 0; e < 256; e++)
-        this.vromTile[i][e] = new hi();
+        this.vromTile[i][e] = new fi();
     var r, h;
     for (s = 0; s < this.vromCount; s++)
       for (i = 0; i < 4096; i++)
@@ -2495,17 +2498,17 @@ bt.prototype = {
     return this.mapperType >= 0 && this.mapperType < this.mapperName.length ? this.mapperName[this.mapperType] : "Unknown Mapper, " + this.mapperType;
   },
   mapperSupported: function() {
-    return typeof ht[this.mapperType] < "u";
+    return typeof ot[this.mapperType] < "u";
   },
   createMapper: function() {
     if (this.mapperSupported())
-      return new ht[this.mapperType](this.nes);
+      return new ot[this.mapperType](this.nes);
     throw new Error(
       "This ROM uses a mapper not supported by JSNES: " + this.getMapperName() + "(" + this.mapperType + ")"
     );
   }
 };
-var ri = bt, ni = $t, rt = ct, ai = ti, oi = si, li = ri, Nt = function(t) {
+var ci = Mt, mi = ni, lt = dt, Ri = oi, _i = pi, xi = ci, yt = function(t) {
   if (this.opts = {
     onFrame: function() {
     },
@@ -2525,12 +2528,12 @@ var ri = bt, ni = $t, rt = ct, ai = ti, oi = si, li = ri, Nt = function(t) {
   this.frameTime = 1e3 / this.opts.preferredFrameRate, this.ui = {
     writeFrame: this.opts.onFrame,
     updateStatus: this.opts.onStatusUpdate
-  }, this.cpu = new ni(this), this.ppu = new ai(this), this.papu = new oi(this), this.mmap = null, this.controllers = {
-    1: new rt(),
-    2: new rt()
+  }, this.cpu = new mi(this), this.ppu = new Ri(this), this.papu = new _i(this), this.mmap = null, this.controllers = {
+    1: new lt(),
+    2: new lt()
   }, this.ui.updateStatus("Ready to load a ROM."), this.frame = this.frame.bind(this), this.buttonDown = this.buttonDown.bind(this), this.buttonUp = this.buttonUp.bind(this), this.zapperMove = this.zapperMove.bind(this), this.zapperFireDown = this.zapperFireDown.bind(this), this.zapperFireUp = this.zapperFireUp.bind(this);
 };
-Nt.prototype = {
+yt.prototype = {
   fpsFrameCount: 0,
   romData: null,
   reset: function() {
@@ -2573,7 +2576,7 @@ Nt.prototype = {
     this.romData !== null && this.loadROM(this.romData);
   },
   loadROM: function(t) {
-    this.rom = new li(this), this.rom.load(t), this.reset(), this.mmap = this.rom.createMapper(), this.mmap.loadROM(), this.ppu.setMirroring(this.rom.getMirroringType()), this.romData = t;
+    this.rom = new xi(this), this.rom.load(t), this.reset(), this.mmap = this.rom.createMapper(), this.mmap.loadROM(), this.ppu.setMirroring(this.rom.getMirroringType()), this.romData = t;
   },
   setFramerate: function(t) {
     this.opts.preferredFrameRate = t, this.frameTime = 1e3 / t, this.papu.setSampleRate(this.opts.sampleRate, !1);
@@ -2590,46 +2593,162 @@ Nt.prototype = {
     this.reset(), this.romData = t.romData, this.cpu.fromJSON(t.cpu), this.mmap.fromJSON(t.mmap), this.ppu.fromJSON(t.ppu);
   }
 };
-var pi = Nt, F = {
-  Controller: ct,
-  NES: pi
+var Si = yt, y = {
+  Controller: dt,
+  NES: Si
 };
-const ui = window.indexedDB, fi = 1, ci = "nes-vue", d = "save_data", Z = ui.open(ci, fi);
-let I;
-Z.onsuccess = (t) => {
-  t.target && (I = t.target.result);
+const di = window.indexedDB, gi = 1, Ai = "nes-vue", S = "save_data", z = di.open(Ai, gi);
+let C;
+z.onsuccess = (t) => {
+  t.target && (C = t.target.result);
 };
-Z.onerror = () => {
+z.onerror = () => {
   console.error("indexedDB load error");
 };
-Z.onupgradeneeded = (t) => {
-  t.target && (I = t.target.result, I.objectStoreNames.contains(d) || I.createObjectStore(d, { keyPath: "id" }));
+z.onupgradeneeded = (t) => {
+  t.target && (C = t.target.result, C.objectStoreNames.contains(S) || C.createObjectStore(S, { keyPath: "id" }));
 };
-function mi({ data: t, onSuccess: i, onError: e }) {
-  const s = I.transaction([d], "readwrite").objectStore(d).add(t);
+function Ci({ data: t, onSuccess: i, onError: e }) {
+  const s = C.transaction([S], "readwrite").objectStore(S).add(t);
   s.onsuccess = i, s.onerror = (n) => {
     const a = n.target.error;
     e(a == null ? void 0 : a.code);
   };
 }
-function Ri({ data: t, onSuccess: i }) {
-  const e = I.transaction([d], "readwrite").objectStore(d).put(t);
+function Di({ data: t, onSuccess: i }) {
+  const e = C.transaction([S], "readwrite").objectStore(S).put(t);
   e.onsuccess = i;
 }
-function _i({ id: t, onSuccess: i, onError: e }) {
-  const s = I.transaction([d]), n = s.objectStore(d).get(t);
+function Ii({ id: t, onSuccess: i, onError: e }) {
+  const s = C.transaction([S]), n = s.objectStore(S).get(t);
   n.onsuccess = () => {
     i(n);
   }, s.onerror = e;
 }
-function xi({ id: t, onSuccess: i }) {
-  const n = I.transaction([d], "readwrite").objectStore(d).delete(t);
+function bi({ id: t, onSuccess: i }) {
+  const n = C.transaction([S], "readwrite").objectStore(S).delete(t);
   n.onsuccess = i;
 }
-function Si() {
-  I.transaction([d], "readwrite").objectStore(d).clear();
+function Ni() {
+  C.transaction([S], "readwrite").objectStore(S).clear();
 }
-const H = {
+function Ei(t) {
+  try {
+    t();
+  } catch {
+    return;
+  }
+}
+function V(t) {
+  return Array(t).fill(!1);
+}
+function Ti(t) {
+  return t.filter(Boolean);
+}
+let b = {}, P, Z = 1;
+const pt = 512, j = 4 * 1024, H = j - 1, Pt = new Float32Array(j), vt = new Float32Array(j);
+let B = 0, X = 0;
+function Oi() {
+  return B - X & H;
+}
+const Fi = (t, i) => {
+  Pt[B] = t, vt[B] = i, B = B + 1 & H;
+}, Mi = () => {
+  if (!window.AudioContext)
+    return 44100;
+  const t = new window.AudioContext(), i = t.sampleRate;
+  return t.close(), i;
+}, yi = (t) => {
+  b = new AudioContext(), P = b.createScriptProcessor(pt, 0, 2), P.onaudioprocess = (i) => {
+    const e = i.outputBuffer, s = e.length;
+    Oi() < pt && Ei(t.frame);
+    const n = e.getChannelData(0), a = e.getChannelData(1);
+    for (let r = 0; r < s; r++) {
+      const h = X + r & H;
+      n[r] = Pt[h] * Z, a[r] = vt[h] * Z;
+    }
+    X = X + s & H;
+  }, P.connect(b.destination);
+}, ut = () => {
+  P.disconnect(b.destination), P.onaudioprocess = null, P = {}, "close" in b && b.close();
+};
+function Pi() {
+  b.suspend();
+}
+function vi() {
+  b.resume();
+}
+function ft(t) {
+  t > 100 && (t = 100), t < 0 && (t = 0), Z = t / 100;
+}
+const w = 256, G = 240;
+let kt, ct = {}, Lt = {}, k = {};
+const ki = (t) => {
+  let i = 0;
+  for (let e = 0; e < G; ++e)
+    for (let s = 0; s < w; ++s)
+      i = e * 256 + s, Lt[i] = 4278190080 | t[i];
+}, Li = (t) => {
+  k = t.getContext("2d");
+  const i = k.getImageData(0, 0, w, G);
+  k.fillStyle = "black", k.fillRect(0, 0, w, G);
+  const e = new ArrayBuffer(i.data.length);
+  ct = new Uint8ClampedArray(e), Lt = new Uint32Array(e), kt = requestAnimationFrame(s);
+  function s() {
+    requestAnimationFrame(s), i.data.set(ct), k.putImageData(i, 0, 0);
+  }
+}, mt = (t) => {
+  const i = t.parentNode, e = i.clientWidth, s = i.clientHeight, n = e / s, a = w / G;
+  a < n ? (t.style.height = `${s}px`, t.style.width = `${Math.round(s + a)}px`) : (t.style.width = `${e}px`, t.style.height = `${Math.round(e / a)}px`);
+}, Rt = () => {
+  cancelAnimationFrame(kt);
+}, Bi = (t) => {
+  const i = new Image();
+  return i.src = t.toDataURL("image/png"), i;
+};
+function wi(t) {
+  return t === void 0;
+}
+function Gi(t) {
+  return t === null;
+}
+function Bt(t) {
+  return typeof t == "number" ? isNaN(t) : Gi(t) || wi(t);
+}
+function W(t) {
+  return !Bt(t);
+}
+function L(t, i = 2, e = "0") {
+  return t = t + "", t.length >= i ? t : Array.from({ length: i - t.length + 1 }).join(e) + t;
+}
+function Vi(t = "yyyy-MM-dd|HH:mm:ss") {
+  const i = new Date();
+  return t.replace("yyyy", `${i.getFullYear()}`).replace("MM", L(i.getMonth() + 1)).replace("dd", L(i.getDate())).replace("HH", L(i.getHours())).replace("mm", L(i.getMinutes())).replace("ss", L(i.getSeconds()));
+}
+function qi(t) {
+  return Object.keys(t);
+}
+const q = 0.3, wt = {
+  UP: "KeyW",
+  DOWN: "KeyS",
+  LEFT: "KeyA",
+  RIGHT: "KeyD",
+  A: "KeyK",
+  B: "KeyJ",
+  C: "KeyI",
+  D: "KeyU",
+  SELECT: "Digit2",
+  START: "Digit1"
+}, Gt = {
+  UP: "ArrowUp",
+  DOWN: "ArrowDown",
+  LEFT: "ArrowLeft",
+  RIGHT: "ArrowRight",
+  A: "Numpad2",
+  B: "Numpad1",
+  C: "Numpad5",
+  D: "Numpad4"
+}, K = {
   UP: "BUTTON_UP",
   DOWN: "BUTTON_DOWN",
   LEFT: "BUTTON_LEFT",
@@ -2640,111 +2759,127 @@ const H = {
   D: "BUTTON_B",
   SELECT: "BUTTON_SELECT",
   START: "BUTTON_START"
-}, di = Object.keys(H), gi = (t, i) => {
-  const e = {};
-  return di.forEach((s) => {
-    e[t[s]] = {
-      key: s,
-      p: 1,
-      value: H[s]
-    }, s in i && (e[i[s]] = {
-      key: s,
-      p: 2,
-      value: H[s]
-    });
-  }), e;
-};
-function Ai(t) {
-  try {
-    t();
-  } catch {
-    return;
+}, Xi = qi(K);
+class Hi {
+  constructor(i) {
+    v(this, "animationFrame");
+    v(this, "axesHolding");
+    v(this, "btnHolding");
+    v(this, "gamepad_btns");
+    window.addEventListener("gamepadconnected", this.connectHandler.bind(this, !0)), window.addEventListener("gamepaddisconnected", this.connectHandler.bind(this, !1)), this.animationFrame = requestAnimationFrame(this.frame.bind(this)), this.btnHolding = {
+      p1: V(20),
+      p2: V(20)
+    }, this.axesHolding = {
+      p1: V(4),
+      p2: V(4)
+    }, this.gamepad_btns = i;
   }
-}
-let E = {}, M, W = 1;
-const nt = 512, J = 4 * 1024, w = J - 1, Et = new Float32Array(J), Tt = new Float32Array(J);
-let k = 0, B = 0;
-function Ci() {
-  return k - B & w;
-}
-const Di = (t, i) => {
-  Et[k] = t, Tt[k] = i, k = k + 1 & w;
-}, Ii = () => {
-  if (!window.AudioContext)
-    return 44100;
-  const t = new window.AudioContext(), i = t.sampleRate;
-  return t.close(), i;
-}, bi = (t) => {
-  E = new AudioContext(), M = E.createScriptProcessor(nt, 0, 2), M.onaudioprocess = (i) => {
-    const e = i.outputBuffer, s = e.length;
-    Ci() < nt && Ai(t.frame);
-    const n = e.getChannelData(0), a = e.getChannelData(1);
-    for (let r = 0; r < s; r++) {
-      const h = B + r & w;
-      n[r] = Et[h] * W, a[r] = Tt[h] * W;
+  get gamepads() {
+    return Ti(navigator.getGamepads());
+  }
+  connectHandler(i, e) {
+    i ? this.gamepads[e.gamepad.index] = e.gamepad : this.gamepads.length === 0 && this.close();
+  }
+  axesHandler(i, e, s, n) {
+    var r;
+    const a = (r = this.axesHolding[i]) == null ? void 0 : r[s];
+    e ? a || (document.dispatchEvent(new KeyboardEvent("keydown", {
+      code: this.gamepad_btns.value[i][n]
+    })), this.axesHolding[i][s] = !0) : a && (document.dispatchEvent(new KeyboardEvent("keyup", {
+      code: this.gamepad_btns.value[i][n]
+    })), this.axesHolding[i][s] = !1);
+  }
+  btnHandler(i, e, s) {
+    var a;
+    const n = (a = this.btnHolding[i]) == null ? void 0 : a[s];
+    if (e.pressed) {
+      if (n)
+        return;
+      this.btnHolding[i][s] = !0, document.dispatchEvent(new KeyboardEvent("keydown", {
+        code: this.gamepad_btns.value[i][s]
+      }));
+    } else
+      n && (this.btnHolding[i][s] = !1, document.dispatchEvent(new KeyboardEvent("keyup", {
+        code: this.gamepad_btns.value[i][s]
+      })));
+  }
+  run() {
+    for (let i = 0; i < this.gamepads.length && !(i > 1); i++) {
+      const e = `p${i + 1}`, s = this.gamepads[i];
+      s.buttons.forEach(this.btnHandler.bind(this, e));
+      const n = s.axes[0], a = s.axes[1];
+      this.axesHandler(e, n > q, 0, 15), this.axesHandler(e, n < -q, 1, 14), this.axesHandler(e, a > q, 2, 13), this.axesHandler(e, a < -q, 3, 12);
     }
-    B = B + s & w;
-  }, M.connect(E.destination);
-}, at = () => {
-  M.disconnect(E.destination), M.onaudioprocess = null, M = {}, "close" in E && E.close();
-};
-function Ni() {
-  E.suspend();
-}
-function Ei() {
-  E.resume();
-}
-function ot(t) {
-  t > 100 && (t = 100), t < 0 && (t = 0), W = t / 100;
-}
-const v = 256, L = 240;
-let Ot, lt = {}, Ft = {}, y = {};
-const Ti = (t) => {
-  let i = 0;
-  for (let e = 0; e < L; ++e)
-    for (let s = 0; s < v; ++s)
-      i = e * 256 + s, Ft[i] = 4278190080 | t[i];
-}, Oi = (t) => {
-  y = t.getContext("2d");
-  const i = y.getImageData(0, 0, v, L);
-  y.fillStyle = "black", y.fillRect(0, 0, v, L);
-  const e = new ArrayBuffer(i.data.length);
-  lt = new Uint8ClampedArray(e), Ft = new Uint32Array(e), Ot = requestAnimationFrame(s);
-  function s() {
-    requestAnimationFrame(s), i.data.set(lt), y.putImageData(i, 0, 0);
   }
-}, pt = (t) => {
-  const i = t.parentNode, e = i.clientWidth, s = i.clientHeight, n = e / s, a = v / L;
-  a < n ? (t.style.height = `${s}px`, t.style.width = `${Math.round(s + a)}px`) : (t.style.width = `${e}px`, t.style.height = `${Math.round(e / a)}px`);
-}, ut = () => {
-  cancelAnimationFrame(Ot);
-}, Fi = (t) => {
-  const i = new Image();
-  return i.src = t.toDataURL("image/png"), i;
-};
-function Mi(t) {
-  return t === void 0;
+  frame() {
+    this.run(), cancelAnimationFrame(this.animationFrame), this.animationFrame = requestAnimationFrame(this.frame.bind(this));
+  }
+  close() {
+    this.btnHolding.p1.fill(!1), this.btnHolding.p2.fill(!1), cancelAnimationFrame(this.animationFrame);
+  }
 }
-function yi(t) {
-  return t === null;
-}
-function Mt(t) {
-  return typeof t == "number" ? isNaN(t) : yi(t) || Mi(t);
-}
-function X(t) {
-  return !Mt(t);
-}
-function P(t, i = 2, e = "0") {
-  return t = t + "", t.length >= i ? t : Array.from({ length: i - t.length + 1 }).join(e) + t;
-}
-function Pi(t = "yyyy-MM-dd|HH:mm:ss") {
-  const i = new Date();
-  return t.replace("yyyy", `${i.getFullYear()}`).replace("MM", P(i.getMonth() + 1)).replace("dd", P(i.getDate())).replace("HH", P(i.getHours())).replace("mm", P(i.getMinutes())).replace("ss", P(i.getSeconds()));
-}
-const ki = ["width", "height"], vi = { style: { position: "absolute", top: "0", left: "0%", "background-color": "#000", width: "100%", height: "100%" } }, Li = { name: "nes-vue" }, ft = /* @__PURE__ */ Xt({
-  ...Li,
+const Yi = (t) => {
+  const i = O(() => Object.assign(wt, t.p1)), e = O(() => Object.assign(Gt, t.p2)), s = O(() => {
+    const h = {};
+    return Xi.forEach((u) => {
+      h[i.value[u]] = {
+        key: u,
+        p: 1,
+        value: K[u]
+      }, u in e.value && (h[e.value[u]] = {
+        key: u,
+        p: 2,
+        value: K[u]
+      });
+    }), h;
+  }), n = O(() => [i.value.C, i.value.D, e.value.C, e.value.D]), a = O(() => ({
+    p1: [
+      i.value.A,
+      i.value.C,
+      i.value.B,
+      i.value.D,
+      "",
+      "",
+      "",
+      "",
+      i.value.SELECT,
+      i.value.START,
+      "",
+      "",
+      i.value.UP,
+      i.value.DOWN,
+      i.value.LEFT,
+      i.value.RIGHT
+    ],
+    p2: [
+      e.value.A,
+      e.value.C,
+      e.value.B,
+      e.value.D,
+      "",
+      "",
+      "",
+      "",
+      i.value.SELECT,
+      i.value.START,
+      "",
+      "",
+      e.value.UP,
+      e.value.DOWN,
+      e.value.LEFT,
+      e.value.RIGHT
+    ]
+  })), r = new Hi(a);
+  return xt(() => {
+    r.frame();
+  }), St(() => {
+    r.close();
+  }), [s, n];
+}, Wi = ["width", "height"], Ui = { style: { position: "absolute", top: "0", left: "0%", "background-color": "#000", width: "100%", height: "100%" } }, _t = /* @__PURE__ */ $t({
+  name: "nes-vue",
+  __name: "NesVue",
   props: {
-    url: null,
+    url: {},
     autoStart: { type: Boolean, default: !1 },
     width: { default: "256px" },
     height: { default: "240px" },
@@ -2754,48 +2889,28 @@ const ki = ["width", "height"], vi = { style: { position: "absolute", top: "0", 
     storage: { type: Boolean, default: !1 },
     debugger: { type: Boolean, default: !1 },
     turbo: { default: 16 },
-    p1: { default: () => ({
-      UP: "KeyW",
-      DOWN: "KeyS",
-      LEFT: "KeyA",
-      RIGHT: "KeyD",
-      A: "KeyK",
-      B: "KeyJ",
-      C: "KeyI",
-      D: "KeyU",
-      SELECT: "Digit2",
-      START: "Digit1"
-    }) },
-    p2: { default: () => ({
-      UP: "ArrowUp",
-      DOWN: "ArrowDown",
-      LEFT: "ArrowLeft",
-      RIGHT: "ArrowRight",
-      A: "Numpad2",
-      B: "Numpad1",
-      C: "Numpad5",
-      D: "Numpad4"
-    }) }
+    p1: { default: () => wt },
+    p2: { default: () => Gt }
   },
   emits: ["fps", "success", "error", "saved", "loaded", "update:url", "removed"],
   setup(t, { expose: i, emit: e }) {
     const s = t;
     if (!s.url)
       throw "nes-vue missing props: url.";
-    const n = j(null);
-    let a = j(!0), r = null, h;
-    function f(l) {
+    const [n, a] = Yi(s), r = tt(null), h = tt(!0);
+    let u = null, _;
+    function m(l) {
       return s.debugger && console.error(l.message), e("error", l), !1;
     }
-    const c = new F.NES({
-      onFrame: Ti,
-      onAudioSample: Di,
-      sampleRate: Ii()
+    const f = new y.NES({
+      onFrame: ki,
+      onAudioSample: Fi,
+      sampleRate: Mi()
     });
-    Yt(() => {
-      c.ppu.clipToTvSize = !s.clip;
+    Qt(() => {
+      f.ppu.clipToTvSize = !s.clip;
     });
-    const x = {
+    const R = {
       p1: {
         C: {
           timeout: 0,
@@ -2820,146 +2935,146 @@ const ki = ["width", "height"], vi = { style: { position: "absolute", top: "0", 
           once: !0
         }
       }
-    }, R = G(() => {
+    }, F = O(() => {
       let l = 1e3 / (2 * s.turbo);
       return l < 20 && (l = 20), l > 100 && (l = 100), l;
-    }), m = G(() => gi(s.p1, s.p2)), T = function(l) {
-      const u = [s.p1.C, s.p1.D, s.p2.C, s.p2.D], p = m.value[l.code];
-      if (X(p))
-        if (u.includes(l.code)) {
-          const _ = x[`p${p.p}`][p.key];
-          _.once && (c.buttonDown(p.p, F.Controller[p.value]), _.timeout = window.setInterval(() => {
-            _.beDown ? c.buttonDown(p.p, F.Controller[p.value]) : c.buttonUp(p.p, F.Controller[p.value]), _.beDown = !_.beDown;
-          }, R.value), _.once = !1);
+    }), D = function(l) {
+      const p = n.value[l.code];
+      if (W(p))
+        if (a.value.includes(l.code)) {
+          const c = R[`p${p.p}`][p.key];
+          c.once && (f.buttonDown(p.p, y.Controller[p.value]), c.timeout = window.setInterval(() => {
+            c.beDown ? f.buttonDown(p.p, y.Controller[p.value]) : f.buttonUp(p.p, y.Controller[p.value]), c.beDown = !c.beDown;
+          }, F.value), c.once = !1);
           return;
         } else
-          c.buttonDown(p.p, F.Controller[p.value]);
-    }, b = function(l) {
-      const u = [s.p1.C, s.p1.D, s.p2.C, s.p2.D], p = m.value[l.code];
-      if (X(p)) {
-        if (u.includes(l.code)) {
-          const _ = x[`p${p.p}`][p.key];
-          clearInterval(_.timeout), _.once = !0;
+          f.buttonDown(p.p, y.Controller[p.value]);
+    }, M = function(l) {
+      const p = n.value[l.code];
+      if (W(p)) {
+        if (a.value.includes(l.code)) {
+          const c = R[`p${p.p}`][p.key];
+          clearInterval(c.timeout), c.once = !0;
         }
-        c.buttonUp(p.p, F.Controller[p.value]);
+        f.buttonUp(p.p, y.Controller[p.value]);
       }
     };
-    function N(l = s.url) {
-      if (Mt(n.value))
+    function x(l = s.url) {
+      if (Bt(r.value))
         return;
-      if (a.value ? a.value = !1 : (at(), ut(), clearInterval(h)), l !== s.url) {
-        r = null, e("update:url", l);
+      if (h.value ? h.value = !1 : (ut(), Rt(), clearInterval(_)), l !== s.url) {
+        u = null, e("update:url", l);
         return;
       }
-      Oi(n.value), new Promise((p, _) => {
-        function z(D) {
+      Li(r.value), new Promise((c, E) => {
+        function Q(A) {
           try {
-            c.loadROM(D), h = setInterval(() => {
-              const V = c.getFPS();
-              e("fps", V || 0);
-            }, 1e3), p("success");
+            f.loadROM(A), _ = setInterval(() => {
+              const Y = f.getFPS();
+              e("fps", Y || 0);
+            }, 1e3), c("success");
           } catch {
-            _({
+            E({
               code: 0,
               message: `${l} loading Error: Probably the ROM is unsupported.`
-            }), a.value = !0;
+            }), h.value = !0;
           }
         }
-        if (X(r))
-          z(r);
+        if (W(u))
+          Q(u);
         else {
-          const D = new XMLHttpRequest();
-          D.open("GET", l), D.overrideMimeType("text/plain; charset=x-user-defined"), D.onerror = () => {
-            _({
+          const A = new XMLHttpRequest();
+          A.open("GET", l), A.overrideMimeType("text/plain; charset=x-user-defined"), A.onerror = () => {
+            E({
               code: 404,
-              message: `${l} loading Error: ${D.statusText}`
+              message: `${l} loading Error: ${A.statusText}`
             });
-          }, D.onload = function() {
-            this.status === 200 ? (r = this.responseText, z(r)) : _({
+          }, A.onload = function() {
+            this.status === 200 ? (u = this.responseText, Q(u)) : E({
               code: 404,
-              message: `${l} loading Error: ${D.statusText}`
+              message: `${l} loading Error: ${A.statusText}`
             });
-          }, D.send();
+          }, A.send();
         }
-        pt(n.value), document.addEventListener("keydown", T), document.addEventListener("keyup", b);
+        r.value && mt(r.value), document.addEventListener("keydown", D), document.addEventListener("keyup", M);
       }).then(() => {
-        bi(c), e("success");
-      }, (p) => f(p));
+        yi(f), e("success");
+      }, (c) => m(c));
     }
-    function A() {
-      a.value || g(), s.url && N();
+    function d() {
+      h.value || I(), s.url && x();
     }
-    function g() {
-      a.value || (at(), ut(), clearInterval(h), c.reset(), a.value = !0);
+    function I() {
+      h.value || (ut(), Rt(), clearInterval(_), f.reset(), h.value = !0);
     }
-    function S(l) {
-      return l === void 0 ? f({
+    function N(l) {
+      return l === void 0 ? m({
         code: 4,
         message: "TypeError: id is undefined."
       }) : !1;
     }
-    function K(l) {
-      const u = JSON.parse(l);
-      if (u.path !== s.url)
-        return f({
+    function $(l) {
+      const p = JSON.parse(l);
+      if (p.path !== s.url)
+        return m({
           code: 2,
-          message: `Load Error: The saved data is inconsistent with the current game, saved: ${u.path}, current: ${s.url}.`
+          message: `Load Error: The saved data is inconsistent with the current game, saved: ${p.path}, current: ${s.url}.`
         });
       try {
-        c.ppu.reset(), c.romData = u.data.romData, c.cpu.fromJSON(u.data.cpu), c.mmap.fromJSON(u.data.mmap), c.ppu.fromJSON(u.data.ppu);
+        f.ppu.reset(), f.romData = p.data.romData, f.cpu.fromJSON(p.data.cpu), f.mmap.fromJSON(p.data.mmap), f.ppu.fromJSON(p.data.ppu);
       } catch {
-        return f({
+        return m({
           code: 2,
           message: "Load Error: The saved data is invalid."
         });
       }
     }
-    function yt(l) {
-      if (!S(l))
+    function Vt(l) {
+      if (!N(l))
         try {
           localStorage.setItem(l, JSON.stringify({
             path: s.url,
-            data: c.toJSON()
+            data: f.toJSON()
           })), e("saved", {
             id: l,
             message: "The state has been saved in localStorage",
             target: "localStorage"
           });
-        } catch (u) {
-          if (u.name === "QuotaExceededError")
-            return f({
+        } catch (p) {
+          if (p.name === "QuotaExceededError")
+            return m({
               code: 1,
               message: "Save Error: localStorage out of memory."
             });
         }
     }
-    function Pt(l) {
-      if (S(l))
+    function qt(l) {
+      if (N(l))
         return;
-      const u = localStorage.getItem(l);
-      if (!u)
-        return f({
+      const p = localStorage.getItem(l);
+      if (!p)
+        return m({
           code: 2,
           message: "Load Error: nothing to load."
         });
-      K(u), e("loaded", {
+      $(p), e("loaded", {
         id: l,
         message: "Loaded state from localStorage",
         target: "localStorage"
       });
     }
-    function kt(l) {
-      if (S(l))
+    function Xt(l) {
+      if (N(l))
         return;
-      const u = {
+      const p = {
         id: l,
         nes: JSON.stringify({
           path: s.url,
-          data: c.toJSON()
+          data: f.toJSON()
         })
       };
-      mi({
-        data: u,
+      Ci({
+        data: p,
         onSuccess() {
           e("saved", {
             id: l,
@@ -2967,10 +3082,10 @@ const ki = ["width", "height"], vi = { style: { position: "absolute", top: "0", 
             target: "indexedDB"
           });
         },
-        onError(p) {
-          if (p === 0) {
-            Ri({
-              data: u,
+        onError(c) {
+          if (c === 0) {
+            Di({
+              data: p,
               onSuccess: () => {
                 e("saved", {
                   id: l,
@@ -2981,131 +3096,131 @@ const ki = ["width", "height"], vi = { style: { position: "absolute", top: "0", 
             });
             return;
           }
-          return f({
+          return m({
             code: 1,
             message: "Save Error: Unable to save data to indexedDB."
           });
         }
       });
     }
-    function vt(l) {
-      S(l) || _i({
+    function Ht(l) {
+      N(l) || Ii({
         id: l,
-        onSuccess(u) {
-          var p;
-          if ((p = u.result) != null && p.nes)
-            K(u.result.nes), e("loaded", {
+        onSuccess(p) {
+          var c;
+          if ((c = p.result) != null && c.nes)
+            $(p.result.nes), e("loaded", {
               id: l,
               message: "Loaded state from indexedDB",
               target: "indexedDB"
             });
           else
-            return f({
+            return m({
               code: 2,
               message: "Load Error: Nothing to load."
             });
         },
         onError() {
-          return f({
+          return m({
             code: 2,
             message: "Load Error: Nothing to load, probably the save data has been removed or invalidated."
           });
         }
       });
     }
-    function Lt(l) {
-      if (!S(l)) {
-        if (!c.cpu.irqRequested)
-          return f({
+    function Yt(l) {
+      if (!N(l)) {
+        if (!f.cpu.irqRequested)
+          return m({
             code: 1,
             message: "Save Error: Can only be saved while the game is running."
           });
-        s.storage ? yt(l) : kt(l);
+        s.storage ? Vt(l) : Xt(l);
       }
     }
-    function Bt(l) {
-      if (!S(l)) {
-        if (!c.cpu.irqRequested)
-          return f({
+    function Wt(l) {
+      if (!N(l)) {
+        if (!f.cpu.irqRequested)
+          return m({
             code: 2,
             message: "Load Error: Can only be loaded when the game is running."
           });
-        s.storage ? Pt(l) : vt(l);
+        s.storage ? qt(l) : Ht(l);
       }
     }
-    function wt(l) {
-      S(l) || (s.storage ? localStorage.removeItem(l) : xi({
+    function Ut(l) {
+      N(l) || (s.storage ? localStorage.removeItem(l) : bi({
         id: l,
         onSuccess() {
           e("removed", l);
         }
       }));
     }
-    function Vt(l, u) {
-      if (!n.value || a.value)
+    function Zt(l, p) {
+      if (!r.value || h.value)
         return;
-      const p = Fi(n.value);
+      const c = Bi(r.value);
       if (l) {
-        const _ = document.createElement("a");
-        _.href = p.src, _.download = u != null ? u : Pi("yyyy-MM-dd_HH-mm-ss"), _.click();
+        const E = document.createElement("a");
+        E.href = c.src, E.download = p != null ? p : Vi("yyyy-MM-dd_HH-mm-ss"), E.click();
       }
-      return p;
+      return c;
     }
-    function Gt() {
-      Si();
+    function Kt() {
+      Ni();
     }
-    const qt = G(() => {
+    const Jt = O(() => {
       const l = /^\d*$/;
-      let u = s.width, p = s.height;
-      return n.value && Ht(() => {
-        pt(n.value);
-      }), l.test(String(u)) && (u += "px"), l.test(String(p)) && (p += "px"), `width: ${u};height: ${p};background-color: #000;margin: auto;position: relative;overflow: hidden;`;
+      let p = s.width, c = s.height;
+      return r.value && ti(() => {
+        r.value && mt(r.value);
+      }), l.test(String(p)) && (p += "px"), l.test(String(c)) && (c += "px"), `width: ${p};height: ${c};background-color: #000;margin: auto;position: relative;overflow: hidden;`;
     });
-    return $(() => s.url, () => {
-      r = null, A();
-    }), $(() => s.gain, () => {
-      ot(s.gain);
-    }), Wt(() => {
-      s.autoStart && N(), ot(s.gain);
-    }), Ut(() => {
-      document.removeEventListener("keydown", T), document.removeEventListener("keyup", b), g();
+    return it(() => s.url, () => {
+      u = null, d();
+    }), it(() => s.gain, () => {
+      ft(s.gain);
+    }), xt(() => {
+      s.autoStart && x(), ft(s.gain);
+    }), St(() => {
+      document.removeEventListener("keydown", D), document.removeEventListener("keyup", M), I();
     }), i({
-      start: N,
-      reset: A,
-      stop: g,
-      pause: Ni,
-      play: Ei,
-      save: Lt,
-      load: Bt,
-      remove: wt,
-      clear: Gt,
-      screenshot: Vt
-    }), (l, u) => (Q(), tt("div", {
-      style: Zt(q(qt))
+      start: x,
+      reset: d,
+      stop: I,
+      pause: Pi,
+      play: vi,
+      save: Yt,
+      load: Wt,
+      remove: Ut,
+      clear: Kt,
+      screenshot: Zt
+    }), (l, p) => (st(), et("div", {
+      style: ii(Jt.value)
     }, [
-      it("canvas", {
+      ht("canvas", {
         ref_key: "cvs",
-        ref: n,
-        width: q(v),
-        height: q(L),
+        ref: r,
+        width: rt(w),
+        height: rt(G),
         style: { display: "inline-block" }
-      }, null, 8, ki),
-      Jt(it("div", vi, null, 512), [
-        [Kt, a.value]
+      }, null, 8, Wi),
+      si(ht("div", Ui, null, 512), [
+        [ei, h.value]
       ]),
-      a.value ? (Q(), tt("div", {
+      h.value ? (st(), et("div", {
         key: 0,
         style: { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", cursor: "pointer", color: "#f8f4ed", "font-size": "20px" },
-        onClick: u[0] || (u[0] = (p) => N())
-      }, zt(t.label), 1)) : jt("", !0)
+        onClick: p[0] || (p[0] = (c) => x())
+      }, hi(l.label), 1)) : ri("", !0)
     ], 4));
   }
-}), wi = {
+}), Ji = {
   install(t) {
-    t.component(ft.name, ft);
+    t.component(_t.name, _t);
   }
 };
 export {
-  ft as NesVue,
-  wi as default
+  _t as NesVue,
+  Ji as default
 };
