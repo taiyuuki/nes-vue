@@ -15,6 +15,13 @@ A NES (FC)🎮 emulator component for Vue 3.
 
 🚀[Playground](https://taiyuuki.github.io/nes-vue)
 
+## Features
+
+- [x] Support for multiplayer.
+- [x] Support for gamepad.
+- [x] Support for turbo button.
+- [x] Support for saving and loading.
+
 ## Usage
 
 ### install
