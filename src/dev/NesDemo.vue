@@ -8,9 +8,6 @@ const nes = ref<NesVueInstance | null>(null)
 const gameUrl = ref<string>('SuperContra.nes')
 const saveable = ref(true)
 const clip = ref(true)
-const p1 = ref({
-    C: 'KeyO',
-})
 
 function resetGame() {
     saveable.value = false
@@ -39,7 +36,9 @@ function load() {
 }
 
 function test() {
-    p1.value.C = 'KeyI'
+    if (is_not_void(nes.value)) {
+        nes.value.screenshot(true, 'screenshot.png')
+    }
 }
 
 function onError(error: EmitErrorObj) {
@@ -57,7 +56,6 @@ function onError(error: EmitErrorObj) {
       height="480"
       :clip="clip"
       debugger
-      :p1="p1"
       @error="onError"
     />
   </div>

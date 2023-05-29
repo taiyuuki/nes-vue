@@ -5,7 +5,7 @@ import { saveData, loadData, putData, removeData, clearData } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, date_now } from '@taiyuuki/utils'
+import { is_not_void, is_void, download_canvas } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 
 defineOptions({
@@ -500,10 +500,7 @@ function screenshot(download?: boolean, imageName?: string) {
     if (!cvs.value || isStop.value) {return}
     const img = cut(cvs.value)
     if (download) {
-        const a = document.createElement('a')
-        a.href = img.src
-        a.download = imageName ?? date_now('yyyy-MM-dd_HH-mm-ss')
-        a.click()
+        download_canvas(cvs.value, imageName)
     }
     return img
 }
