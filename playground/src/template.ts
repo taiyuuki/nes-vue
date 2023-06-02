@@ -1,6 +1,7 @@
 import { fm2s, roms } from './download/roms'
 
-const template = `<template>
+const template = `
+<template>
   <div class="box">
     <nes-vue
       ref="nes"
@@ -44,8 +45,7 @@ const template = `<template>
 </template>
 `
 
-let script = `
-<script setup>
+let script = `<script setup>
 import { ref, computed } from 'vue'
 import { NesVue } from 'nes-vue'
 
@@ -56,7 +56,7 @@ const nes = ref(null)
 const slt = ref(null)
 const disable = ref(true)
 const isPaused = ref(false)
-const pauseLabel = computed(() => isPaused.value ? 'play' : 'pause')
+const pauseLabel = computed(() => isPaused.value ? 'Play' : 'Pause')
 
 function fetchFm2() {
   const fm2 = fm2List[gameList.indexOf(slt.value.value)]
