@@ -2,22 +2,38 @@ declare module "jsnes" {
   export class NES {
     constructor(nesOptions: NesOptions)
     romData: any
+    frameTime: number
+    fpsFrameCount: number
+    frameCounter: number
+    videoMode: boolean
+    controllers: {
+      1: {
+        state: number[]
+      },
+      2: {
+        state: number[]
+      }
+    }
     cpu: {
       fromJSON(cpu:any): void,
+      toJSON(): any
       reset(): void,
       irqRequested: boolean
     }
     mmap: {
       fromJSON(mmap:any): void,
+      toJSON(): any
       reset(): void,
     }
     ppu: {
       fromJSON(ppu:any): void,
+      toJSON(): any
       reset(): void,
       clipToTvSize: boolean
       f_spClipping: number
       f_bgClipping: number
     }
+
     loadROM(buffer: Buffer | string): void
     frame(): void
     buttonDown(n: number, button: string): void

@@ -1,5 +1,5 @@
 import type { NES } from 'jsnes'
-import { ignoreSourceError } from 'src/utils'
+import { tas_scripts } from 'src/tas'
 
 let audio_ctx = {} as AudioContext
 let script_processor: ScriptProcessorNode
@@ -33,12 +33,21 @@ export const getSampleRate = () => {
 
 export const audioFrame = (nes: NES) => {
     audio_ctx = new AudioContext()
+    nes.frameCounter = 1
     script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
     script_processor.onaudioprocess = (event: AudioProcessingEvent) => {
         const dst = event.outputBuffer
         const len = dst.length
         if (audio_remain() < AUDIO_BUFFERING) {
-            ignoreSourceError(nes.frame)
+            if (nes.videoMode) {
+                const script = tas_scripts[nes.frameCounter]
+                if (nes.frameCounter > 0 && script) {
+                    nes.controllers[1].state = script.p1
+                    nes.controllers[2].state = script.p2
+                }
+            }
+            nes.frame()
+            nes.frameCounter++
         }
         const dst_l = dst.getChannelData(0)
         const dst_r = dst.getChannelData(1)

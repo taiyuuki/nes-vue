@@ -4,9 +4,11 @@ import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } fr
 import { saveData, loadData, putData, removeData, clearData } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
 import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
-import { WIDTH, HEIGHT, onFrame, animationFram, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas } from '@taiyuuki/utils'
+import { WIDTH, HEIGHT, onFrame, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
+import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
+import { fm2Parse, tas_scripts } from 'src/tas'
+import { compressArray, decompressArray, getPtTile, getVramMirrorTable, compressNameTable, decompressNameTable } from 'src/utils'
 
 defineOptions({
     name: 'nes-vue',
@@ -76,6 +78,8 @@ const nes = new jsnes.NES({
     onAudioSample,
     sampleRate: getSampleRate(),
 })
+
+nes.videoMode = false
 
 effect(() => {
     nes.ppu.clipToTvSize = !props.clip
@@ -156,6 +160,16 @@ const upKeyboardEvent = function (event: KeyboardEvent) {
     }
 }
 
+function addEvent() {
+    document.addEventListener('keydown', downKeyboardEvent)
+    document.addEventListener('keyup', upKeyboardEvent)
+}
+
+function removeEvent() {
+    document.removeEventListener('keydown', downKeyboardEvent)
+    document.removeEventListener('keyup', upKeyboardEvent)
+}
+
 /**
  * 🎮: Start the game in the stopped state. Normally, url is not required.
  * @param url Rom url
@@ -177,7 +191,7 @@ function start(url: string = <string>props.url) {
         emits('update:url', url)
         return
     }
-    animationFram(cvs.value)
+    animationFrame(cvs.value)
 
     const rp = new Promise((resolve, reject) => {
         function loadROM(buffer: string) {
@@ -225,15 +239,15 @@ function start(url: string = <string>props.url) {
             req.send()
         }
         cvs.value && fitInParent(cvs.value)
-        document.addEventListener('keydown', downKeyboardEvent)
-        document.addEventListener('keyup', upKeyboardEvent)
+        addEvent()
     })
 
     rp.then(() => {
         audioFrame(nes)
         emits('success')
     }, reason => {
-        return emitError(reason)
+        emitError(reason)
+        return reason
     })
 }
 
@@ -241,6 +255,9 @@ function start(url: string = <string>props.url) {
  * 🎮: Restart the current game
  */
 function reset() {
+    if (nes.videoMode) {
+        fm2Stop()
+    }
     if (!isStop.value) {
         stop()
     }
@@ -284,11 +301,24 @@ function loadGameData(data: string) {
         })
     }
     try {
+        if (!romBuffer) {
+            start(saveData.path)
+        }
+        const ppuData = saveData.data.ppu
+        ppuData.attrib = get_fill_arr(0x20, 0)
+        ppuData.bgbuffer = get_fill_arr(0xF000, 0)
+        ppuData.buffer = get_fill_arr(0xF000, 0)
+        ppuData.pixrendered = get_fill_arr(0xF000, 0)
+        ppuData.vramMem = decompressArray(saveData.data.vramMenZip)
+        ppuData.nameTable = decompressNameTable(saveData.data.nameTableZip)
+        ppuData.vramMirrorTable = getVramMirrorTable()
+        ppuData.ptTile = getPtTile()
         nes.ppu.reset()
-        nes.romData = saveData.data.romData
+        nes.romData = romBuffer
         nes.cpu.fromJSON(saveData.data.cpu)
         nes.mmap.fromJSON(saveData.data.mmap)
-        nes.ppu.fromJSON(saveData.data.ppu)
+        nes.ppu.fromJSON(ppuData)
+        nes.frameCounter = saveData.frameCounter
     }
     catch (_) {
         return emitError({
@@ -298,13 +328,35 @@ function loadGameData(data: string) {
     }
 }
 
+function getNesData() {
+    const ppuData = nes.ppu.toJSON()
+    delete ppuData.attrib
+    delete ppuData.bgbuffer
+    delete ppuData.buffer
+    delete ppuData.pixrendered
+    delete ppuData.vramMirrorTable
+    delete ppuData.ptTile
+    const vramMenZip = compressArray(ppuData.vramMem)
+    const nameTableZip = compressNameTable(ppuData.nameTable)
+    delete ppuData.vramMem
+    delete ppuData.nameTable
+    return JSON.stringify({
+        path: props.url,
+        data: {
+            cpu: nes.cpu.toJSON(),
+            mmap: nes.mmap.toJSON(),
+            ppu: ppuData,
+            vramMenZip,
+            nameTableZip,
+        },
+        frameCounter: nes.frameCounter,
+    })
+}
+
 function saveInStorage(id: string) {
     if (checkId(id)) {return}
     try {
-        localStorage.setItem(id, JSON.stringify({
-            path: props.url,
-            data: nes.toJSON(),
-        }))
+        localStorage.setItem(id, getNesData())
         emits('saved', {
             id,
             message: 'The state has been saved in localStorage',
@@ -342,10 +394,7 @@ function saveIndexedDB(id: string) {
     if (checkId(id)) {return}
     const data = {
         id,
-        nes: JSON.stringify({
-            path: props.url,
-            data: nes.toJSON(),
-        }),
+        nes: getNesData(),
     }
     saveData({
         data,
@@ -492,6 +541,10 @@ function remove(id: string) {
     }
 }
 
+function clear() {
+    clearData()
+}
+
 /** },
   }🎮: Screenshot
  * @param download True will start downloading the image inside the browser.
@@ -505,8 +558,53 @@ function screenshot(download?: boolean, imageName?: string) {
     return img
 }
 
-function clear() {
-    clearData()
+function fm2Play() {
+    if (is_empty_obj(tas_scripts, false)) {
+        emitError({
+            code: 3,
+            message: 'FM2 Error: No fm2 scripts found.',
+        })
+        return
+    }
+    reset()
+    nes.videoMode = true
+    removeEvent()
+}
+
+/**
+ * Fetches the *.fm2 file.
+ * @param url fm2 file url
+ * @param fix fix fm2
+ */
+async function fm2URL(url: string, fix = 0) {
+    try {
+        const res = await fetch(url)
+        const text = await res.text()
+        fm2Parse(text, fix)
+    }
+    catch (e) {
+        emitError({
+            code: 4,
+            message: 'FM2 Error: Unable to load fm2 file.',
+        })
+        return Promise.reject(e)
+    }
+    return fm2Play
+}
+
+function fm2Stop() {
+    nes.videoMode = false
+    addEvent()
+}
+
+/**
+ * Reads fm2 text.
+ * @param text - fm2 text
+ * @param fix - fix fm2
+ */
+function fm2Text(text: string, fix = 0) {
+    fm2Parse(text, fix)
+    return Promise.resolve(fm2Play)
 }
 
 const canvasStyle = computed(() => {
@@ -557,6 +655,10 @@ defineExpose({
     remove,
     clear,
     screenshot,
+    fm2URL,
+    fm2Text,
+    fm2Play,
+    fm2Stop,
 })
 </script>
 

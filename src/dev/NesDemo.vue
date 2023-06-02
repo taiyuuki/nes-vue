@@ -5,9 +5,8 @@ import NesVue from '../nes/NesVue.vue'
 import { is_not_void } from '@taiyuuki/utils'
 
 const nes = ref<NesVueInstance | null>(null)
-const gameUrl = ref<string>('SuperContra.nes')
+const gameUrl = ref<string>('Super Mario Bros (JU).nes')
 const saveable = ref(true)
-const clip = ref(true)
 
 function resetGame() {
     saveable.value = false
@@ -35,9 +34,29 @@ function load() {
     }
 }
 
-function test() {
+function pause() {
     if (is_not_void(nes.value)) {
-        nes.value.screenshot(true, 'screenshot.png')
+        nes.value.pause()
+    }
+}
+
+function play() {
+    if (is_not_void(nes.value)) {
+        nes.value.play()
+    }
+}
+function playVideo() {
+    if (is_not_void(nes.value)) {
+        nes.value.fm2URL('happylee-supermariobros,warped.fm2', 0)
+            .then(fm2Play => {
+                fm2Play()
+            })
+    }
+}
+
+function stopVideo() {
+    if (is_not_void(nes.value)) {
+        nes.value.fm2Stop()
     }
 }
 
@@ -54,7 +73,7 @@ function onError(error: EmitErrorObj) {
       label="Click to Start"
       width="512"
       height="480"
-      :clip="clip"
+      clip
       debugger
       @error="onError"
     />
@@ -76,10 +95,21 @@ function onError(error: EmitErrorObj) {
     >
       Load
     </button>
+    <button @click="pause">
+      Pause
+    </button>
+    <button @click="play">
+      Play
+    </button>
     <button
-      @click="test"
+      @click="playVideo"
     >
-      Test
+      Play Video
+    </button>
+    <button
+      @click="stopVideo"
+    >
+      Video Stop
     </button>
   </div>
 </template>
