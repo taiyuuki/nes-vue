@@ -26,12 +26,17 @@ export function compressArray(arr: number[]) {
     let current = arr[0]
     let count = 1
     for (let i = 1; i < arr.length; i++) {
-        if (arr[i] == current && count < 255) {
+        if (arr[i] == current) {
             count++
         }
         else {
-            compressed.push(count)
-            compressed.push(current)
+            if (count > 1) {
+                compressed.push(count)
+                compressed.push(current)
+            }
+            else {
+                compressed.push(-current - 1)
+            }
             current = arr[i]
             count = 1
         }
@@ -43,11 +48,18 @@ export function compressArray(arr: number[]) {
 
 export function decompressArray(compressed: number[]) {
     const decompressed = []
-    for (let i = 0; i < compressed.length; i += 2) {
-        const count = compressed[i]
-        const value = compressed[i + 1]
-        for (let j = 0; j < count; j++) {
-            decompressed.push(value)
+    for (let i = 0; i < compressed.length;) {
+        if (compressed[i] < 0) {
+            decompressed.push(-compressed[i] - 1)
+            i++
+        }
+        else {
+            const count = compressed[i]
+            const value = compressed[i + 1]
+            for (let j = 0; j < count; j++) {
+                decompressed.push(value)
+            }
+            i += 2
         }
     }
     return decompressed
@@ -58,6 +70,53 @@ export function getPtTile() {
         opaque: get_fill_arr(8, false),
         pix: get_fill_arr(64, 0),
     }))
+}
+
+interface PtTile {
+    opaque: boolean[]
+    pix: number[]
+}
+
+export function compressPtTile(ptTile: PtTile[]): [number[], number[]] {
+    const opaques: number[] = []
+    const pixs: number[] = []
+    for (let i = 0; i < ptTile.length; i++) {
+        for (let j = 0; j < ptTile[i].opaque.length; j++) {
+            if (ptTile[i].opaque[j] === false) {
+                opaques.push(0)
+            }
+            else {
+                opaques.push(1)
+            }
+        }
+        pixs.push(...ptTile[i].pix)
+    }
+    return [compressArray(opaques), compressArray(pixs)]
+}
+
+export function decompressPtTile(compressed: [number[], number[]]) {
+    const ptTile: PtTile[] = []
+    let opaque: boolean[] = Array(8)
+    let pix: number[] = []
+    const opaques = decompressArray(compressed[0])
+    const pixs = decompressArray(compressed[1])
+    for (let i = 0; i < 512; i += 1) {
+        for (let j = 0; j < 8; j += 1) {
+            if (opaques[i * 8 + j] === 0) {
+                opaque[j] = false
+            }
+        }
+        for (let j = 0; j < 64; j += 1) {
+            pix[j] = pixs[i * 64 + j]
+        }
+        ptTile.push({
+            opaque,
+            pix,
+        })
+        opaque = Array(8)
+        pix = []
+    }
+    return ptTile
 }
 
 interface NameTable {

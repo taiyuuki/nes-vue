@@ -8,7 +8,7 @@ import { WIDTH, HEIGHT, onFrame, animationFrame, animationStop, fitInParent, cut
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, tas_scripts } from 'src/tas'
-import { compressArray, decompressArray, getPtTile, getVramMirrorTable, compressNameTable, decompressNameTable } from 'src/utils'
+import { compressArray, decompressArray, getVramMirrorTable, compressNameTable, decompressNameTable, compressPtTile, decompressPtTile } from 'src/utils'
 
 defineOptions({
     name: 'nes-vue',
@@ -305,6 +305,7 @@ function loadGameData(data: string) {
             start(saveData.path)
         }
         const ppuData = saveData.data.ppu
+        const cpuData = saveData.data.cpu
         ppuData.attrib = get_fill_arr(0x20, 0)
         ppuData.bgbuffer = get_fill_arr(0xF000, 0)
         ppuData.buffer = get_fill_arr(0xF000, 0)
@@ -312,10 +313,11 @@ function loadGameData(data: string) {
         ppuData.vramMem = decompressArray(saveData.data.vramMenZip)
         ppuData.nameTable = decompressNameTable(saveData.data.nameTableZip)
         ppuData.vramMirrorTable = getVramMirrorTable()
-        ppuData.ptTile = getPtTile()
+        ppuData.ptTile = decompressPtTile(saveData.data.ptTileZip)
+        cpuData.mem = decompressArray(saveData.data.cpuMemZip)
         nes.ppu.reset()
         nes.romData = romBuffer
-        nes.cpu.fromJSON(saveData.data.cpu)
+        nes.cpu.fromJSON(cpuData)
         nes.mmap.fromJSON(saveData.data.mmap)
         nes.ppu.fromJSON(ppuData)
         nes.frameCounter = saveData.frameCounter
@@ -330,24 +332,30 @@ function loadGameData(data: string) {
 
 function getNesData() {
     const ppuData = nes.ppu.toJSON()
+    const cpuData = nes.cpu.toJSON()
     delete ppuData.attrib
     delete ppuData.bgbuffer
     delete ppuData.buffer
     delete ppuData.pixrendered
     delete ppuData.vramMirrorTable
-    delete ppuData.ptTile
     const vramMenZip = compressArray(ppuData.vramMem)
     const nameTableZip = compressNameTable(ppuData.nameTable)
+    const ptTileZip = compressPtTile(ppuData.ptTile)
+    const cpuMemZip = compressArray(cpuData.mem)
     delete ppuData.vramMem
     delete ppuData.nameTable
+    delete cpuData.mem
+    delete ppuData.ptTile
     return JSON.stringify({
         path: props.url,
         data: {
-            cpu: nes.cpu.toJSON(),
+            cpu: cpuData,
             mmap: nes.mmap.toJSON(),
             ppu: ppuData,
             vramMenZip,
             nameTableZip,
+            cpuMemZip,
+            ptTileZip,
         },
         frameCounter: nes.frameCounter,
     })

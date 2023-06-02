@@ -1,6 +1,6 @@
 {
   "name": "nes-vue",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A NES(FC) emulator component for Vue 3",
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",
@@ -40,7 +40,7 @@
     "@taiyuuki/utils": "^0.4.0"
   },
   "devDependencies": {
-    "@taiyuuki/eslint-config-vue": "^0.0.10",
+    "@taiyuuki/eslint-config-vue": "^0.0.11",
     "@types/node": "^18.16.16",
     "@vitejs/plugin-vue": "^3.2.0",
     "eslint": "^8.41.0",

@@ -252,7 +252,7 @@ save(id: string) => void
 
 默认情况下，存档是保存在 indexedDB，你可以设置[storage](#属性)属性让其保存在localStorage。
 
-根据不同的浏览器，localStorage能保存**2 MB**至**10 MB** 的数据，每个游戏的保存数据大约在**0.5MB** 至 **2MB**不等。
+根据不同的浏览器，localStorage能保存**2 MB**至**10 MB** 的数据，每个存档大约200kB。
 
 如果你需要保存较多的数据，建议你使用默认的 indexedDB。
 

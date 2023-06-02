@@ -253,7 +253,7 @@ save(id: string) => void
 
 By default, the game state is saved in indexedDB, you can also save it in localStorage via [storage](#props) property. 
 
-The localStorage can store from **2 MB** to **10 MB** size of data depending upon the browser used, each game state archive requires about **0.5MB** to **2MB**.
+The localStorage can store from **2 MB** to **10 MB** size of data depending upon the browser used, each game state archive requires about 200KB.
 
 If you need to save more data, it’s recommended to use indexedDB.
 
