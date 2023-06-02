@@ -24,13 +24,13 @@ export const pkg = `{
     "serve": "vite preview"
   },
   "dependencies": {
-    "nes-vue": "^1.3.7",
-    "vue": "^3.2.0"
+    "nes-vue": "^1.5.0",
+    "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.4.0",
+    "@vitejs/plugin-vue": "^3.2.0",
     "@vue/compiler-sfc": "^3.2.0",
-    "vite": "^2.4.4"
+    "vite": "^3.2.7"
   }
 }`
 

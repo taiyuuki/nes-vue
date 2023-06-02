@@ -1,4 +1,4 @@
-import { roms } from './download/roms'
+import { fm2s, roms } from './download/roms'
 
 const template = `<template>
   <div class="box">
@@ -7,15 +7,10 @@ const template = `<template>
       :url="gameURL"
       :width="512"
       :height="480"
+      @success="fetchFm2"
     />
   </div>
   <div class="btns">
-    <button @click="resetGame">
-      Reset
-    </button>
-    <button @click="stopGame">
-      Stop
-    </button>
     <select
       ref="slt"
       name="rom"
@@ -30,24 +25,46 @@ const template = `<template>
         {{ rom.replace('.nes', '') }}
       </option>
     </select>
-    <input
-      type="file"
-      accept=".nes"
-      @change="selectLocalRom"
-    />
+    <button @click="resetGame">
+      Reset
+    </button>
+    <button @click="stopGame">
+      Stop
+    </button>
+    <button @click="pause" style="width:5em" :disabled="disable">
+      {{ pauseLabel }}
+    </button>
+    <button @click="playTAS" :disabled="disable">
+      Play TAS Video
+    </button>
+    <button @click="stopTAS" v-show="tasPlaying">
+      Stop TAS Video
+    </button>
   </div>
 </template>
 `
 
 let script = `
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { NesVue } from 'nes-vue'
 
 const gameList = ${JSON.stringify(roms, null, 2)}
+const fm2List = ${JSON.stringify(fm2s, null, 2)}
 const gameURL = ref(gameList[0])
 const nes = ref(null)
 const slt = ref(null)
+const disable = ref(true)
+const isPaused = ref(false)
+const pauseLabel = computed(() => isPaused.value ? 'play' : 'pause')
+
+function fetchFm2() {
+  const fm2 = fm2List[gameList.indexOf(slt.value.value)]
+  nes.value.fm2URL(fm2[0], fm2[1])
+    .then(() => {
+      disable.value = false
+  })
+}
 
 function resetGame() {
   nes.value.reset()
@@ -55,17 +72,33 @@ function resetGame() {
 
 function stopGame() {
   nes.value.stop()
+  disable.value = true
 }
 
 function selectRom() {
   gameURL.value = slt.value.value
+  disable.value = true
 }
 
-function selectLocalRom(e) {
-  const rom = e.target.files[0]
-  if (rom.name.endsWith('.nes')) {
-    gameURL.value = URL.createObjectURL(rom)
+const tasPlaying = ref(false)
+function playTAS() {
+  nes.value.fm2Play()
+  tasPlaying.value = true
+}
+
+function stopTAS() {
+  nes.value.fm2Stop()
+  tasPlaying.value = false
+}
+
+
+function pause() {
+  if (isPaused.value) {
+    nes.value.play()
+  } else {
+    nes.value.pause()
   }
+  isPaused.value = !isPaused.value
 }
 `
 

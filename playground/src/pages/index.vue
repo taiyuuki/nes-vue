@@ -5,7 +5,7 @@ import { template, script, style } from '../template'
 
 const store = new ReplStore()
 
-store.state.files['App.vue'].code = template + script + style
+store.state.files['App.vue'].code = script + template + style
 
 store.setImportMap({ imports: { 'nes-vue': './nes-vue.es.js' } })
 </script>

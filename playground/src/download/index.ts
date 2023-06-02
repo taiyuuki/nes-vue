@@ -1,6 +1,6 @@
-import { downloadBlob, urlToBlob } from '@taiyuuki/utils'
+import { download_blob, url_to_blob } from '@taiyuuki/utils'
 import type { ReplStore } from '@vue/repl'
-import { roms } from './roms'
+import { fm2s, roms } from './roms'
 import { html, main, pkg, readme, viteConfig } from './files'
 
 export async function downloadProject(store: ReplStore) {
@@ -29,10 +29,16 @@ export async function downloadProject(store: ReplStore) {
 
     // .nes files
     for await (const rom of roms) {
-        const romBlob = await urlToBlob(rom)
+        const romBlob = await url_to_blob(rom)
         publicFolder.file(rom, romBlob)
     }
 
+    // .fm2 files
+    for await (const fm2 of fm2s) {
+        const fm2Blob = await url_to_blob(fm2[0])
+        publicFolder.file(fm2[0], fm2Blob)
+    }
+
     const project = await zip.generateAsync({ type: 'blob' })
-    downloadBlob(project, 'nes-vue-demo')
+    download_blob(project, 'nes-vue-demo')
 }
