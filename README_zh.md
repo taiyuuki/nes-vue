@@ -360,7 +360,6 @@ import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
 function playVideo() {
-  const url = './fm2/xxx.fm2'
   nes.value.fm2Text(text) // text就是fm2的纯文本字符串
   nes.value.fm2Play() // 开始播放录像
 }

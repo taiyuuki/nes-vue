@@ -361,7 +361,6 @@ import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
 function playVideo() {
-  const url = './fm2/xxx.fm2'
   nes.value.fm2Text(text) // The text here is the plain text string of fm2 file.
   nes.value.fm2Play() // Playing the recording.
 }
