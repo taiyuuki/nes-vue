@@ -594,6 +594,8 @@ async function fm2URL(url: string, fix = 0) {
 
 function fm2Stop() {
     nes.videoMode = false
+    nes.controllers[1].state = get_fill_arr(8, 0x40)
+    nes.controllers[2].state = get_fill_arr(8, 0x40)
     addEvent()
 }
 

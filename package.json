@@ -37,10 +37,10 @@
     "publish": "pnpm publish --registry https://registry.npmjs.org"
   },
   "dependencies": {
-    "@taiyuuki/eslint-config-vue": "^0.0.10",
     "@taiyuuki/utils": "^0.4.0"
   },
   "devDependencies": {
+    "@taiyuuki/eslint-config-vue": "^0.0.10",
     "@types/node": "^18.16.16",
     "@vitejs/plugin-vue": "^3.2.0",
     "eslint": "^8.41.0",
