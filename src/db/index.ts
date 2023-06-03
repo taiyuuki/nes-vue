@@ -81,3 +81,4 @@ export function clearData() {
     const objectStore = transaction.objectStore(storeName)
     objectStore.clear()
 }
+

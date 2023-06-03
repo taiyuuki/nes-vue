@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { EmitErrorObj, NesVueInstance } from '../'
-import NesVue from '../nes/NesVue.vue'
+import NesVue from 'src/components/NesVue.vue'
 import { is_not_void } from '@taiyuuki/utils'
 
 const nes = ref<NesVueInstance | null>(null)

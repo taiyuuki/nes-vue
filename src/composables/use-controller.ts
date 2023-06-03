@@ -1,5 +1,5 @@
 import { object_keys } from '@taiyuuki/utils'
-import type { ControllerOptions, NesVueProps, Player } from 'src/nes/types'
+import type { ControllerOptions, NesVueProps, Player } from 'src/components/types'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
 import { onMounted, onBeforeUnmount, computed } from 'vue'

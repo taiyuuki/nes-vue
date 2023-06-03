@@ -1,16 +1,16 @@
-export const WIDTH = 256
-export const HEIGHT = 240
+const WIDTH = 256
+const HEIGHT = 240
 let animationframeID: number
 let framebuffer_u8 = {} as Uint8ClampedArray, framebuffer_u32 = {} as Uint32Array
 let canvas_ctx = {} as CanvasRenderingContext2D
 
-export function onFrame(framebuffer_24: Buffer) {
+function onFrame(framebuffer_24: Buffer) {
     for (let i = 0; i < framebuffer_24.length; i += 1) {
         framebuffer_u32[i] = 0xff000000 | framebuffer_24[i] // Full alpha
     }
 }
 
-export const animationFrame = (cvs: HTMLCanvasElement) => {
+const animationFrame = (cvs: HTMLCanvasElement) => {
     canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
     const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT)
 
@@ -29,7 +29,7 @@ export const animationFrame = (cvs: HTMLCanvasElement) => {
     }
 }
 
-export const fitInParent = (cvs: HTMLCanvasElement) => {
+const fitInParent = (cvs: HTMLCanvasElement) => {
     const parent = cvs.parentNode as HTMLElement
     const parentWidth = parent.clientWidth
     const parentHeight = parent.clientHeight
@@ -45,12 +45,23 @@ export const fitInParent = (cvs: HTMLCanvasElement) => {
     }
 }
 
-export const animationStop = () => {
+const animationStop = () => {
     cancelAnimationFrame(animationframeID)
 }
 
-export const cut = (cvs: HTMLCanvasElement) => {
+const cut = (cvs: HTMLCanvasElement) => {
     const image = new Image()
     image.src = cvs.toDataURL('image/png')
     return image
+}
+
+export {
+    WIDTH,
+    HEIGHT,
+    onFrame,
+    animationFrame,
+    animationStop,
+    fitInParent,
+    cut,
+
 }

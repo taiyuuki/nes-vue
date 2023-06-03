@@ -1,14 +1,5 @@
 import { get_fill_arr } from '@taiyuuki/utils'
 
-export function ignoreSourceError(fun: Function) {
-    try {
-        fun()
-    }
-    catch (e) {
-        return
-    }
-}
-
 export function fillFalse(num: number): boolean[] {
     return Array(num).fill(false)
 }

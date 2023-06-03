@@ -1,5 +1,5 @@
-import nes from './nes'
-import NesVue from './nes/NesVue.vue'
+import nes from 'src/components'
+import NesVue from 'src/components/NesVue.vue'
 
 export interface NesVueInstance extends InstanceType<typeof NesVue> {
     pause: () => void
@@ -7,6 +7,6 @@ export interface NesVueInstance extends InstanceType<typeof NesVue> {
 }
 export type {
     Controller, NesVueProps, EmitErrorObj, SavedOrLoaded,
-} from 'src/nes/types'
+} from 'src/components/types'
 export { NesVue }
 export default nes

@@ -3,12 +3,13 @@ import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
 import { saveData, loadData, putData, removeData, clearData } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
-import { onAudioSample, getSampleRate, audioFrame, audioStop, pause, play, setGain } from 'src/audio'
-import { WIDTH, HEIGHT, onFrame, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
+import { audioFrame, audioStop, pause, play, setGain } from 'src/audio'
+import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
+import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, tas_scripts } from 'src/tas'
 import { compressArray, decompressArray, getVramMirrorTable, compressNameTable, decompressNameTable, compressPtTile, decompressPtTile } from 'src/utils'
+import nes from 'src/nes'
 
 defineOptions({
     name: 'nes-vue',
@@ -43,10 +44,6 @@ const props = withDefaults(defineProps<{
 
 const emits = defineEmits<NesVueEmits>()
 
-if (!props.url) {
-    throw 'nes-vue missing props: url.'
-}
-
 interface NesVueEmits {
     (e: 'fps', fps: number): void
     (e: 'success'): void
@@ -55,6 +52,10 @@ interface NesVueEmits {
     (e: 'loaded', loaded: SavedOrLoaded): void
     (e: 'update:url', path: string): void
     (e: 'removed', id: string): void
+}
+
+if (!props.url) {
+    throw 'nes-vue missing props: url.'
 }
 
 const [controller, turbo_btns] = useController(props)
@@ -72,14 +73,6 @@ function emitError(errorObj: EmitErrorObj) {
     emits('error', errorObj)
     return false
 }
-
-const nes = new jsnes.NES({
-    onFrame,
-    onAudioSample,
-    sampleRate: getSampleRate(),
-})
-
-nes.videoMode = false
 
 effect(() => {
     nes.ppu.clipToTvSize = !props.clip
@@ -113,13 +106,8 @@ const automatic: { [key: string]: { [key: string]: Automatic } } = {
 }
 
 const interval = computed(() => {
-    let time = (1000 / (2 * props.turbo))
-    if (time < 20) {
-        time = 20
-    }
-    if (time > 100) {
-        time = 100
-    }
+    const time = (1000 / (2 * props.turbo))
+    math_between(time, 20, 100)
     return time
 })
 
@@ -243,7 +231,7 @@ function start(url: string = <string>props.url) {
     })
 
     rp.then(() => {
-        audioFrame(nes)
+        audioFrame()
         emits('success')
     }, reason => {
         emitError(reason)
@@ -649,8 +637,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('keydown', downKeyboardEvent)
-    document.removeEventListener('keyup', upKeyboardEvent)
+    removeEvent()
     stop()
 })
 

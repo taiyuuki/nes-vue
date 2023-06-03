@@ -1,5 +1,5 @@
-import type { NES } from 'jsnes'
 import { tas_scripts } from 'src/tas'
+import nes from 'src/nes'
 
 let audio_ctx = {} as AudioContext
 let script_processor: ScriptProcessorNode
@@ -15,13 +15,13 @@ function audio_remain() {
     return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
 }
 
-export const onAudioSample = (left: number, right: number) => {
+function onAudioSample(left: number, right: number) {
     audio_samples_L[audio_write_cursor] = left
     audio_samples_R[audio_write_cursor] = right
     audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
 }
 
-export const getSampleRate = () => {
+function getSampleRate()  {
     if (!window.AudioContext) {
         return 44100
     }
@@ -31,7 +31,7 @@ export const getSampleRate = () => {
     return sampleRate
 }
 
-export const audioFrame = (nes: NES) => {
+function audioFrame()  {
     audio_ctx = new AudioContext()
     nes.frameCounter = 1
     script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
@@ -62,7 +62,7 @@ export const audioFrame = (nes: NES) => {
     script_processor.connect(audio_ctx.destination)
 }
 
-export const audioStop = () => {
+function audioStop()  {
     script_processor.disconnect(audio_ctx.destination)
     script_processor.onaudioprocess = null
     script_processor = {} as ScriptProcessorNode
@@ -75,18 +75,18 @@ export const audioStop = () => {
 /**
  * 🎮: Pause
  */
-export function pause() {
+function pause() {
     audio_ctx.suspend()
 }
 
 /**
  * 🎮: Play
  */
-export function play() {
+function play() {
     audio_ctx.resume()
 }
 
-export function setGain(n: number) {
+function setGain(n: number) {
     if (n > 100) {
         n = 100
     }
@@ -94,4 +94,14 @@ export function setGain(n: number) {
         n = 0
     }
     gain = n / 100
+}
+
+export {
+    onAudioSample,
+    audioFrame,
+    audioStop,
+    getSampleRate,
+    setGain,
+    play,
+    pause,
 }
