@@ -65,13 +65,6 @@ export function decompressArray(compressed: number[]) {
     return decompressed
 }
 
-export function getPtTile() {
-    return get_fill_arr(512, 0).map(() => ({
-        opaque: get_fill_arr(8, false),
-        pix: get_fill_arr(64, 0),
-    }))
-}
-
 interface PtTile {
     opaque: boolean[]
     pix: number[]

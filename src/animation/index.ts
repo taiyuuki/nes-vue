@@ -1,18 +1,8 @@
-// import { key_in } from '@taiyuuki/utils'
-// import type { NES } from 'jsnes'
-// import { initTasScript, tas_scripts } from 'src/tas'
-// import { ignoreSourceError } from 'src/utils'
-
 export const WIDTH = 256
 export const HEIGHT = 240
 let animationframeID: number
 let framebuffer_u8 = {} as Uint8ClampedArray, framebuffer_u32 = {} as Uint32Array
 let canvas_ctx = {} as CanvasRenderingContext2D
-// let _nes!: NES
-
-// initTasScript()
-
-// let frameCounter = 1
 
 export function onFrame(framebuffer_24: Buffer) {
     for (let i = 0; i < framebuffer_24.length; i += 1) {
@@ -33,10 +23,6 @@ export const animationFrame = (cvs: HTMLCanvasElement) => {
 
     function onAnimationFrame() {
         cancelAnimationFrame(animationframeID)
-        // nes.frame()
-        // frameCounter++
-        // nes.controllers[1].state = tas_scripts[frameCounter].p1
-        // nes.controllers[2].state = tas_scripts[frameCounter].p2
         animationframeID = requestAnimationFrame(onAnimationFrame)
         image.data.set(framebuffer_u8)
         canvas_ctx.putImageData(image, 0, 0)
