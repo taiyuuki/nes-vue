@@ -69,7 +69,7 @@ createApp(App).use(nes).mount("#app");
 | `height`    | 游戏画面高度，可以有单位，默认是px。                         | string \| number | 240                 |
 | `label`     | 游戏运行前画面上的显示文字。                                 | string           | ‘Game Start’        |
 | `gain`      | 游戏音量 介于[0, 100]之间。                                  | number           | 100                 |
-| `clip`      | 是否剪切画面为TV尺寸，false=游戏画面的四周剪切8像素，true=不剪切。<br />设为不剪切可以解决部分游戏画面边缘显示不全的问题，且画面紧凑没有黑边，但也会造成很多游戏画面边缘材质闪烁，请酌情使用。 | boolean          | false               |
+| `noClip`      | 是否剪切画面为TV尺寸，false=游戏画面的四周剪切8像素，true=不剪切。<br />设为不剪切可以解决部分游戏画面边缘显示不全的问题，且画面紧凑没有黑边，但也会造成很多游戏画面边缘材质闪烁，请酌情使用。 | boolean          | false               |
 | `autoStart` | 组件挂载后自动开始游戏                                       | boolean          | false               |
 | `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save)           | boolean          | false               |
 | `debugger`  | 错误信息输出到控制台                                         | boolean          | false               |

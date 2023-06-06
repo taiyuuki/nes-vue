@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
     height?: number | string
     label?: string
     gain?: number
-    clip?: boolean
+    noClip?: boolean
     storage?: boolean
     debugger?: boolean
     turbo?: number
