@@ -28,13 +28,14 @@ function putImageData() {
 }
 
 function animationFrame(cvs: HTMLCanvasElement) {
-    canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
-
+    canvas_ctx = cvs.getContext('2d')!
     canvas_ctx.fillStyle = 'black'
     canvas_ctx.fillRect(0, 0, WIDTH, HEIGHT)
     const buffer = new ArrayBuffer(imageData.data.length)
     framebuffer_u8 = new Uint8ClampedArray(buffer)
     framebuffer_u32 = new Uint32Array(buffer)
+    playback.clearDB()
+    nes.frameCounter = 1
     animationframeID = requestAnimationFrame(onAnimationFrame)
 
     function onAnimationFrame() {

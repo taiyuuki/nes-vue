@@ -9,7 +9,7 @@ class DB<T = any> {
         this.dateFactory = window.indexedDB
         this.dbName = dbName
         this.storeName = storeName
-        this.res = this.dateFactory.open(dbName, DB.VERSION)
+        this.res = this.dateFactory.open(this.dbName, DB.VERSION)
 
         this.res.addEventListener('success', () => {
             this.database = this.res.result
@@ -21,8 +21,8 @@ class DB<T = any> {
 
         this.res.addEventListener('upgradeneeded', () => {
             this.database = this.res.result
-            if (!this.database.objectStoreNames.contains(storeName)) {
-                this.database.createObjectStore(storeName, { keyPath: 'id' })
+            if (!this.database.objectStoreNames.contains(this.storeName)) {
+                this.database.createObjectStore(this.storeName, { keyPath: 'id' })
             }
         })
     }
