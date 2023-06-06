@@ -76,6 +76,7 @@ import { NesVue } from 'nes-vue';
 | `storage`   | Use `localStorage ` to save the game state, see [Methods - save](#save). | boolean          | false                         |
 | `debugger`  | The error message is output in the console.                  | boolean          | false                         |
 | `turbo` | Mashing speed per second, between [5, 20].                   | number           | 16                            |
+| `rewindMode` | Enable rewind mode, in this mode, you can manipulation the game frame by frame using the `prev` and `next` methods. | boolean | false |
 | `p1`        | Player 1 controller.                                         | object           | see [Controller](#Controller) |
 | `p2`        | Player 2 controller.                                         | object           | see [Controller](#Controller) |
 
@@ -381,3 +382,31 @@ There are several points to note:
   The specific number of frames that need to be adjusted can only be tested by yourself.
 
 * Even with identical game versions, the start frame is completely aligned, and as the game progresses, errors may occur due to differences in the implementation of the emulator. In this case, manual adjustment of the `*.fm2` file is the only way to correct it.
+
+### Rewind mode
+
+When rewind mode is enabled, calling the `prev` or `next` methods will pause the game and allow frame by frame manipulation of the game.
+
+```vue
+<template>
+  <nes-vue :url="example.com/aaa.nes" auto-start :width="512" :height="480" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+function prevFrame() {
+  nes.value.prev() // Backward one frame.
+}
+
+function nextFrame() {
+  nes.value.next() // Forward one frame.
+}
+
+function play() {
+  nes.value.play() // Continues to run.
+}
+</script>
+```
+

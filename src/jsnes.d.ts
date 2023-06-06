@@ -5,6 +5,7 @@ declare module "jsnes" {
     mmap: Mmap;
     ppu: PPU;
     videoMode: boolean
+    playbackMode: boolean
     frameCounter: number
     controllers: Controller[]
     toJSON(): NESInstance

@@ -2,6 +2,7 @@ import { Playback } from 'src/playback'
 import { compressArray, decompressArray } from 'src/utils'
 import { loadNesData, nes } from 'src/nes'
 import { nesFrame, resume } from 'src/audio'
+
 const WIDTH = 256
 const HEIGHT = 240
 let animationframeID: number
@@ -14,11 +15,13 @@ const playback = new Playback
 function onFrame(u32: number[]) {
     nes.frameCounter++
     for (let i = 0; i < 256 * 240; i += 1) {
-        framebuffer_u32[i] = 0xff000000 | u32[i] // Full alpha
+        framebuffer_u32[i] = 0xff000000 | u32[i]
     }
-    playback.push(compressArray(framebuffer_u32), nes.frameCounter)
-    if (nes.frameCounter % 60 === 0) {
-        playback.save()
+    if (nes.playbackMode) {
+        playback.push(compressArray(framebuffer_u32), nes.frameCounter)
+        if (nes.frameCounter % 45 === 0) {
+            playback.save()
+        }
     }
 }
 

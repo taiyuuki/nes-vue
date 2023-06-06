@@ -22,12 +22,6 @@ function stopGame() {
     }
 }
 
-function action() {
-    if (is_not_void(nes.value)) {
-        nes.value.action()
-    }
-}
-
 function save() {
     if (is_not_void(nes.value)) {
         nes.value.save(gameUrl.value)
@@ -86,8 +80,9 @@ function onError(error: EmitErrorObj) {
       label="Click to Start"
       width="512"
       height="480"
-      clip
+      no-clip
       debugger
+      rewind-mode
       @error="onError"
     />
   </div>
@@ -97,9 +92,6 @@ function onError(error: EmitErrorObj) {
     </button>
     <button @click="stopGame">
       Stop
-    </button>
-    <button @click="action">
-      Action
     </button>
     <button
       @click="save"

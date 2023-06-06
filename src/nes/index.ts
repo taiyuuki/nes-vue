@@ -13,6 +13,7 @@ const nes = new jsnes.NES({
 
 nes.videoMode = false
 nes.frameCounter = 1
+nes.playbackMode = false
 const rom = {
     buffer: null as string | null,
 }

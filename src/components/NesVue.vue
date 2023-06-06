@@ -3,7 +3,7 @@ import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
 import { DB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
-import { audioFrame, audioStop, suspend, resume, setGain } from 'src/audio'
+import { audioFrame, audioStop, suspend, setGain } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut, rewind, forward, frameAction } from 'src/animation'
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between, key_in } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<{
     storage?: boolean
     debugger?: boolean
     turbo?: number
+    rewindMode?: boolean
     p1?: Partial<Controller>
     p2?: Partial<Controller>
 }>(), {
@@ -37,6 +38,7 @@ const props = withDefaults(defineProps<{
     storage: false,
     debugger: false,
     turbo: 16,
+    rewindMode: false,
     p1: () => P1_DEFAULT,
     p2: () => P2_DEFAULT,
 })
@@ -247,7 +249,7 @@ function start(url: string = <string>props.url) {
 function reset() {
     nes.videoMode && fm2Stop()
     isStop.value || stop()
-    isPause || (isPause = false)
+    isPause && (isPause = false)
     if (props.url) {
         start()
     }
@@ -361,7 +363,7 @@ function loadIndexedDB(id: string) {
  */
 function save(id: string) {
     if (checkId(id)) {return}
-    if (!nes.cpu.irqRequested) {
+    if (!nes.cpu.irqRequested || isPause || isStop.value) {
         return emitError({
             code: 1,
             message: 'Save Error: Can only be saved while the game is running.',
@@ -396,7 +398,7 @@ function save(id: string) {
  */
 function load(id: string) {
     if (checkId(id)) {return}
-    if (!nes.cpu.irqRequested) {
+    if (!nes.cpu.irqRequested || isPause || isStop.value) {
         return emitError({
             code: 2,
             message: 'Load Error: Can only be loaded when the game is running.',
@@ -494,23 +496,21 @@ function pause() {
 }
 
 function play() {
+    if (!props.rewindMode) { return }
     isPause = false
-    resume()
+    frameAction()
 }
 
 function prev() {
+    if (!props.rewindMode) { return }
     isPause || pause()
     rewind()
 }
 
 function next() {
+    if (!props.rewindMode) { return }
     isPause || pause()
     forward()
-}
-
-function action() {
-    isPause = false
-    frameAction()
 }
 
 const canvasStyle = computed(() => {
@@ -536,8 +536,10 @@ watch(() => props.url, () => {
     reset()
 })
 watch(() => props.gain, () => { setGain(props.gain) })
+watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
 
 onMounted(() => {
+    nes.playbackMode = props.rewindMode
     if (props.autoStart) {
         start()
     }
@@ -566,7 +568,6 @@ defineExpose({
     fm2Stop,
     prev,
     next,
-    action,
 })
 </script>
 
