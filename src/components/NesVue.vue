@@ -3,7 +3,7 @@ import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
 import { DB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
-import { audioFrame, audioStop, suspend, setGain } from 'src/audio'
+import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut, rewind, forward, frameAction } from 'src/animation'
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between, key_in } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
@@ -496,9 +496,13 @@ function pause() {
 }
 
 function play() {
-    if (!props.rewindMode) { return }
     isPause = false
-    frameAction()
+    if (props.rewindMode) {
+        frameAction()
+    }
+    else {
+        resume()
+    }
 }
 
 function prev() {

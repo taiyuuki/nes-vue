@@ -1,6 +1,7 @@
 import { fm2s, roms } from './download/roms'
 
 const template = `
+
 <template>
   <div class="box">
     <nes-vue
@@ -32,7 +33,7 @@ const template = `
     <button @click="stopGame">
       Stop
     </button>
-    <button @click="pause" style="width:5em" :disabled="disable">
+    <button @click="pause" style="width:4em" :disabled="disable">
       {{ pauseLabel }}
     </button>
     <button @click="playTAS" :disabled="disable">
@@ -78,6 +79,7 @@ function stopGame() {
 function selectRom() {
   gameURL.value = slt.value.value
   disable.value = true
+  tasPlaying.value = false
 }
 
 const tasPlaying = ref(false)
@@ -130,9 +132,9 @@ button, select, input {
 export const isGitee = location.href.includes('gitee')
 
 export const repoURL = isGitee
-    ? 'https://gitee.com/taiyuuki/nes-vue'
-    : 'https://github.com/taiyuuki/nes-vue'
+  ? 'https://gitee.com/taiyuuki/nes-vue'
+  : 'https://github.com/taiyuuki/nes-vue'
 
 export {
-    template, script, style,
+  template, script, style,
 }
