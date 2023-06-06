@@ -1,22 +1,38 @@
+import { Playback } from 'src/playback'
+import { compressArray, decompressArray } from 'src/utils'
+import { loadNesData, nes } from 'src/nes'
+import { nesFrame, resume } from 'src/audio'
 const WIDTH = 256
 const HEIGHT = 240
 let animationframeID: number
-let framebuffer_u8 = {} as Uint8ClampedArray, framebuffer_u32 = {} as Uint32Array
-let canvas_ctx = {} as CanvasRenderingContext2D
+let framebuffer_u8!: Uint8ClampedArray, framebuffer_u32!: Uint32Array
+let canvas_ctx!: CanvasRenderingContext2D
+const imageData = new ImageData(WIDTH, HEIGHT)
 
-function onFrame(framebuffer_24: Buffer) {
-    for (let i = 0; i < framebuffer_24.length; i += 1) {
-        framebuffer_u32[i] = 0xff000000 | framebuffer_24[i] // Full alpha
+const playback = new Playback
+
+function onFrame(u32: number[]) {
+    nes.frameCounter++
+    for (let i = 0; i < 256 * 240; i += 1) {
+        framebuffer_u32[i] = 0xff000000 | u32[i] // Full alpha
+    }
+    playback.push(compressArray(framebuffer_u32), nes.frameCounter)
+    if (nes.frameCounter % 60 === 0) {
+        playback.save()
     }
 }
 
-const animationFrame = (cvs: HTMLCanvasElement) => {
+function putImageData() {
+    imageData.data.set(framebuffer_u8)
+    canvas_ctx.putImageData(imageData, 0, 0)
+}
+
+function animationFrame(cvs: HTMLCanvasElement) {
     canvas_ctx = cvs.getContext('2d') as CanvasRenderingContext2D
-    const image = canvas_ctx.getImageData(0, 0, WIDTH, HEIGHT)
 
     canvas_ctx.fillStyle = 'black'
     canvas_ctx.fillRect(0, 0, WIDTH, HEIGHT)
-    const buffer = new ArrayBuffer(image.data.length)
+    const buffer = new ArrayBuffer(imageData.data.length)
     framebuffer_u8 = new Uint8ClampedArray(buffer)
     framebuffer_u32 = new Uint32Array(buffer)
     animationframeID = requestAnimationFrame(onAnimationFrame)
@@ -24,12 +40,58 @@ const animationFrame = (cvs: HTMLCanvasElement) => {
     function onAnimationFrame() {
         cancelAnimationFrame(animationframeID)
         animationframeID = requestAnimationFrame(onAnimationFrame)
-        image.data.set(framebuffer_u8)
-        canvas_ctx.putImageData(image, 0, 0)
+        putImageData()
     }
 }
 
-const fitInParent = (cvs: HTMLCanvasElement) => {
+function rewind() {
+    const frame = nes.frameCounter - 1
+    if (frame in playback.frameData) {
+        const frameData = decompressArray(playback.action(frame))
+        for (let i = 0; i < frameData.length; i++) {
+            framebuffer_u32[i] = frameData[i]
+        }
+        putImageData()
+        nes.frameCounter--
+    }
+    else {
+        playback.load((data) => {
+            loadNesData(data, () => {
+                console.error('Failed to load nes data')
+            })
+
+            rewind()
+        })
+    }
+}
+
+function forward() {
+    const frame = nes.frameCounter + 1
+    if (frame in playback.frameData) {
+        const frameData = decompressArray(playback.action(frame))
+        for (let i = 0; i < frameData.length; i++) {
+            framebuffer_u32[i] = frameData[i]
+        }
+        putImageData()
+        nes.frameCounter++
+    }
+    else {
+        nesFrame()
+    }
+}
+
+function frameAction() {
+    const frame = nes.frameCounter + 1
+    if (frame in playback.frameData) {
+        forward()
+        setTimeout(frameAction, 1000 / 60)
+    }
+    else {
+        resume()
+    }
+}
+
+function fitInParent(cvs: HTMLCanvasElement) {
     const parent = cvs.parentNode as HTMLElement
     const parentWidth = parent.clientWidth
     const parentHeight = parent.clientHeight
@@ -45,11 +107,11 @@ const fitInParent = (cvs: HTMLCanvasElement) => {
     }
 }
 
-const animationStop = () => {
+function animationStop() {
     cancelAnimationFrame(animationframeID)
 }
 
-const cut = (cvs: HTMLCanvasElement) => {
+function cut(cvs: HTMLCanvasElement) {
     const image = new Image()
     image.src = cvs.toDataURL('image/png')
     return image
@@ -62,6 +124,8 @@ export {
     animationFrame,
     animationStop,
     fitInParent,
+    rewind,
+    forward,
     cut,
-
+    frameAction,
 }

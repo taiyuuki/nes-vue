@@ -1,5 +1,5 @@
 import { object_keys } from '@taiyuuki/utils'
-import type { ControllerOptions, NesVueProps, Player } from 'src/components/types'
+import type { ControllerMaps, NesVueProps, Player } from 'src/components/types'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
 import { onMounted, onBeforeUnmount, computed } from 'vue'
@@ -48,7 +48,7 @@ class GamepadManager {
     animationFrame: number
     axesHolding: Record<Player, boolean[]>
     btnHolding: Record<Player, boolean[]>
-    gamepad_btns:  ComputedRef<{ p1: string[]; p2: string[] }>
+    gamepad_btns: ComputedRef<{ p1: string[]; p2: string[] }>
 
     constructor(gamepad_btns: ComputedRef<{ p1: string[]; p2: string[] }>) {
         window.addEventListener('gamepadconnected', this.connectHandler.bind(this, true))
@@ -148,14 +148,14 @@ class GamepadManager {
     }
 }
 
-export const useController = (props: NesVueProps): [ComputedRef<ControllerOptions>, ComputedRef<string[]>] => {
+export const useController = (props: NesVueProps): [ComputedRef<ControllerMaps>, ComputedRef<string[]>] => {
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
 
     const controller = computed(() => {
-        const options: ControllerOptions = {}
+        const options: Record<string, any> = {}
         keys.forEach(key => {
-            options[p1.value[key] as string] = {
+            options[p1.value[key]] = {
                 key,
                 p: 1,
                 value: keyMaps[key],
@@ -168,7 +168,7 @@ export const useController = (props: NesVueProps): [ComputedRef<ControllerOption
                 }
             }
         })
-        return options
+        return options as ControllerMaps
     })
 
     const turbo_btns = computed(() => {

@@ -1,69 +1,157 @@
 declare module "jsnes" {
-  export class NES {
-    constructor(nesOptions: NesOptions)
-    romData: any
-    frameTime: number
-    fpsFrameCount: number
-    frameCounter: number
+  export interface NESInstance {
+    romData: string;
+    cpu: CPU;
+    mmap: Mmap;
+    ppu: PPU;
     videoMode: boolean
-    controllers: {
-      1: {
-        state: number[]
-      },
-      2: {
-        state: number[]
-      }
-    }
-    cpu: {
-      fromJSON(cpu:any): void,
-      toJSON(): any
-      reset(): void,
-      irqRequested: boolean
-    }
-    mmap: {
-      fromJSON(mmap:any): void,
-      toJSON(): any
-      reset(): void,
-    }
-    ppu: {
-      fromJSON(ppu:any): void,
-      toJSON(): any
-      reset(): void,
-      clipToTvSize: boolean
-      f_spClipping: number
-      f_bgClipping: number
-    }
-
-    loadROM(buffer: Buffer | string): void
-    frame(): void
-    buttonDown(n: number, button: string): void
-    buttonUp(n: number, button: string): void
+    frameCounter: number
+    controllers: Controller[]
+    toJSON(): NESInstance
+    fromJSON(json: any): void
     reset(): void
+    frame(): void
+    buttonUp(player: number, button: number): boolean
+    buttonDown(player: number, button: number): boolean
+    loadROM(url: string): void
     getFPS(): number
-    toJSON(): string
-    fromJSON(saveDate: any): void
+  }
+
+  export interface Controller {
+    state: number[]
+  }
+
+  export interface NesOptions {
+    onFrame(frameBuffer: number[]): void
+    onAudioSample(left: number, right: number): void
+    sampleRate?: number
+  }
+
+  export type NESConstructor = new (options: NesOptions) => NESInstance
+
+  export interface CPU {
+    mem: Array<number>;
+    cyclesToHalt: number;
+    irqRequested: boolean;
+    irqType: null;
+    toJSON(): Partial<CPU>;
+    fromJSON(json: any): void
+    reset(): void
+  }
+
+  export interface Mmap {
+    joy1StrobeState: number;
+    joy2StrobeState: number;
+    joypadLastWrite: number;
+    command: number;
+    prgAddressSelect: number;
+    chrAddressSelect: number;
+    pageNumber: null;
+    irqCounter: number;
+    irqLatchValue: number;
+    irqEnable: number;
+    prgAddressChanged: boolean;
+    toJSON(): Partial<Mmap>;
+    fromJSON(json: any): void
+    reset(): void
+  }
+
+  export interface PPU {
+    vramMem: number[];
+    spriteMem: number[];
+    vramBufferedReadValue: number;
+    firstWrite: boolean;
+    currentMirroring: number;
+    vramMirrorTable: number[];
+    ntable1: null[];
+    sramAddress: number;
+    hitSpr0: boolean;
+    sprPalette: number[];
+    imgPalette: number[];
+    curX: number;
+    scanline: number;
+    lastRenderedScanline: number;
+    clipToTvSize: boolean;
+    curNt: null;
+    scantile: null[];
+    attrib: null[];
+    buffer: null[];
+    bgbuffer: null[];
+    pixrendered: null[];
+    requestEndFrame: boolean;
+    nmiOk: boolean;
+    dummyCycleToggle: boolean;
+    nmiCounter: number;
+    validTileData: null;
+    scanlineAlreadyRendered: null;
+    nameTable: NameTable[];
+    ptTile: PtTile[];
+    toJSON(): Partial<PPU>;
+    fromJSON(json: any): void
+    reset(): void
+  }
+
+  export interface NameTable {
+    tile: number[];
+    attrib: number[];
+  }
+
+  export interface PtTile {
+    opaque: boolean[];
+    pix: number[];
   }
   export interface ControllerOptions {
-    BUTTON_UP: string
-    BUTTON_DOWN: string
-    BUTTON_LEFT: string
-    BUTTON_RIGHT: string
-    BUTTON_A: string
-    BUTTON_B: string
-    BUTTON_SELECT: string
-    BUTTON_START: string
+    BUTTON_UP: number
+    BUTTON_DOWN: number
+    BUTTON_LEFT: number
+    BUTTON_RIGHT: number
+    BUTTON_A: number
+    BUTTON_B: number
+    BUTTON_SELECT: number
+    BUTTON_START: number
   }
-  const jsnes = { NES, Controller: ControllerOptions }
+  type JSNES = {
+    NES: NESConstructor, Controller: ControllerOptions
+  }
+  const jsnes: JSNES
   export default jsnes
 }
 
-type NesOptions = {
-  onFrame(frameBuffer: Buffer): void
-  onAudioSample(left: number, right: number): void
-  sampleRate?: number
-};
+declare interface FrameData {
+  [frame: number]: number[]
+}
 
-type Game = {
-  name: string
+declare interface SaveData {
   path: string
-};
+  data: {
+    cpu: any
+    mmap: any
+    ppu: any
+    vramMemZip: any
+    nameTableZip: any
+    cpuMemZip: any
+    ptTileZip: any
+    frameCounter: number
+  }
+}
+
+declare interface PlaybackData {
+  length: number,
+  frameList: number[],
+  frameData: FrameData,
+  nes: SaveData
+}
+
+declare interface Replay {
+  saveDatas: {
+    [index: number]: SaveData
+  }
+  frameList: number[]
+  dbIndex: number
+  length: number
+  push(saveData: SaveData, index: number): void
+  get lastIndex(): number
+  pop(): SaveData
+  save(): void
+  load(): void
+}

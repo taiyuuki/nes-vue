@@ -1,7 +1,7 @@
 import { tas_scripts } from 'src/tas'
-import nes from 'src/nes'
+import { nes } from 'src/nes'
 
-let audio_ctx = {} as AudioContext
+let audio_ctx = new AudioContext
 let script_processor: ScriptProcessorNode
 let gain = 1
 const AUDIO_BUFFERING = 512
@@ -10,6 +10,8 @@ const SAMPLE_MASK = SAMPLE_COUNT - 1
 const audio_samples_L = new Float32Array(SAMPLE_COUNT)
 const audio_samples_R = new Float32Array(SAMPLE_COUNT)
 let audio_write_cursor = 0, audio_read_cursor = 0
+
+// const replayFrames = new ReplayFrames
 
 function audio_remain() {
     return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
@@ -21,7 +23,7 @@ function onAudioSample(left: number, right: number) {
     audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
 }
 
-function getSampleRate()  {
+function getSampleRate() {
     if (!window.AudioContext) {
         return 44100
     }
@@ -31,23 +33,25 @@ function getSampleRate()  {
     return sampleRate
 }
 
-function audioFrame()  {
+function nesFrame() {
+    if (nes.videoMode) {
+        const script = tas_scripts[nes.frameCounter]
+        if (nes.frameCounter > 0 && script) {
+            nes.controllers[1].state = script.p1
+            nes.controllers[2].state = script.p2
+        }
+    }
+    nes.frame()
+}
+
+function audioFrame() {
     audio_ctx = new AudioContext()
-    nes.frameCounter = 1
     script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2)
     script_processor.onaudioprocess = (event: AudioProcessingEvent) => {
         const dst = event.outputBuffer
         const len = dst.length
         if (audio_remain() < AUDIO_BUFFERING) {
-            if (nes.videoMode) {
-                const script = tas_scripts[nes.frameCounter]
-                if (nes.frameCounter > 0 && script) {
-                    nes.controllers[1].state = script.p1
-                    nes.controllers[2].state = script.p2
-                }
-            }
-            nes.frame()
-            nes.frameCounter++
+            nesFrame()
         }
         const dst_l = dst.getChannelData(0)
         const dst_r = dst.getChannelData(1)
@@ -62,7 +66,7 @@ function audioFrame()  {
     script_processor.connect(audio_ctx.destination)
 }
 
-function audioStop()  {
+function audioStop() {
     script_processor.disconnect(audio_ctx.destination)
     script_processor.onaudioprocess = null
     script_processor = {} as ScriptProcessorNode
@@ -75,14 +79,14 @@ function audioStop()  {
 /**
  * 🎮: Pause
  */
-function pause() {
+function suspend() {
     audio_ctx.suspend()
 }
 
 /**
  * 🎮: Play
  */
-function play() {
+function resume() {
     audio_ctx.resume()
 }
 
@@ -98,10 +102,11 @@ function setGain(n: number) {
 
 export {
     onAudioSample,
+    nesFrame,
     audioFrame,
     audioStop,
     getSampleRate,
     setGain,
-    play,
-    pause,
+    suspend,
+    resume,
 }

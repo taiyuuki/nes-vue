@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
-import { saveData, loadData, putData, removeData, clearData } from 'src/db'
+import { DB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
-import { audioFrame, audioStop, pause, play, setGain } from 'src/audio'
-import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between } from '@taiyuuki/utils'
+import { audioFrame, audioStop, suspend, resume, setGain } from 'src/audio'
+import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut, rewind, forward, frameAction } from 'src/animation'
+import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between, key_in } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, tas_scripts } from 'src/tas'
-import { compressArray, decompressArray, getVramMirrorTable, compressNameTable, decompressNameTable, compressPtTile, decompressPtTile } from 'src/utils'
-import nes from 'src/nes'
+import { nes, getNesData, loadNesData, rom } from 'src/nes'
 
 defineOptions({
     name: 'nes-vue',
@@ -62,7 +61,8 @@ const [controller, turbo_btns] = useController(props)
 
 const cvs = ref<HTMLCanvasElement | null>(null)
 const isStop = ref<boolean>(true)
-let romBuffer: null | string = null
+const db = new DB<SaveData>('nes-vue', 'save_data')
+let isPause = false
 
 let fpsStamp: NodeJS.Timeout
 
@@ -112,8 +112,9 @@ const interval = computed(() => {
 })
 
 const downKeyboardEvent = function (event: KeyboardEvent) {
-    const keyMap = controller.value[event.code]
-    if (is_not_void(keyMap)) {
+    const code = event.code
+    if (key_in(code, controller.value)) {
+        const keyMap = controller.value[code]
         if (turbo_btns.value.includes(event.code)) {
             const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
             if (autoObj.once) {
@@ -137,8 +138,9 @@ const downKeyboardEvent = function (event: KeyboardEvent) {
     }
 }
 const upKeyboardEvent = function (event: KeyboardEvent) {
-    const keyMap = controller.value[event.code]
-    if (is_not_void(keyMap)) {
+    const code = event.code
+    if (key_in(code, controller.value)) {
+        const keyMap = controller.value[code]
         if (turbo_btns.value.includes(event.code)) {
             const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
             clearInterval(autoObj.timeout)
@@ -175,7 +177,7 @@ function start(url: string = <string>props.url) {
         clearInterval(fpsStamp)
     }
     if (url !== props.url) {
-        romBuffer = null
+        rom.buffer = null
         emits('update:url', url)
         return
     }
@@ -199,8 +201,8 @@ function start(url: string = <string>props.url) {
                 isStop.value = true
             }
         }
-        if (is_not_void(romBuffer)) {
-            loadROM(romBuffer)
+        if (is_not_void(rom.buffer)) {
+            loadROM(rom.buffer)
         }
         else {
             const req = new XMLHttpRequest()
@@ -214,8 +216,8 @@ function start(url: string = <string>props.url) {
             }
             req.onload = function () {
                 if (this.status === 200) {
-                    romBuffer = this.responseText
-                    loadROM(romBuffer)
+                    rom.buffer = this.responseText
+                    loadROM(rom.buffer)
                 }
                 else {
                     reject({
@@ -243,12 +245,9 @@ function start(url: string = <string>props.url) {
  * 🎮: Restart the current game
  */
 function reset() {
-    if (nes.videoMode) {
-        fm2Stop()
-    }
-    if (!isStop.value) {
-        stop()
-    }
+    nes.videoMode && fm2Stop()
+    isStop.value || stop()
+    isPause || (isPause = false)
     if (props.url) {
         start()
     }
@@ -280,79 +279,14 @@ function checkId(id: string | number | undefined) {
     }
 }
 
-function loadGameData(data: string) {
-    const saveData = JSON.parse(data)
-    if (saveData.path !== props.url) {
-        return emitError({
-            code: 2,
-            message: `Load Error: The saved data is inconsistent with the current game, saved: ${saveData.path}, current: ${props.url}.`,
-        })
-    }
-    try {
-        if (!romBuffer) {
-            start(saveData.path)
-        }
-        const ppuData = saveData.data.ppu
-        const cpuData = saveData.data.cpu
-        ppuData.attrib = get_fill_arr(0x20, 0)
-        ppuData.bgbuffer = get_fill_arr(0xF000, 0)
-        ppuData.buffer = get_fill_arr(0xF000, 0)
-        ppuData.pixrendered = get_fill_arr(0xF000, 0)
-        ppuData.vramMem = decompressArray(saveData.data.vramMenZip)
-        ppuData.nameTable = decompressNameTable(saveData.data.nameTableZip)
-        ppuData.vramMirrorTable = getVramMirrorTable()
-        ppuData.ptTile = decompressPtTile(saveData.data.ptTileZip)
-        cpuData.mem = decompressArray(saveData.data.cpuMemZip)
-        nes.ppu.reset()
-        nes.romData = romBuffer
-        nes.cpu.fromJSON(cpuData)
-        nes.mmap.fromJSON(saveData.data.mmap)
-        nes.ppu.fromJSON(ppuData)
-        nes.frameCounter = saveData.frameCounter
-    }
-    catch (_) {
-        return emitError({
-            code: 2,
-            message: 'Load Error: The saved data is invalid.',
-        })
-    }
-}
-
-function getNesData() {
-    const ppuData = nes.ppu.toJSON()
-    const cpuData = nes.cpu.toJSON()
-    delete ppuData.attrib
-    delete ppuData.bgbuffer
-    delete ppuData.buffer
-    delete ppuData.pixrendered
-    delete ppuData.vramMirrorTable
-    const vramMenZip = compressArray(ppuData.vramMem)
-    const nameTableZip = compressNameTable(ppuData.nameTable)
-    const ptTileZip = compressPtTile(ppuData.ptTile)
-    const cpuMemZip = compressArray(cpuData.mem)
-    delete ppuData.vramMem
-    delete ppuData.nameTable
-    delete cpuData.mem
-    delete ppuData.ptTile
-    return JSON.stringify({
-        path: props.url,
-        data: {
-            cpu: cpuData,
-            mmap: nes.mmap.toJSON(),
-            ppu: ppuData,
-            vramMenZip,
-            nameTableZip,
-            cpuMemZip,
-            ptTileZip,
-        },
-        frameCounter: nes.frameCounter,
-    })
+function loadGameData(saveData: SaveData) {
+    loadNesData(saveData, emitError, props.url)
 }
 
 function saveInStorage(id: string) {
     if (checkId(id)) {return}
     try {
-        localStorage.setItem(id, getNesData())
+        localStorage.setItem(id, JSON.stringify(getNesData(props.url)))
         emits('saved', {
             id,
             message: 'The state has been saved in localStorage',
@@ -371,14 +305,14 @@ function saveInStorage(id: string) {
 
 function loadInStorage(id: string) {
     if (checkId(id)) {return}
-    const saveDataJSON = localStorage.getItem(id)
-    if (!saveDataJSON) {
+    const saveDataString = localStorage.getItem(id)
+    if (!saveDataString) {
         return emitError({
             code: 2,
             message: 'Load Error: nothing to load.',
         })
     }
-    loadGameData(saveDataJSON)
+    loadGameData(JSON.parse(saveDataString))
     emits('loaded', {
         id,
         message: 'Loaded state from localStorage',
@@ -388,67 +322,21 @@ function loadInStorage(id: string) {
 
 function saveIndexedDB(id: string) {
     if (checkId(id)) {return}
-    const data = {
-        id,
-        nes: getNesData(),
+    try {
+        db.setItem(id, getNesData(props.url))
     }
-    saveData({
-        data,
-        onSuccess() {
-            emits('saved', {
-                id,
-                message: 'The state has been saved in IndexedDB',
-                target: 'indexedDB',
-            })
-        },
-        onError(code: number | undefined) {
-            if (code === 0) {
-                putData({
-                    data,
-                    onSuccess: () => {
-                        emits('saved', {
-                            id,
-                            message: 'Overwritten saved',
-                            target: 'indexedDB',
-                        })
-                    },
-                })
-                return
-            }
-            return emitError({
-                code: 1,
-                message: 'Save Error: Unable to save data to indexedDB.',
-            })
-        },
-    })
+    catch (_) {
+        emitError({
+            code: 3,
+            message: 'Save Error: Unable to save data to indexedDB.',
+        })
+    }
 }
 
 function loadIndexedDB(id: string) {
     if (checkId(id)) {return}
-    loadData({
-        id,
-        onSuccess(res) {
-            if (res.result?.nes) {
-                loadGameData(res.result.nes)
-                emits('loaded', {
-                    id,
-                    message: 'Loaded state from indexedDB',
-                    target: 'indexedDB',
-                })
-            }
-            else {
-                return emitError({
-                    code: 2,
-                    message: 'Load Error: Nothing to load.',
-                })
-            }
-        },
-        onError() {
-            return emitError({
-                code: 2,
-                message: 'Load Error: Nothing to load, probably the save data has been removed or invalidated.',
-            })
-        },
+    db.getItem(id, (data) => {
+        loadGameData(data)
     })
 }
 
@@ -528,17 +416,12 @@ function remove(id: string) {
         localStorage.removeItem(id)
     }
     else {
-        removeData({
-            id,
-            onSuccess() {
-                emits('removed', id)
-            },
-        })
+        db.removeItem(id)
     }
 }
 
 function clear() {
-    clearData()
+    db.clear()
 }
 
 /** },
@@ -605,6 +488,31 @@ function fm2Text(text: string, fix = 0) {
     return Promise.resolve(fm2Play)
 }
 
+function pause() {
+    isPause = true
+    suspend()
+}
+
+function play() {
+    isPause = false
+    resume()
+}
+
+function prev() {
+    isPause || pause()
+    rewind()
+}
+
+function next() {
+    isPause || pause()
+    forward()
+}
+
+function action() {
+    isPause = false
+    frameAction()
+}
+
 const canvasStyle = computed(() => {
     const pure = /^\d*$/
     let width = props.width
@@ -624,7 +532,7 @@ const canvasStyle = computed(() => {
 })
 
 watch(() => props.url, () => {
-    romBuffer = null
+    rom.buffer = null
     reset()
 })
 watch(() => props.gain, () => { setGain(props.gain) })
@@ -656,6 +564,9 @@ defineExpose({
     fm2Text,
     fm2Play,
     fm2Stop,
+    prev,
+    next,
+    action,
 })
 </script>
 

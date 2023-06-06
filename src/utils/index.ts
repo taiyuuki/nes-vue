@@ -1,4 +1,5 @@
 import { get_fill_arr } from '@taiyuuki/utils'
+import type { NameTable, PtTile } from 'jsnes'
 
 export function fillFalse(num: number): boolean[] {
     return Array(num).fill(false)
@@ -12,12 +13,12 @@ export function getVramMirrorTable() {
     return get_fill_arr(0x8000, 0).map((_, i) => i)
 }
 
-export function compressArray(arr: number[]) {
+export function compressArray(arr: number[] | Uint32Array) {
     const compressed = []
     let current = arr[0]
     let count = 1
     for (let i = 1; i < arr.length; i++) {
-        if (arr[i] == current) {
+        if (arr[i] === current) {
             count++
         }
         else {
@@ -37,7 +38,7 @@ export function compressArray(arr: number[]) {
     return compressed
 }
 
-export function decompressArray(compressed: number[]) {
+export function decompressArray(compressed: number[]): number[] {
     const decompressed = []
     for (let i = 0; i < compressed.length;) {
         if (compressed[i] < 0) {
@@ -54,11 +55,6 @@ export function decompressArray(compressed: number[]) {
         }
     }
     return decompressed
-}
-
-interface PtTile {
-    opaque: boolean[]
-    pix: number[]
 }
 
 export function compressPtTile(ptTile: PtTile[]): [number[], number[]] {
@@ -103,12 +99,7 @@ export function decompressPtTile(compressed: [number[], number[]]) {
     return ptTile
 }
 
-interface NameTable {
-    tile: number[]
-    attrib: number[]
-}
-
-export function compressNameTable(nameTable: [NameTable, NameTable, NameTable, NameTable]): [number[], number[]] {
+export function compressNameTable(nameTable: NameTable[]): [number[], number[]] {
     const tile: number[] = []
     const attrib: number[] = []
     nameTable.reduce((prev, curr) => {

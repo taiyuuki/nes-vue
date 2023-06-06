@@ -22,6 +22,12 @@ function stopGame() {
     }
 }
 
+function action() {
+    if (is_not_void(nes.value)) {
+        nes.value.action()
+    }
+}
+
 function save() {
     if (is_not_void(nes.value)) {
         nes.value.save(gameUrl.value)
@@ -34,17 +40,6 @@ function load() {
     }
 }
 
-function pause() {
-    if (is_not_void(nes.value)) {
-        nes.value.pause()
-    }
-}
-
-function play() {
-    if (is_not_void(nes.value)) {
-        nes.value.play()
-    }
-}
 function playVideo() {
     if (is_not_void(nes.value)) {
         nes.value.fm2URL('happylee-supermariobros,warped.fm2', 0)
@@ -54,9 +49,27 @@ function playVideo() {
     }
 }
 
-function stopVideo() {
+function play() {
     if (is_not_void(nes.value)) {
-        nes.value.fm2Stop()
+        nes.value.play()
+    }
+}
+
+function pause() {
+    if (is_not_void(nes.value)) {
+        nes.value.pause()
+    }
+}
+
+function prev() {
+    if (is_not_void(nes.value)) {
+        nes.value.prev()
+    }
+}
+
+function next() {
+    if (is_not_void(nes.value)) {
+        nes.value.next()
     }
 }
 
@@ -85,6 +98,9 @@ function onError(error: EmitErrorObj) {
     <button @click="stopGame">
       Stop
     </button>
+    <button @click="action">
+      Action
+    </button>
     <button
       @click="save"
     >
@@ -95,21 +111,22 @@ function onError(error: EmitErrorObj) {
     >
       Load
     </button>
-    <button @click="pause">
-      Pause
-    </button>
-    <button @click="play">
-      Play
-    </button>
     <button
       @click="playVideo"
     >
       Play Video
     </button>
-    <button
-      @click="stopVideo"
-    >
-      Video Stop
+    <button @click="prev">
+      Prev
+    </button>
+    <button @click="next">
+      Next
+    </button>
+    <button @click="pause">
+      Pause
+    </button>
+    <button @click="play">
+      Play
     </button>
   </div>
 </template>

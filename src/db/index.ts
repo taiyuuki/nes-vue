@@ -1,84 +1,59 @@
-const dateBase = window.indexedDB
-const version = 1
-const dbName = 'nes-vue'
-const storeName = 'save_data'
-const res = dateBase.open(dbName, version)
-let db: IDBDatabase
+class DB<T = any> {
+    public static readonly VERSION = 1
+    dateFactory: IDBFactory
+    storeName: string
+    dbName: string
+    res: IDBOpenDBRequest
+    database!: IDBDatabase
+    constructor(dbName: string, storeName: string) {
+        this.dateFactory = window.indexedDB
+        this.dbName = dbName
+        this.storeName = storeName
+        this.res = this.dateFactory.open(dbName, DB.VERSION)
 
-res.onsuccess = (e) => {
-    if (e.target) {
-        db = (<IDBOpenDBRequest>e.target).result
+        this.res.addEventListener('success', () => {
+            this.database = this.res.result
+        })
+
+        this.res.addEventListener('error', () => {
+            console.error('indexedDB load error')
+        })
+
+        this.res.addEventListener('upgradeneeded', () => {
+            this.database = this.res.result
+            if (!this.database.objectStoreNames.contains(storeName)) {
+                this.database.createObjectStore(storeName, { keyPath: 'id' })
+            }
+        })
+    }
+
+    setItem(id: string, data: T) {
+        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).put({ id, data })
+        this.database.addEventListener('error', () => {
+            console.error('indexedDB save error')
+        })
+    }
+
+    getItem(id: string, callback: (data: T) => void) {
+        const res = this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).get(id)
+        this.database.addEventListener('error', () => {
+            console.error('indexedDB load error')
+        })
+        res.addEventListener('success', () => {
+            callback(res.result.data)
+        })
+    }
+
+    removeItem(id: string) {
+        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).delete(id)
+    }
+
+    clear() {
+        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).clear()
     }
 }
 
-res.onerror = () => {
-    console.error('indexedDB load error')
-}
-
-res.onupgradeneeded = (e) => {
-    if (e.target) {
-        db = (<IDBOpenDBRequest>e.target).result
-        if (!db.objectStoreNames.contains(storeName)) {
-            db.createObjectStore(storeName, { keyPath: 'id' })
-        }
-    }
-}
-
-export interface SaveDataOptions {
-    data: any
-    onSuccess: (this: IDBRequest<IDBValidKey>, ev: Event) => any
-    onError: (code: number | undefined) => any
-}
-
-export interface LoadDataOptions {
-    id: string | number
-    onSuccess: (res: IDBRequest<any>) => any
-    onError: (this: IDBTransaction, ev: Event) => any
-}
-
-export interface PutDataOptions {
-    data: any
-    onSuccess: () => any
-}
-
-export interface RemoveDataOptions {
-    id: string | number
-    onSuccess: (this: IDBRequest<undefined>, ev: Event) => any
-}
-
-export function saveData({ data, onSuccess, onError }: SaveDataOptions) {
-    const res = db.transaction([storeName], 'readwrite').objectStore(storeName).add(data)
-    res.onsuccess = onSuccess
-    res.onerror = (e) => {
-        const error = (<IDBRequest>e.target).error
-        onError(error?.code)
-    }
-}
-
-export function putData({ data, onSuccess }: PutDataOptions) {
-    const res = db.transaction([storeName], 'readwrite').objectStore(storeName).put(data)
-    res.onsuccess = onSuccess
-}
-
-export function loadData({ id, onSuccess, onError }: LoadDataOptions) {
-    const transaction = db.transaction([storeName])
-    const res = transaction.objectStore(storeName).get(id)
-    res.onsuccess = () => {
-        onSuccess(res)
-    }
-    transaction.onerror = onError
-}
-
-export function removeData({ id, onSuccess }: RemoveDataOptions) {
-    const transaction = db.transaction([storeName], 'readwrite')
-    const objectStore = transaction.objectStore(storeName)
-    const res = objectStore.delete(id)
-    res.onsuccess = onSuccess
-}
-
-export function clearData() {
-    const transaction = db.transaction([storeName], 'readwrite')
-    const objectStore = transaction.objectStore(storeName)
-    objectStore.clear()
+export {
+    DB,
 }
 
