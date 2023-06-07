@@ -22,7 +22,6 @@ A NES (FC)🎮 emulator component for Vue 3.
 - [x] Support for turbo button.
 - [x] Support for saving and loading.
 - [x] Support for playing TAS recordings. (`*.fm2`)
-- [x] Support for rewind mode. (`*.fm2`)
 
 ## Usage
 
@@ -77,7 +76,6 @@ import { NesVue } from 'nes-vue';
 | `storage`   | Use `localStorage ` to save the game state, see [Methods - save](#save). | boolean          | false                         |
 | `debugger`  | The error message is output in the console.                  | boolean          | false                         |
 | `turbo` | Mashing speed per second, between [5, 20].                   | number           | 16                            |
-| `rewindMode` | Enable rewind mode, in this mode, you can manipulation the game frame by frame using the `prev` and `next` methods. | boolean | false |
 | `p1`        | Player 1 controller.                                         | object           | see [Controller](#Controller) |
 | `p2`        | Player 2 controller.                                         | object           | see [Controller](#Controller) |
 

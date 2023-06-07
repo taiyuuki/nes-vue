@@ -20,7 +20,6 @@
 - [x] 支持连发建
 - [x] 支持保存、读取
 - [x] 支持回放TAS录像（*.fm2文件）
-- [x] 支持游戏回退
 
 ## 使用
 
@@ -75,7 +74,6 @@ createApp(App).use(nes).mount("#app");
 | `storage`   | 游戏保存时使用localStorage, 见[方法 - save](#save)           | boolean          | false               |
 | `debugger`  | 错误信息输出到控制台                                         | boolean          | false               |
 | `turbo`     | 连发键每秒频率 介于[5, 25]之间                                | number           | 16                  |
-| `rewind-mode` | 开启可回退模式，这模式下，可以游戏倒退，并且可以通过`prev`和`next`方法来逐帧操作游戏。 | boolean | false |
 | `p1`        | 玩家 1 控制器                                                | object           | 见[控制器](#控制器) |
 | `p2`        | 玩家 2 控制器                                                | object           | 见[控制器](#控制器) |
 
