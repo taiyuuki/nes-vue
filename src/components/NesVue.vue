@@ -4,10 +4,10 @@ import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } fr
 import { DB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
 import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
-import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut, rewind, forward, frameAction } from 'src/animation'
+import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between, key_in } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
-import { fm2Parse, tas_scripts } from 'src/tas'
+import { fm2Parse, controllerState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
 
 defineOptions({
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
     storage?: boolean
     debugger?: boolean
     turbo?: number
-    rewindMode?: boolean
+    // rewindMode?: boolean
     p1?: Partial<Controller>
     p2?: Partial<Controller>
 }>(), {
@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<{
     storage: false,
     debugger: false,
     turbo: 16,
-    rewindMode: false,
+    // rewindMode: false,
     p1: () => P1_DEFAULT,
     p2: () => P2_DEFAULT,
 })
@@ -440,7 +440,7 @@ function screenshot(download?: boolean, imageName?: string) {
 }
 
 function fm2Play() {
-    if (is_empty_obj(tas_scripts, false)) {
+    if (is_empty_obj(controllerState, false)) {
         emitError({
             code: 3,
             message: 'FM2 Error: No fm2 scripts found.',
@@ -497,25 +497,25 @@ function pause() {
 
 function play() {
     isPause = false
-    if (props.rewindMode) {
-        frameAction()
-    }
-    else {
-        resume()
-    }
+    // if (props.rewindMode) {
+    //     frameAction()
+    // }
+    // else {
+    resume()
+    // }
 }
 
-function prev() {
-    if (!props.rewindMode) { return }
-    isPause || pause()
-    rewind()
-}
+// function prev() {
+//     if (!props.rewindMode) { return }
+//     isPause || pause()
+//     rewind()
+// }
 
-function next() {
-    if (!props.rewindMode) { return }
-    isPause || pause()
-    forward()
-}
+// function next() {
+//     if (!props.rewindMode) { return }
+//     isPause || pause()
+//     forward()
+// }
 
 const canvasStyle = computed(() => {
     const pure = /^\d*$/
@@ -540,10 +540,10 @@ watch(() => props.url, () => {
     reset()
 })
 watch(() => props.gain, () => { setGain(props.gain) })
-watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
+// watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
 
 onMounted(() => {
-    nes.playbackMode = props.rewindMode
+    // nes.playbackMode = props.rewindMode
     if (props.autoStart) {
         start()
     }
@@ -570,8 +570,8 @@ defineExpose({
     fm2Text,
     fm2Play,
     fm2Stop,
-    prev,
-    next,
+    // prev,
+    // next,
 })
 </script>
 

@@ -384,30 +384,4 @@ There are several points to note:
 
 * Even with identical game versions, the start frame is completely aligned, and as the game progresses, errors may occur due to differences in the implementation of the emulator. In this case, manual adjustment of the `*.fm2` file is the only way to correct it.
 
-### Rewind mode
-
-When rewind mode is enabled, calling the `prev` or `next` methods will pause the game and allow frame by frame manipulation of the game.
-
-```vue
-<template>
-  <nes-vue :url="example.com/aaa.nes" auto-start :width="512" :height="480" />
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { NesVue } from 'nes-vue'
-
-function prevFrame() {
-  nes.value.prev() // Backward one frame.
-}
-
-function nextFrame() {
-  nes.value.next() // Forward one frame.
-}
-
-function play() {
-  nes.value.play() // Continues to run.
-}
-</script>
-```
 

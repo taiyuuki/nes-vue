@@ -371,32 +371,6 @@ function playVideo() {
 
 * 即便完全相同的游戏版本，开始帧也完全对齐，随着游戏的进行，也可能会出现差错，这是模拟器的实现差异造成的，在这种情况下，只能靠手动调整 `*fm2` 文件来修正，没有其他办法。
 
-### 回退模式
-
-开启了回退模式下，调用`prev`或`next`方法会暂停并逐帧操作游戏。
-
-```vue
-<template>
-  <nes-vue :url="example.com/aaa.nes" auto-start :width="512" :height="480" />
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { NesVue } from 'nes-vue'
-
-function prevFrame() {
-  nes.value.prev() // 游戏后退一帧
-}
-
-function nextFrame() {
-  nes.value.next() // 游戏前进一帧
-}
-
-function play() {
-  nes.value.play() // 游戏继续
-}
-</script>
-```
 
 
 

@@ -55,17 +55,17 @@ function pause() {
     }
 }
 
-function prev() {
-    if (is_not_void(nes.value)) {
-        nes.value.prev()
-    }
-}
+// function prev() {
+//     if (is_not_void(nes.value)) {
+//         nes.value.prev()
+//     }
+// }
 
-function next() {
-    if (is_not_void(nes.value)) {
-        nes.value.next()
-    }
-}
+// function next() {
+//     if (is_not_void(nes.value)) {
+//         nes.value.next()
+//     }
+// }
 
 function onError(error: EmitErrorObj) {
     console.log(error.message)
@@ -108,12 +108,12 @@ function onError(error: EmitErrorObj) {
     >
       Play Video
     </button>
-    <button @click="prev">
+    <!-- <button @click="prev">
       Prev
     </button>
     <button @click="next">
       Next
-    </button>
+    </button> -->
     <button @click="pause">
       Pause
     </button>

@@ -1,4 +1,4 @@
-import { tas_scripts } from 'src/tas'
+import { controllerState } from 'src/tas'
 import { nes } from 'src/nes'
 
 let audio_ctx = new AudioContext
@@ -10,8 +10,6 @@ const SAMPLE_MASK = SAMPLE_COUNT - 1
 const audio_samples_L = new Float32Array(SAMPLE_COUNT)
 const audio_samples_R = new Float32Array(SAMPLE_COUNT)
 let audio_write_cursor = 0, audio_read_cursor = 0
-
-// const replayFrames = new ReplayFrames
 
 function audio_remain() {
     return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
@@ -35,7 +33,7 @@ function getSampleRate() {
 
 function nesFrame() {
     if (nes.videoMode) {
-        const script = tas_scripts[nes.frameCounter]
+        const script = controllerState[nes.frameCounter]
         if (nes.frameCounter > 0 && script) {
             nes.controllers[1].state = script.p1
             nes.controllers[2].state = script.p2
