@@ -66,6 +66,11 @@ function pause() {
 //         nes.value.next()
 //     }
 // }
+function clear() {
+    if (is_not_void(nes.value)) {
+        nes.value.clear()
+    }
+}
 
 function onError(error: EmitErrorObj) {
     console.log(error.message)
@@ -119,6 +124,9 @@ function onError(error: EmitErrorObj) {
     </button>
     <button @click="play">
       Play
+    </button>
+    <button @click="clear">
+      Clear
     </button>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { DB } from 'src/db'
+import { createDB } from 'src/db'
 import { getNesData } from 'src/nes'
 
 class Playback {
@@ -9,7 +9,7 @@ class Playback {
     frameList: number[]
     dbIndex: number
     constructor() {
-        this.db = new DB('auto-save', 'playback_data')
+        this.db = createDB('auto-save', 'playback_data')
         this.length = 0
         this.frameList = []
         this.frameData = {}

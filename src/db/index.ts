@@ -1,59 +1,50 @@
-class DB<T = any> {
-    public static readonly VERSION = 1
-    dateFactory: IDBFactory
-    storeName: string
-    dbName: string
-    res: IDBOpenDBRequest
-    database!: IDBDatabase
-    constructor(dbName: string, storeName: string) {
-        this.dateFactory = window.indexedDB
-        this.dbName = dbName
-        this.storeName = storeName
-        this.res = this.dateFactory.open(this.dbName, DB.VERSION)
+function createDB<T = any>(dbName: string, storeName: string): DB<T> {
+    const VERSION = 1
+    const dateFactory = window.indexedDB
+    const res = dateFactory.open(dbName, VERSION)
+    let database!: IDBDatabase
 
-        this.res.addEventListener('success', () => {
-            this.database = this.res.result
-        })
+    res.addEventListener('success', () => {
+        database = res.result
+    })
+    res.addEventListener('success', () => {
+        database = res.result
+    })
 
-        this.res.addEventListener('error', () => {
-            console.error('indexedDB load error')
-        })
+    res.addEventListener('error', () => {
+        console.error('indexedDB load error')
+    })
 
-        this.res.addEventListener('upgradeneeded', () => {
-            this.database = this.res.result
-            if (!this.database.objectStoreNames.contains(this.storeName)) {
-                this.database.createObjectStore(this.storeName, { keyPath: 'id' })
-            }
-        })
+    res.addEventListener('upgradeneeded', () => {
+        database = res.result
+        if (!database.objectStoreNames.contains(storeName)) {
+            database.createObjectStore(storeName, { keyPath: 'id' })
+        }
+    })
+    function setItem(id: string, data: T) {
+        database.transaction([storeName], 'readwrite').objectStore(storeName).put({ id, data })
     }
-
-    setItem(id: string, data: T) {
-        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).put({ id, data })
-        this.database.addEventListener('error', () => {
-            console.error('indexedDB save error')
-        })
-    }
-
-    getItem(id: string, callback: (data: T) => void) {
-        const res = this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).get(id)
-        this.database.addEventListener('error', () => {
-            console.error('indexedDB load error')
-        })
+    function getItem(id: string, callback: (data: T) => void) {
+        const res = database.transaction([storeName], 'readwrite').objectStore(storeName).get(id)
         res.addEventListener('success', () => {
             callback(res.result.data)
         })
     }
-
-    removeItem(id: string) {
-        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).delete(id)
+    function removeItem(id: string) {
+        database.transaction([storeName], 'readwrite').objectStore(storeName).delete(id)
     }
-
-    clear() {
-        this.database.transaction([this.storeName], 'readwrite').objectStore(this.storeName).clear()
+    function clear() {
+        database.transaction([storeName], 'readwrite').objectStore(storeName).clear()
+    }
+    return {
+        setItem,
+        getItem,
+        removeItem,
+        clear,
     }
 }
 
 export {
-    DB,
+    createDB,
 }
 

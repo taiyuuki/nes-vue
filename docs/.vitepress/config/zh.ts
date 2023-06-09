@@ -5,17 +5,22 @@ export default {
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: '主页', link: '/zh/index' },
-            { text: '示例', link: '/zh/markdown-examples' },
+            { text: '开始使用', link: '/zh/guide/getting-started' },
         ],
 
         sidebar: [
             {
-                text: '示例',
+                text: '指南',
                 items: [
-                    { text: 'Markdown示例', link: '/zh/markdown-examples' },
-                    { text: 'Runtime API示例', link: '/zh/api-examples' },
+                    { text: '开始使用', link: '/zh/guide/getting-started' },
+                    { text: '属性', link: '/zh/guide/props' },
+                    { text: '事件', link: '/zh/guide/events' },
+                    { text: '方法', link: '/zh/guide/methods' },
+                    { text: '播放录像', link: '/zh/guide/replay' },
                 ],
             },
         ],
+
+        outlineTitle: '目录',
     },
 }

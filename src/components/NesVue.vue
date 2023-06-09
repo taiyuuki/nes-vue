@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
-import { DB } from 'src/db'
+import { createDB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller } from './types'
 import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
@@ -63,10 +63,10 @@ const [controller, turbo_btns] = useController(props)
 
 const cvs = ref<HTMLCanvasElement | null>(null)
 const isStop = ref<boolean>(true)
-const db = new DB<SaveData>('nes-vue', 'save_data')
+const db = createDB<SaveData>('nes-vue', 'save_data')
 let isPause = false
 
-let fpsStamp: NodeJS.Timeout
+let fpsStamp: number
 
 function emitError(errorObj: EmitErrorObj) {
     if (props.debugger) {
@@ -329,7 +329,7 @@ function saveIndexedDB(id: string) {
     }
     catch (_) {
         emitError({
-            code: 3,
+            code: 1,
             message: 'Save Error: Unable to save data to indexedDB.',
         })
     }

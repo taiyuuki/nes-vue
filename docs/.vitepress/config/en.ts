@@ -1,18 +1,25 @@
 export default {
     label: 'English',
     lang: 'en',
-    nav: [
-        { text: 'Home', link: '/' },
-        { text: 'Examples', link: '/markdown-examples' },
-    ],
+    themeConfig: {
+        nav: [
+            { text: 'Home', link: '/' },
+            { text: 'Getting Started', link: '/guide/getting-started' },
+        ],
 
-    sidebar: [
-        {
-            text: 'Examples',
-            items: [
-                { text: 'Markdown Examples', link: '/markdown-examples' },
-                { text: 'Runtime API Examples', link: '/api-examples' },
-            ],
-        },
-    ],
+        sidebar: [
+            {
+                text: 'Guide',
+                items: [
+                    { text: 'Getting Started', link: '/guide/getting-started' },
+                    { text: 'Props', link: '/guide/props' },
+                    { text: 'Events', link: '/guide/events' },
+                    { text: 'Methods', link: '/guide/methods' },
+                    { text: 'TAS Video', link: '/guide/replay' },
+                ],
+            },
+        ],
+
+        outlineTitle: 'Outline',
+    },
 }

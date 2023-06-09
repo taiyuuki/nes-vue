@@ -64,7 +64,7 @@ createApp(App).use(nes).mount("#app");
 
 | Property    | Description                                                  | Type             | Default             |
 | ----------- | ------------------------------------------------------------ | ---------------- | ------------------- |
-| `url`       | nes游戏的rom地址，必须！！！                                 | string           |                     |
+| `url`       | nes游戏的rom地址，**必须！！！**                                 | string           |                     |
 | `width`     | 游戏画面宽度，可以有单位，默认是px。                         | string \| number | 256                 |
 | `height`    | 游戏画面高度，可以有单位，默认是px。                         | string \| number | 240                 |
 | `label`     | 游戏运行前画面上的显示文字。                                 | string           | ‘Game Start’        |

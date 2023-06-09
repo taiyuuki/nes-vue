@@ -12,13 +12,18 @@ hero:
     - theme: alt
       text: 中文
       link: /zh/index
+    - theme: brand
+      text: Getting Started
+      link: /guide/getting-started
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Multiplayer
+    details: Support for multiplayer.
+  - title: Gamepad
+    details: Support for gamepad.
+  - title: Save and Load
+    details: Support for saving and loading.
+  - title: TAS
+    details: Support for playing TAS recordings.
 ---
 
