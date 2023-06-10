@@ -5,7 +5,7 @@ export default {
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: '主页', link: '/zh/index' },
-            { text: '开始使用', link: '/zh/guide/getting-started' },
+            { text: 'API', link: '/zh/guide/getting-started' },
         ],
 
         sidebar: [

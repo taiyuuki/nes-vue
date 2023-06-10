@@ -1,62 +1,66 @@
 # Methods
 
-All of the following methods are mounted on the component instance.
+All methods are mounted on component instances.
+
+## TypeScript
+
+If you use TypeScript, you can obtain the instance type of the component by `InstanceType`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref<InstanceType<typeof NesVue>>()
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
+</template>
+```
+
+Alternatively, you can directly use the `NesVueInstance` type from `nes-vue`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+import type { NesVueInstance } from 'nes-vue'
+
+const nes = ref<NesVueInstance>()
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
+</template>
+```
 
 ## start
 
-Start running.
+Start NES game.
 
 ```ts
 start(url?: string) => void
 ```
-Normally, **url is not required**, the `start` method is used to start the game in the stopped state.
 
-If you want to switch games, you just need to bind the url property with a reactive value, and then change the value.
 
-```vue
-<template>
-  <nes-vue :url="gameURL" auto-start :width="512" :height="480" />
-  <button @click="switch">Switch</button>
-</template>
+::: tip
+In most cases, clicking on the text ([label](/guide/props#label)) in the middle of the screen will start the game without the `start` method.
+:::
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { NesVue } from 'nes-vue'
-const gameURL = ref('example.com/aaa.nes')
-
-function switch() {
-  gameURL.value = 'example.com/bbb.nes'
-}
-</script>
-```
-
-**WARNING**: If you have to switch the game via the `start` method, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
-
-```vue
-<template>
-  <nes-vue ref="nes" v-model:url="gameURL" auto-start :width="512" :height="480" />
-  <button @click="switch">Switch</button>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import type { NesVueInstance } from 'nes-vue'
-import { NesVue } from 'nes-vue'
-const gameURL = ref('example.com/aaa.nes')
-const nes = ref<NesVueInstance | null>(null)
-
-function switch() {
-  if (nes.value) {
-    // this will be update the gameURL to 'example.com/bbb.nes'
-    nes.value.start('example.com/bbb.nes')
-  }
-}
-</script>
-```
+::: warning
+If you have to switch the game via the `start` method, you must use the **v-model** directive to bind the url, so that nes-vue can update it.
+:::
 
 ## reset
 
-Restart the current game.
+Restart the game.
 
 ```ts
 reset() => void
@@ -64,7 +68,7 @@ reset() => void
 
 ## stop
 
-Game stop.
+Stop the game.
 
 ```ts
 stop() => void
@@ -72,7 +76,7 @@ stop() => void
 
 ## pause
 
-Game pause.
+The game is paused and can be resumed.
 
 ```ts
 pause() => void
@@ -80,13 +84,15 @@ pause() => void
 
 ## play
 
-Paused game continues.
+Resume the game.
 
 ```ts
 play() => void
 ```
 
 ## save
+
+Save game state.
 
 ::: warning
 Can only be loaded while the game is running, and ensure that the running game is consistent with the saved game.
@@ -96,52 +102,55 @@ Can only be loaded while the game is running, and ensure that the running game i
 save(id: string) => void
 ```
 
-By default, the game state is saved in indexedDB, you can also save it in localStorage via [storage](/guide/props#props) property. 
+By default, the game state is saved in indexedDB, you can also save it in localStorage via [storage](/guide/props#storage) property. 
 
-The localStorage can store from **2 MB** to **10 MB** size of data depending upon the browser used, each game state archive requires about 200KB.
-
-If you need to save more data, it’s recommended to use indexedDB.
+Each game state archive requires about 200KB, if you need to save more data, it’s recommended to use indexedDB.
 
 ## load
+
+Load game state.
 
 ```ts
 load(id: string) => void
 ```
 
-```vue
-<template>
-  <nes-vue ref="nes" url="example.com/xxx.nes" auto-start :width="512" :height="480" />
-  <button @click="save">Save</button>
-  <button @click="load">Load</button>
-</template>
+example：
 
-<script setup lang="ts">
+```vue
+<script setup>
 import { ref } from 'vue'
-import type { NesVueInstance } from 'nes-vue'
 import { NesVue } from 'nes-vue'
 
-const nes = ref<NesVueInstance | null>(null)
+const nes = ref()
 const id = 'example'
 
 function save() {
-  if (nes.value) {
-    // Save state
-    nes.value.save(id)
-  }
+  // save state
+  nes.value.save(id)
 }
 
 function load() {
-  if (nes.value) {
-    // Load state
-    nes.value.load(id)
-  }
+  // load state
+  nes.value.load(id)
 }
 </script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    auto-start
+    width="512"
+    height="480"
+  />
+  <button @click="save">Save</button>
+  <button @click="load">Load</button>
+</template>
 ```
 
 ## remove
 
-Remove saved data.
+Remove game state.
 
 ```ts
 remove(id: string) => void
@@ -149,7 +158,7 @@ remove(id: string) => void
 
 ## clear
 
-Clear all saved data.
+Clear all saved state.
 
 ```ts
 clear() => void
@@ -164,3 +173,27 @@ screenshot(download?: boolean, imageName?: string) => HTMLImageElement
 `screenshot(true)` will start downloading the  screenshot inside the browser.
 
 The return value is an image element of the screenshot.
+
+## fm2URL
+
+```ts
+fm2URL(url: string) => Promise<fm2Play>
+```
+
+Fetch the `*.fm2` file, refer to [Replay](/guide/replay)。
+
+## fm2Text
+
+```ts
+fm2Text(text: string) => Promise<fm2Play>
+```
+
+Read the `*.fm2` file's text content, refer to [Replay](/guide/replay)。
+
+## fm2Play
+
+```ts
+fm2Play() => void
+```
+
+Play fm2 video， refer to [Replay](/guide/replay)。

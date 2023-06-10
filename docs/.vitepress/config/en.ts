@@ -4,7 +4,7 @@ export default {
     themeConfig: {
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Getting Started', link: '/guide/getting-started' },
+            { text: 'API', link: '/guide/getting-started' },
         ],
 
         sidebar: [

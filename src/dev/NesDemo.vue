@@ -4,7 +4,7 @@ import type { EmitErrorObj, NesVueInstance } from '../'
 import NesVue from 'src/components/NesVue.vue'
 import { is_not_void } from '@taiyuuki/utils'
 
-const nes = ref<NesVueInstance | null>(null)
+const nes = ref<NesVueInstance>()
 const gameUrl = ref<string>('Super Mario Bros (JU).nes')
 const saveable = ref(true)
 

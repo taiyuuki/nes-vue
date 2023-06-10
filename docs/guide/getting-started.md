@@ -9,13 +9,16 @@
 ```shell
 npm i nes-vue
 ```
-### Importing component
+## Impoting
 
 ```vue
 <template>
-  <nes-vue url="example.com/xxx.nes" />
+  <nes-vue
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
 </template>
 <script setup>
-import { NesVue } from 'nes-vue';
+  import { NesVue } from 'nes-vue';
 </script>
 ```
+`url` is a required property, refer to [props](/guide/props#url) for details.

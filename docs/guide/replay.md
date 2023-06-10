@@ -4,44 +4,67 @@ Starting from v1.5.0, the function of playing TAS videos (`*.fm2` files) has bee
 
 There are two ways to play the `*.fm2` here.
 
-The first is to request `*.fm2` files through a URL.
+## Fetch fm2 file
+
+The first is to fetch `*.fm2` files through a URL.
 
 ```vue
-<template>
-  <nes-vue :url="example.com/aaa.nes" auto-start :width="512" :height="480" />
-</template>
-
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
+const nes = ref()
+
 function playVideo() {
-  const url = './fm2/xxxxx.fm2'
+  const url = 'https://taiyuuki.github.io/nes-vue/happylee-supermariobros,warped.fm2'
   nes.value.fm2URL(url) // return a Promise.
   .then(fm2Play => {
       fm2Play() // Playing the recording.
   })
 }
 </script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+    auto-start
+  />
+</template>
 ```
+
+## 读取纯文本
 
 The second is to directly read the plain text string of the `*.fm2` file.
 
 ```vue
-<template>
-  <nes-vue :url="example.com/aaa.nes" auto-start :width="512" :height="480" />
-</template>
-
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
+const nes = ref()
+
 function playVideo() {
-  nes.value.fm2Text(text) // The text here is the plain text string of fm2 file.
+  const text = `...` // The text here is the plain text string of fm2 file.
+  nes.value.fm2Text(text)
   nes.value.fm2Play() // Playing the recording.
 }
 </script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+    auto-start
+  />
+</template>
 ```
+
+## Note
 
 There are several points to note:
 

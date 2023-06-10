@@ -9,14 +9,18 @@
 获取游戏FPS，每秒触发一次。
 
 ```vue
-<template>
-  <nes-vue url="example.com/xxx.nes" @fps="getFPS" />
-</template>
 <script setup>
 function getFPS(fps){
   console.log(fps.toFixed(2))
 }
 </script>
+
+<template>
+  <nes-vue
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    @fps="getFPS"
+  />
+</template>
 ```
 
 ### @success

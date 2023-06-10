@@ -4,14 +4,11 @@ layout: home
 
 hero:
   name: "NES Vue"
-  text: "A NES emulator for Vue 3.x"
+  text: "A NES emulator for Vue 3"
   actions:
-    - theme: brand
-      text: English
-      link: /
     - theme: alt
-      text: 中文
-      link: /zh/index
+      text: Playground
+      link: https://taiyuuki.github.io/nes-vue
     - theme: brand
       text: Getting Started
       link: /guide/getting-started
@@ -26,4 +23,3 @@ features:
   - title: TAS
     details: Support for playing TAS recordings.
 ---
-

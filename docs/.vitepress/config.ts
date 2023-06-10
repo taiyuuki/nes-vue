@@ -15,7 +15,7 @@ export default defineConfig({
     markdown: {
         theme: {
             light: 'light-plus',
-            dark: 'rose-pine-moon',
+            dark: 'github-dark',
         },
     },
     themeConfig: {
