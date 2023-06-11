@@ -4,6 +4,7 @@ import zh from './config/zh'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+    base: process.env.GITEE ? '/nes-vue-docs/' : void 0,
     title: 'NES Vue',
     description: 'NES Vue documents',
 

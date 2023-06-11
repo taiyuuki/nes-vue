@@ -45,6 +45,7 @@
     "publish": "pnpm publish --registry https://registry.npmjs.org",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
+    "docs:build-gitee": "set GITEE=1 && vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
