@@ -27,6 +27,14 @@
     "type": "git",
     "url": "https://github.com/taiyuuki/nes-vue.git"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@algolia/client-search",
+        "search-insights"
+      ]
+    }
+  },
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./ --fix",
     "dev": "vite",
