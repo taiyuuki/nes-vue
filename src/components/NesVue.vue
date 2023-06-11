@@ -189,7 +189,7 @@ function start(url: string = <string>props.url) {
         function loadROM(buffer: string) {
             try {
                 nes.loadROM(buffer)
-                fpsStamp = setInterval(() => {
+                fpsStamp = window.setInterval(() => {
                     const fps = nes.getFPS()
                     emits('fps', fps ? fps : 0)
                 }, 1000)
