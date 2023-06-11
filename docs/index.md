@@ -5,6 +5,9 @@ layout: home
 hero:
   name: "NES Vue"
   text: "A NES emulator for Vue 3"
+  image:
+    src: /nes-vue.svg
+    alt: NESVue
   actions:
     - theme: alt
       text: Playground
@@ -14,12 +17,16 @@ hero:
       link: /guide/getting-started
 
 features:
-  - title: Multiplayer
-    details: Support for multiplayer.
-  - title: Gamepad
-    details: Support for gamepad.
-  - title: Save and Load
-    details: Support for saving and loading.
-  - title: TAS
-    details: Support for playing TAS recordings.
+  - title: 💡Easy To Use
+    details: Simply import and use it.
+  - title: 💾Save
+    details: Support saving and loading.
+  - title: 📺TAS
+    details: Supports playing TAS videos.
+  - title: 🎮Gamepad
+    details: Support gamepad.
+  - title: 🔧Optional
+    details: Support custom resolution, buttons, combo frequency, etc.
+  - title: 👯Multiplayer
+    details: Support for dual players。
 ---

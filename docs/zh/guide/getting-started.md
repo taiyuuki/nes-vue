@@ -1,9 +1,5 @@
 # 开始使用
 
-## 游乐场
-
-🚀[Playground](https://taiyuuki.github.io/nes-vue)
-
 ## 安装
 
 ```shell
@@ -22,4 +18,6 @@ npm i nes-vue
 </script>
 ```
 
-`url`是`nes-vue`的必需属性，见[props](/zh/guide/props#url)
+## 游乐场
+
+在线体验：[Playground](https://taiyuuki.github.io/nes-vue)

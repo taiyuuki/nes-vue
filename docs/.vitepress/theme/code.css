@@ -2,31 +2,25 @@
     --vp-c-brand: #f03752;
     --vp-button-brand-bg: #f03752;
     --vp-button-brand-border: #f04b22;
-    --vp-button-brand-hover-bg: #1e9eb3;
-    --vp-button-brand-hover-border: #2b73af;
+    --vp-button-brand-hover-bg: #41b883;
+    --vp-button-brand-hover-border: #41b349;
     --vp-button-brand-active-bg: #1e9eb3;
     --vp-button-brand-active-border: #2b73af;
 
-    --code-base: #eee;
-    --code-gradient: #f0f8ff;
+    --code-base: #eef7f2;
+    --code-gradient: #fffef9;
     --code-counter: #131124;
     --code-border: #41b349;
 }
 
 :root.dark {
-    --code-base: #23241f;
+    --code-base: #132c33;
     --code-gradient: #1c0d1a;
     --code-counter: #baccd9;
 }
 
 html {
     overflow-y: auto;
-}
-
-body {
-    width: 100vw;
-    overflow-x: hidden;
-    position: absolute;
 }
 
 header.VPNav.VPNav {
@@ -89,24 +83,7 @@ div:not(.language-shell)>pre.shiki::after {
     content: ' \A';
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-}
-
-.dark::view-transition-old(root) {
-    z-index: 1;
-}
-
-.dark::view-transition-new(root) {
-    z-index: 999;
-}
-
-::view-transition-old(root) {
-    z-index: 999;
-}
-
-::view-transition-new(root) {
-    z-index: 1;
+.image-container img {
+    max-width: 320px;
+    max-height: 320px;
 }
