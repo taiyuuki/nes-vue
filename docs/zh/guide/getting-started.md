@@ -20,4 +20,4 @@ npm i nes-vue
 
 ## 游乐场
 
-在线体验：[Playground](https://taiyuuki.github.io/nes-vue)
+在线体验：[Playground](https://taiyuuki.gitee.io/nes-vue)
