@@ -26,14 +26,14 @@ import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 const url = ref('https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes')
 
-function switch() {
+function toggle() {
   url.value = 'https://taiyuuki.github.io/nes-vue/Super Mario Bros 3.nes'
 }
 </script>
 
 <template>
   <nes-vue :url="url" />
-  <button @click="switch">Switch</button>
+  <button @click="toggle">Switch</button>
 </template>
 ```
 
