@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<{
     height: '240px',
     label: 'Game Start',
     gain: 100,
-    clip: false,
+    noClip: false,
     storage: false,
     debugger: false,
     turbo: 16,
@@ -77,7 +77,7 @@ function emitError(errorObj: EmitErrorObj) {
 }
 
 effect(() => {
-    nes.ppu.clipToTvSize = !props.clip
+    nes.ppu.clipToTvSize = !props.noClip
 })
 
 const automatic: { [key: string]: { [key: string]: Automatic } } = {
