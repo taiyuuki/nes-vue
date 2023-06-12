@@ -543,6 +543,7 @@ watch(() => props.gain, () => { setGain(props.gain) })
 
 onMounted(() => {
     // nes.playbackMode = props.rewindMode
+    rom.buffer = null
     if (props.autoStart) {
         start()
     }
