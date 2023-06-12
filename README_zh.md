@@ -42,4 +42,4 @@ npm install nes-vue --save
 </script>
 ```
 
-[API文档](https://taiyuuki.gitee.io/nes-vue-docs/zh/)
+更多组件API请查看 [文档](https://taiyuuki.gitee.io/nes-vue-docs/zh/)

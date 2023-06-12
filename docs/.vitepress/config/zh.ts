@@ -22,5 +22,6 @@ export default {
         ],
 
         outlineTitle: '目录',
+
     },
 }

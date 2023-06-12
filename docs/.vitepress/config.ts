@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 import root from './config/en'
 import zh from './config/zh'
+import { copyright } from './utils'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -33,6 +34,16 @@ export default defineConfig({
         logo: '/nes-vue.svg',
         outline: {
             level: [2, 3],
+        },
+        footer: {
+            message: 'Released under the MIT License.',
+            copyright: copyright(),
+        },
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/taiyuuki/nes-vue' },
+        ],
+        search: {
+            provider: 'local',
         },
     },
 })
