@@ -1,5 +1,6 @@
 import { controllerState } from 'src/tas'
 import { nes } from 'src/nes'
+import { math_between } from '@taiyuuki/utils'
 
 let audio_ctx = new AudioContext
 let script_processor: ScriptProcessorNode
@@ -89,13 +90,7 @@ function resume() {
 }
 
 function setGain(n: number) {
-    if (n > 100) {
-        n = 100
-    }
-    if (n < 0) {
-        n = 0
-    }
-    gain = n / 100
+    gain = math_between(n, 0, 100)
 }
 
 export {

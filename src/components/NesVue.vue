@@ -109,8 +109,7 @@ const automatic: { [key: string]: { [key: string]: Automatic } } = {
 
 const interval = computed(() => {
     const time = (1000 / (2 * props.turbo))
-    math_between(time, 20, 100)
-    return time
+    return math_between(time, 20, 100)
 })
 
 const downKeyboardEvent = function (event: KeyboardEvent) {
