@@ -1,7 +1,7 @@
-import { Playback } from 'src/playback'
-import { compressArray, decompressArray } from 'src/utils'
-import { loadNesData, nes } from 'src/nes'
-import { nesFrame, resume } from 'src/audio'
+// import { Playback } from 'src/playback'
+// import { compressArray, decompressArray } from 'src/utils'
+import {  nes } from 'src/nes'
+// import { nesFrame, resume } from 'src/audio'
 
 const WIDTH = 256
 const HEIGHT = 240
@@ -10,19 +10,19 @@ let framebuffer_u8!: Uint8ClampedArray, framebuffer_u32!: Uint32Array
 let canvas_ctx!: CanvasRenderingContext2D
 const imageData = new ImageData(WIDTH, HEIGHT)
 
-const playback = new Playback
+// const playback = new Playback
 
 function onFrame(u32: number[]) {
     nes.frameCounter++
     for (let i = 0; i < 256 * 240; i += 1) {
         framebuffer_u32[i] = 0xff000000 | u32[i]
     }
-    if (nes.playbackMode) {
-        playback.push(compressArray(framebuffer_u32), nes.frameCounter)
-        if (nes.frameCounter % 45 === 0) {
-            playback.save()
-        }
-    }
+    // if (nes.playbackMode) {
+    //     playback.push(compressArray(framebuffer_u32), nes.frameCounter)
+    //     if (nes.frameCounter % 45 === 0) {
+    //         playback.save()
+    //     }
+    // }
 }
 
 function putImageData() {
@@ -37,7 +37,7 @@ function animationFrame(cvs: HTMLCanvasElement) {
     const buffer = new ArrayBuffer(imageData.data.length)
     framebuffer_u8 = new Uint8ClampedArray(buffer)
     framebuffer_u32 = new Uint32Array(buffer)
-    playback.clearDB()
+    // playback.clearDB()
     nes.frameCounter = 1
     animationframeID = requestAnimationFrame(onAnimationFrame)
 
@@ -48,52 +48,52 @@ function animationFrame(cvs: HTMLCanvasElement) {
     }
 }
 
-function rewind() {
-    const frame = nes.frameCounter - 1
-    if (frame in playback.frameData) {
-        const frameData = decompressArray(playback.action(frame))
-        for (let i = 0; i < frameData.length; i++) {
-            framebuffer_u32[i] = frameData[i]
-        }
-        putImageData()
-        nes.frameCounter--
-    }
-    else {
-        playback.load((data) => {
-            loadNesData(data, () => {
-                console.error('Failed to load nes data')
-            })
+// function rewind() {
+//     const frame = nes.frameCounter - 1
+//     if (frame in playback.frameData) {
+//         const frameData = decompressArray(playback.action(frame))
+//         for (let i = 0; i < frameData.length; i++) {
+//             framebuffer_u32[i] = frameData[i]
+//         }
+//         putImageData()
+//         nes.frameCounter--
+//     }
+//     else {
+//         playback.load((data) => {
+//             loadNesData(data, () => {
+//                 console.error('Failed to load nes data')
+//             })
 
-            rewind()
-        })
-    }
-}
+//             rewind()
+//         })
+//     }
+// }
 
-function forward() {
-    const frame = nes.frameCounter + 1
-    if (frame in playback.frameData) {
-        const frameData = decompressArray(playback.action(frame))
-        for (let i = 0; i < frameData.length; i++) {
-            framebuffer_u32[i] = frameData[i]
-        }
-        putImageData()
-        nes.frameCounter++
-    }
-    else {
-        nesFrame()
-    }
-}
+// function forward() {
+//     const frame = nes.frameCounter + 1
+//     if (frame in playback.frameData) {
+//         const frameData = decompressArray(playback.action(frame))
+//         for (let i = 0; i < frameData.length; i++) {
+//             framebuffer_u32[i] = frameData[i]
+//         }
+//         putImageData()
+//         nes.frameCounter++
+//     }
+//     else {
+//         nesFrame()
+//     }
+// }
 
-function frameAction() {
-    const frame = nes.frameCounter + 1
-    if (frame in playback.frameData) {
-        forward()
-        setTimeout(frameAction, 1000 / 60)
-    }
-    else {
-        resume()
-    }
-}
+// function frameAction() {
+//     const frame = nes.frameCounter + 1
+//     if (frame in playback.frameData) {
+//         forward()
+//         setTimeout(frameAction, 1000 / 60)
+//     }
+//     else {
+//         resume()
+//     }
+// }
 
 function fitInParent(cvs: HTMLCanvasElement) {
     const parent = cvs.parentNode as HTMLElement
@@ -128,8 +128,8 @@ export {
     animationFrame,
     animationStop,
     fitInParent,
-    rewind,
-    forward,
+    // rewind,
+    // forward,
     cut,
-    frameAction,
+    // frameAction,
 }

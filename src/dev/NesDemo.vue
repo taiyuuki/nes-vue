@@ -88,6 +88,7 @@ function onError(error: EmitErrorObj) {
       no-clip
       debugger
       rewind-mode
+      auto-start
       @error="onError"
     />
   </div>
