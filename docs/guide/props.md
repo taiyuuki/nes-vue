@@ -95,6 +95,11 @@ Clip mode can solve the problem that the edges of some game BG are not fully dis
 
 Auto start when the component on mounted.
 
+:::warning
+nes-vue uses the AudioContext API for audio playback, and due to the browser's security policy, the game will only run after user interaction (such as mouse clicks), so use this property with caution.
+If you want to use this property, place nes-vue in a component that will not load until user's clicked.
+:::
+
 ### turbo
 
 * Type `number`

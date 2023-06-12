@@ -95,6 +95,11 @@ function toggle() {
 
 组件挂载后自动开始游戏。
 
+:::warning
+nes-vue使用AudioContext API实现音频播放，由于浏览器的安全策略，游戏只会在用户发生交互（例如鼠标点击）后才会运行，所以请谨慎使用这个属性。
+如果要使用这个属性，请将nes-vue置于用户点击后才会加载的组件中。
+:::
+
 ### turbo
 
 * Type `number`

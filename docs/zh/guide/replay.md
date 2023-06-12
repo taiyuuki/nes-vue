@@ -30,7 +30,6 @@ function playVideo() {
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
     width="512"
     height="480"
-    auto-start
   />
 </template>
 ```
@@ -60,7 +59,6 @@ function playVideo() {
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
     width="512"
     height="480"
-    auto-start
   />
 </template>
 ```
