@@ -90,7 +90,7 @@ function resume() {
 }
 
 function setGain(n: number) {
-    gain = math_between(n, 0, 100)
+    gain = math_between(n, 0, 100) / 100
 }
 
 export {
