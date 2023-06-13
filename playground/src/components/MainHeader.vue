@@ -33,7 +33,7 @@ async function download() {
 
 <template>
   <header class="header">
-    <div>NesVue Playground</div>
+    <div>NES Vue Playground</div>
     <div class="icons">
       <div
         class="icon"
