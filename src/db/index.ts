@@ -7,9 +7,6 @@ function createDB<T = any>(dbName: string, storeName: string): DB<T> {
     res.addEventListener('success', () => {
         database = res.result
     })
-    res.addEventListener('success', () => {
-        database = res.result
-    })
 
     res.addEventListener('error', () => {
         console.error('indexedDB load error')

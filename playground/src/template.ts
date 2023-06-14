@@ -61,7 +61,7 @@ const pauseLabel = computed(() => isPaused.value ? 'Play' : 'Pause')
 
 function fetchFm2() {
   const fm2 = fm2List[gameList.indexOf(slt.value.value)]
-  nes.value.fm2URL(fm2[0], fm2[1])
+  nes.value.fm2URL(...fm2)
     .then(() => {
       disable.value = false
   })
@@ -69,6 +69,8 @@ function fetchFm2() {
 
 function resetGame() {
   nes.value.reset()
+  isPaused.value = false
+  tasPlaying.value = false
 }
 
 function stopGame() {
@@ -90,6 +92,7 @@ function playTAS() {
 
 function stopTAS() {
   nes.value.fm2Stop()
+  isPaused.value = false
   tasPlaying.value = false
 }
 
@@ -108,7 +111,6 @@ function pause() {
 script += '<\/script>'
 
 const style = `
-
 <style>
 .box {
   position: relative;
