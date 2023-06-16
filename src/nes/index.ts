@@ -3,7 +3,8 @@ import jsnes from 'jsnes'
 import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
 import { compressArray, compressNameTable, compressPtTile, decompressArray, decompressNameTable, decompressPtTile, getVramMirrorTable } from 'src/utils'
-import type { EmitErrorObj } from '..'
+import { controllerState } from 'src/tas'
+import type { EmitErrorObj } from 'src/components/types'
 
 const nes = new jsnes.NES({
     onFrame,
@@ -16,6 +17,17 @@ nes.frameCounter = 1
 nes.playbackMode = false
 const rom = {
     buffer: null as string | null,
+}
+
+function nesFrame() {
+    if (nes.videoMode && nes.frameCounter in controllerState) {
+        const script = controllerState[nes.frameCounter]
+        if (nes.frameCounter > 0) {
+            nes.controllers[1].state = script.p1
+            nes.controllers[2].state = script.p2
+        }
+    }
+    nes.frame()
 }
 
 function getNesData(url: string) {
@@ -92,6 +104,7 @@ function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj) => voi
 
 export {
     nes,
+    nesFrame,
     getNesData,
     loadNesData,
     rom,

@@ -1,5 +1,4 @@
-import { controllerState } from 'src/tas'
-import { nes } from 'src/nes'
+import {  nesFrame } from 'src/nes'
 import { math_between } from '@taiyuuki/utils'
 
 let audio_ctx = new AudioContext
@@ -30,17 +29,6 @@ function getSampleRate() {
     const sampleRate = myCtx.sampleRate
     myCtx.close()
     return sampleRate
-}
-
-function nesFrame() {
-    if (nes.videoMode) {
-        const script = controllerState[nes.frameCounter]
-        if (nes.frameCounter > 0 && script) {
-            nes.controllers[1].state = script.p1
-            nes.controllers[2].state = script.p2
-        }
-    }
-    nes.frame()
 }
 
 function audioFrame() {
