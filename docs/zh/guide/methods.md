@@ -202,3 +202,11 @@ fm2Play() => void
 ```
 
 开始播放录像，见[播放录像](/zh/guide/replay)。
+
+## fm2Stop
+
+```ts
+fm2Stop() => void
+```
+
+停止播放录像，见[播放录像](/zh/guide/replay)。

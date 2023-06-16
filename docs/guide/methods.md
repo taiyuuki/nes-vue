@@ -197,3 +197,11 @@ fm2Play() => void
 ```
 
 Play fm2 video， refer to [Replay](/guide/replay)。
+
+## fm2Stop
+
+```ts
+fm2Stop() => void
+```
+
+Stop fm2 video， refer to [Replay](/guide/replay)。
