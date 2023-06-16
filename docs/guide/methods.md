@@ -139,7 +139,6 @@ function load() {
   <nes-vue
     ref="nes"
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
-    auto-start
     width="512"
     height="480"
   />
