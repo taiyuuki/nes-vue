@@ -17,7 +17,7 @@ export default defineConfig({
             insertTypesEntry: true,
             rollupTypes: true,
         }),
-        vue({ reactivityTransform: true }),
+        vue(),
     ],
     resolve: {
         alias: {
@@ -35,7 +35,6 @@ export default defineConfig({
             fileName: (format) => `nes-vue.${format}.js`,
         },
         rollupOptions: {
-            // 打包时忽略vue
             external: ['vue'],
             output: {
                 // 为外部依赖提供全局变量

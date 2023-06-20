@@ -87,10 +87,3 @@ export interface PlaybackData {
     frameData: FrameData
     nes: SaveData
 }
-
-export interface DB<T = any> {
-    setItem: (id: string, data: T) => void
-    getItem: (id: string, callback: (data: T) => void) => void
-    removeItem: (id: string) => void
-    clear: () => void
-}
