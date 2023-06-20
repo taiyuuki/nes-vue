@@ -15,6 +15,7 @@ export default defineConfig({
             outputDir: 'dist',
             staticImport: true,
             insertTypesEntry: true,
+            rollupTypes: true,
         }),
         vue({ reactivityTransform: true }),
     ],

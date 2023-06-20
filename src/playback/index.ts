@@ -1,3 +1,4 @@
+import type { DB, FrameData, SaveData } from 'src/components/types'
 import { createDB } from 'src/db'
 import { getNesData } from 'src/nes'
 

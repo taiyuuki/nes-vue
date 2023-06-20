@@ -62,3 +62,35 @@ export interface Automatic {
 }
 
 export type Player = 'p1' | 'p2'
+
+export interface FrameData {
+    [frame: number]: number[]
+}
+
+export interface SaveData {
+    path: string
+    data: {
+        cpu: any
+        mmap: any
+        ppu: any
+        vramMemZip: any
+        nameTableZip: any
+        cpuMemZip: any
+        ptTileZip: any
+        frameCounter: number
+    }
+}
+
+export interface PlaybackData {
+    length: number
+    frameList: number[]
+    frameData: FrameData
+    nes: SaveData
+}
+
+export interface DB<T = any> {
+    setItem: (id: string, data: T) => void
+    getItem: (id: string, callback: (data: T) => void) => void
+    removeItem: (id: string) => void
+    clear: () => void
+}

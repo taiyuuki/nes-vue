@@ -117,35 +117,3 @@ declare module "jsnes" {
   const jsnes: JSNES
   export default jsnes
 }
-
-declare interface FrameData {
-  [frame: number]: number[]
-}
-
-declare interface SaveData {
-  path: string
-  data: {
-    cpu: any
-    mmap: any
-    ppu: any
-    vramMemZip: any
-    nameTableZip: any
-    cpuMemZip: any
-    ptTileZip: any
-    frameCounter: number
-  }
-}
-
-declare interface PlaybackData {
-  length: number,
-  frameList: number[],
-  frameData: FrameData,
-  nes: SaveData
-}
-
-declare interface DB<T = any> {
-  setItem: (id: string, data: T) => void
-  getItem: (id: string, callback: (data: T) => void) => void
-  removeItem: (id: string) => void
-  clear: () => void
-}

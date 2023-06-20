@@ -1,6 +1,6 @@
 {
   "name": "nes-vue",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A NES(FC) emulator component for Vue 3",
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",
@@ -50,13 +50,13 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@taiyuuki/utils": "^0.4.0"
+    "@taiyuuki/utils": "^0.4.1"
   },
   "devDependencies": {
     "@taiyuuki/eslint-config-vue": "^0.0.11",
-    "@types/node": "^18.16.16",
+    "@types/node": "^18.16.18",
     "@vitejs/plugin-vue": "^3.2.0",
-    "eslint": "^8.41.0",
+    "eslint": "^8.43.0",
     "eslint-plugin-import": "^2.27.5",
     "jsnes": "^1.2.1",
     "rollup-plugin-delete": "^2.0.0",
@@ -66,6 +66,6 @@
     "vitepress": "1.0.0-beta.1",
     "vitest": "^0.25.8",
     "vue": "^3.3.4",
-    "vue-tsc": "^1.6.5"
+    "vue-tsc": "^1.8.0"
   }
 }
