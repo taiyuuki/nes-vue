@@ -1,10 +1,10 @@
 class DB<T> {
     private static readonly VERSION = 1
-    private _dbName: string
-    private _storeName: string
-    private _dateFactory: IDBFactory
-    private _database!: IDBDatabase
-    private _res: IDBRequest
+    _dbName: string
+    _storeName: string
+    _dateFactory: IDBFactory
+    _database!: IDBDatabase
+    _res: IDBRequest
     constructor(dbName: string, storeName: string) {
         this._dbName = dbName
         this._storeName = storeName
@@ -25,7 +25,7 @@ class DB<T> {
         })
     }
 
-    private get _store() {
+    get _store() {
         return this._database.transaction([this._storeName], 'readwrite').objectStore(this._storeName)
     }
 
