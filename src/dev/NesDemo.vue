@@ -1,58 +1,44 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { EmitErrorObj, NesVueInstance } from '../'
+import type { EmitErrorObj } from '../'
 import NesVue from 'src/components/NesVue.vue'
-import { is_not_void } from '@taiyuuki/utils'
+import { useInstance } from 'src/composables/use-instance'
 
-const nes = ref<NesVueInstance>()
+const nes = useInstance<typeof NesVue>()
 const gameUrl = ref<string>('Super Mario Bros (JU).nes')
 const saveable = ref(true)
 
 function resetGame() {
     saveable.value = false
-    if (is_not_void(nes.value)) {
-        nes.value.reset()
-    }
+    nes.value.reset()
 }
 
 function stopGame() {
     saveable.value = true
-    if (is_not_void(nes.value)) {
-        nes.value.stop()
-    }
+    nes.value.stop()
 }
 
 function save() {
-    if (is_not_void(nes.value)) {
-        nes.value.save(gameUrl.value)
-    }
+    nes.value.save(gameUrl.value)
 }
 
 function load() {
-    if (is_not_void(nes.value)) {
-        nes.value.load(gameUrl.value)
-    }
+    nes.value.load(gameUrl.value)
 }
 
 function playVideo() {
-    if (is_not_void(nes.value)) {
-        nes.value.fm2URL('happylee-supermariobros,warped.fm2', 0)
-            .then(fm2Play => {
-                fm2Play()
-            })
-    }
+    nes.value.fm2URL('happylee-supermariobros,warped.fm2', 0)
+        .then(fm2Play => {
+            fm2Play()
+        })
 }
 
 function play() {
-    if (is_not_void(nes.value)) {
-        nes.value.play()
-    }
+    nes.value.play()
 }
 
 function pause() {
-    if (is_not_void(nes.value)) {
-        nes.value.pause()
-    }
+    nes.value.pause()
 }
 
 // function prev() {
@@ -67,9 +53,7 @@ function pause() {
 //     }
 // }
 function clear() {
-    if (is_not_void(nes.value)) {
-        nes.value.clear()
-    }
+    nes.value.clear()
 }
 
 function onError(error: EmitErrorObj) {
