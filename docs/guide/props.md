@@ -117,7 +117,7 @@ Use `localStorage` to save the game state, default is indexedDB, see [Methods - 
 ### db-name
 
 * Type `string`
-* 默认值  `"nes-vue"`
+* Default `"nes-vue"`
 
 The name of the object store for indexedDB. 
 
