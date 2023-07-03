@@ -70,6 +70,7 @@ function onError(error: EmitErrorObj) {
       width="512"
       height="480"
       no-clip
+      db-name="my-nes"
       debugger
       rewind-mode
       @error="onError"

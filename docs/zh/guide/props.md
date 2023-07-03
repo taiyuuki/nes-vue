@@ -114,6 +114,13 @@ nes-vue使用AudioContext API实现音频播放，由于浏览器的安全策略
 
 设置此属性，游戏存档会使用localStorage保存，默认是indexedDB， 详情见[方法 - save](/zh/guide/methods#save)。
 
+### db-name
+
+* Type `string`
+* 默认值  `"nes-vue"`
+
+indexedDB数据库名称
+
 ### p1
 
 * Type `object`

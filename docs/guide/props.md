@@ -114,6 +114,13 @@ Mashing speed per second, between [5, 20].
 
 Use `localStorage` to save the game state, default is indexedDB, see [Methods - save](/guide/methods#save).
 
+### db-name
+
+* Type `string`
+* 默认值  `"nes-vue"`
+
+The name of the object store for indexedDB. 
+
 ### p1
 
 * Type `object`

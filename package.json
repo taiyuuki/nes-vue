@@ -1,6 +1,6 @@
 {
   "name": "nes-vue",
-  "version": "1.6.8",
+  "version": "1.6.9",
   "description": "A NES(FC) emulator component for Vue 3",
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",
@@ -50,7 +50,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@taiyuuki/utils": "^0.4.1"
+    "@taiyuuki/utils": "^0.4.5"
   },
   "devDependencies": {
     "@taiyuuki/eslint-config-vue": "^0.0.11",

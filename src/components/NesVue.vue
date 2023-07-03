@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<{
     storage?: boolean
     debugger?: boolean
     turbo?: number
+    dbName?: string
     // rewindMode?: boolean
     p1?: Partial<Controller>
     p2?: Partial<Controller>
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<{
     storage: false,
     debugger: false,
     turbo: 16,
+    dbName: 'nes-vue',
     // rewindMode: false,
     p1: () => P1_DEFAULT,
     p2: () => P2_DEFAULT,
@@ -63,7 +65,7 @@ const [controller, turbo_btns] = useController(props)
 
 const cvs = ref<HTMLCanvasElement | null>(null)
 const isStop = ref<boolean>(true)
-const db = createDB<SaveData>('nes-vue', 'save_data')
+const db = createDB<SaveData>(props.dbName, 'save_data')
 let isPause = false
 
 let fpsStamp: number
@@ -324,7 +326,7 @@ function loadInStorage(id: string) {
 function saveIndexedDB(id: string) {
     if (checkId(id)) {return}
     try {
-        db.setItem(id, getNesData(props.url))
+        db.set_item(id, getNesData(props.url))
     }
     catch (_) {
         emitError({
@@ -336,7 +338,7 @@ function saveIndexedDB(id: string) {
 
 function loadIndexedDB(id: string) {
     if (checkId(id)) {return}
-    db.getItem(id, (data) => {
+    db.get_item(id).then(data => {
         loadGameData(data)
     })
 }
@@ -417,7 +419,7 @@ function remove(id: string) {
         localStorage.removeItem(id)
     }
     else {
-        db.removeItem(id)
+        db.remove_item(id)
     }
 }
 

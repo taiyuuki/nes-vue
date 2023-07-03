@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@taiyuuki/utils':
-    specifier: ^0.4.1
-    version: 0.4.1
+    specifier: ^0.4.5
+    version: 0.4.5
 
 devDependencies:
   '@taiyuuki/eslint-config-vue':
@@ -664,8 +664,8 @@ packages:
       - supports-color
     dev: true
 
-  /@taiyuuki/utils@0.4.1:
-    resolution: {integrity: sha512-yH9v+qBydCnM/hBrPbfuhrSYQm5RELzK0Xwhj+x97xerEkye5DwKOrYClW+dFCzYXrxCkXldtuaGGTylDhSIkg==}
+  /@taiyuuki/utils@0.4.5:
+    resolution: {integrity: sha512-XLhkgshS9+O5cQX8P7WRiH2gRknOAt0KvWWZa1jetLsNJOx9mglnCbuiPoY/jZ+30wr//g6iEBGU+UROnuz4ig==}
     dev: false
 
   /@ts-morph/common@0.19.0:

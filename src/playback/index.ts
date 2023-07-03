@@ -53,16 +53,16 @@ class Playback {
             nes: getNesData(id),
         }
         this.clear()
-        this.db.setItem(id, saveDatas)
+        this.db.set_item(id, saveDatas)
     }
 
     load(cb: (data: SaveData) => void) {
         const id = `playback-${--this.dbIndex}`
-        this.db.getItem(id, (data) => {
+        this.db.get_item(id).then(data => {
             this.length = data.length
             this.frameList = data.frameList
             this.frameData = data.frameData
-            this.db.removeItem(id)
+            this.db.remove_item(id)
             cb(data.nes)
         })
     }
