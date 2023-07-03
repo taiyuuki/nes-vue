@@ -364,7 +364,7 @@ function loadIndexedDB(id: string) {
  */
 function save(id: string) {
     if (checkId(id)) {return}
-    if (!nes.cpu.irqRequested || isPause || isStop.value) {
+    if (!nes.cpu.irqRequested || isStop.value) {
         return emitError({
             code: 1,
             message: 'Save Error: Can only be saved while the game is running.',
@@ -399,7 +399,7 @@ function save(id: string) {
  */
 function load(id: string) {
     if (checkId(id)) {return}
-    if (!nes.cpu.irqRequested || isPause || isStop.value) {
+    if (!nes.cpu.irqRequested || isStop.value) {
         return emitError({
             code: 2,
             message: 'Load Error: Can only be loaded when the game is running.',
@@ -410,6 +410,9 @@ function load(id: string) {
     }
     else {
         loadIndexedDB(id)
+    }
+    if (isPause) {
+        play()
     }
 }
 
