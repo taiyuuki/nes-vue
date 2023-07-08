@@ -9,6 +9,7 @@ import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, controllerState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
+import { useElement } from 'src/composables/use-instance'
 
 defineOptions({
     name: 'nes-vue',
@@ -63,10 +64,10 @@ if (!props.url) {
 
 const [controller, turbo_btns] = useController(props)
 
-const cvs = ref<HTMLCanvasElement | null>(null)
+const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
 const db = createDB<SaveData>(props.dbName, 'save_data')
-let isPause = false
+let isPaused = false
 
 let fpsStamp: number
 
@@ -250,7 +251,7 @@ function start(url: string = <string>props.url) {
 function reset() {
     nes.videoMode && fm2Stop()
     isStop.value || stop()
-    isPause && (isPause = false)
+    isPaused && (isPaused = false)
     if (props.url) {
         start()
     }
@@ -411,7 +412,7 @@ function load(id: string) {
     else {
         loadIndexedDB(id)
     }
-    if (isPause) {
+    if (isPaused) {
         play()
     }
 }
@@ -495,12 +496,12 @@ function fm2Text(text: string, fix = 0) {
 }
 
 function pause() {
-    isPause = true
+    isPaused = true
     suspend()
 }
 
 function play() {
-    isPause = false
+    isPaused = false
     // if (props.rewindMode) {
     //     frameAction()
     // }
