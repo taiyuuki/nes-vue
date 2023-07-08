@@ -32,14 +32,14 @@ npm install nes-vue --save
 然后:
 
 ```vue
+<script setup>
+  import { NesVue } from 'nes-vue';
+</script>
 <template>
   <nes-vue
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
   />
 </template>
-<script setup>
-  import { NesVue } from 'nes-vue';
-</script>
 ```
 
 更多组件API请查看 [文档](https://taiyuuki.gitee.io/nes-vue-docs/zh/)

@@ -34,11 +34,13 @@ npm install nes-vue --save
 And then
 
 ```vue
-<template>
-  <nes-vue url="example.com/xxx.nes" auto-start :width="512" :height="480" />
-</template>
 <script setup>
-import { NesVue } from 'nes-vue';
+  import { NesVue } from 'nes-vue';
 </script>
+<template>
+  <nes-vue
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
+</template>
 ```
 Refer to [documentations](https://nes-vue-docs.netlify.app/) for more details.
