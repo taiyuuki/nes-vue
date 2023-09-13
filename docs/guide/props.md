@@ -131,7 +131,7 @@ Player 1 controller.
 ### p2
 
 * Type `object`
-* Default  见[Controller](#controller)
+* Default  see[Controller](#controller)
 
 Player 2 controller.
 

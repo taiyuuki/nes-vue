@@ -34,7 +34,7 @@ function playVideo() {
 </template>
 ```
 
-## 读取纯文本
+## Read the plain text string
 
 The second is to directly read the plain text string of the `*.fm2` file.
 
