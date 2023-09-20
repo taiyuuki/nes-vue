@@ -1,10 +1,30 @@
 import { object_keys } from '@taiyuuki/utils'
-import type { ControllerMaps, NesVueProps, Player } from 'src/components/types'
+import type { NesVueProps, Player } from 'src/components/types'
+import { ControllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
 import { onMounted, onBeforeUnmount, computed } from 'vue'
 
 const THRESHOLD = 0.3
+
+// buttonDown - 0x41
+// buttonUp - 0x40
+// controllerState - [A, B, SELECT, START, UP, DOWN, LEFT, RIGHT]
+// for example: [0x40, 0x40, 0x40, 0x41, 0x40, 0x40, 0x40, 0x40]
+// means: Start button is pressed.
+
+const KEYS_INDEX = {
+    A: 0,
+    B: 1,
+    SELECT: 2,
+    START: 3,
+    UP: 4,
+    DOWN: 5,
+    LEFT: 6,
+    RIGHT: 7,
+    C: 8,
+    D: 9,
+}
 
 export const P1_DEFAULT = {
     UP: 'KeyW',
@@ -28,21 +48,9 @@ export const P2_DEFAULT = {
     B: 'Numpad1',
     C: 'Numpad5',
     D: 'Numpad4',
+    SELECT: 'NumpadDecimal',
+    START: 'NumpadEnter',
 }
-
-const keyMaps = {
-    UP: 'BUTTON_UP',
-    DOWN: 'BUTTON_DOWN',
-    LEFT: 'BUTTON_LEFT',
-    RIGHT: 'BUTTON_RIGHT',
-    A: 'BUTTON_A',
-    B: 'BUTTON_B',
-    C: 'BUTTON_A',
-    D: 'BUTTON_B',
-    SELECT: 'BUTTON_SELECT',
-    START: 'BUTTON_START',
-}
-const keys = object_keys(keyMaps)
 
 class GamepadManager {
     animationFrame: number
@@ -115,7 +123,7 @@ class GamepadManager {
         }
     }
 
-    run() {
+    frame() {
         for (let gindex = 0; gindex < this.gamepads.length; gindex++) {
             if (gindex > 1) {
                 break
@@ -135,10 +143,10 @@ class GamepadManager {
         }
     }
 
-    frame() {
-        this.run()
+    run() {
+        this.frame()
         cancelAnimationFrame(this.animationFrame)
-        this.animationFrame = requestAnimationFrame(this.frame.bind(this))
+        this.animationFrame = requestAnimationFrame(this.run.bind(this))
     }
 
     close() {
@@ -148,31 +156,25 @@ class GamepadManager {
     }
 }
 
-export const useController = (props: NesVueProps): [ComputedRef<ControllerMaps>, ComputedRef<string[]>] => {
+export const useController = (props: NesVueProps): ComputedRef<ControllerState> => {
+    const controllerState = new ControllerState()
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
 
     const controller = computed(() => {
-        const options: Record<string, any> = {}
-        keys.forEach(key => {
-            options[p1.value[key]] = {
-                key,
+        controllerState.init()
+        object_keys(KEYS_INDEX).forEach((key) => {
+            const index = KEYS_INDEX[key]
+            controllerState.on(p1.value[key], {
                 p: 1,
-                value: keyMaps[key],
-            }
-            if (key in p2.value) {
-                options[p2.value[key] as string] = {
-                    key,
-                    p: 2,
-                    value: keyMaps[key],
-                }
-            }
+                index,
+            })
+            controllerState.on(p2.value[key], {
+                p: 2,
+                index,
+            })
         })
-        return options as ControllerMaps
-    })
-
-    const turbo_btns = computed(() => {
-        return [p1.value.C, p1.value.D, p2.value.C, p2.value.D]
+        return controllerState
     })
 
     const gamepad_btns = computed(() => {
@@ -219,12 +221,12 @@ export const useController = (props: NesVueProps): [ComputedRef<ControllerMaps>,
     const gamepad = new GamepadManager(gamepad_btns)
 
     onMounted(() => {
-        gamepad.frame()
+        gamepad.run()
     })
 
     onBeforeUnmount(() => {
         gamepad.close()
     })
 
-    return [controller, turbo_btns]
+    return controller
 }

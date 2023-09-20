@@ -1,4 +1,3 @@
-import type { ControllerOptions } from 'jsnes'
 
 export interface EmitErrorObj {
     code: number
@@ -14,15 +13,14 @@ export interface Controller {
     B: string
     C: string
     D: string
-    SELECT?: string
-    START?: string
+    SELECT: string
+    START: string
 }
 
-export type ControllerMaps = Record<keyof Controller, {
-    key: string
+export interface ControllerStateType {
     p: number
-    value: keyof ControllerOptions
-}>
+    index: number
+}
 
 export interface SavedOrLoaded {
     id: string

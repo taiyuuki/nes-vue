@@ -4,7 +4,7 @@ import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
 import { compressArray, compressNameTable, compressPtTile, decompressArray, decompressNameTable, decompressPtTile, getVramMirrorTable } from 'src/utils'
 import { controllerState } from 'src/tas'
-import type { EmitErrorObj, SaveData } from 'src/components/types'
+import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/components/types'
 
 const nes = new jsnes.NES({
     onFrame,
@@ -32,21 +32,23 @@ function nesFrame() {
 
 function getNesData(url: string) {
     const ppu = nes.ppu.toJSON()
-    const cpu = nes.cpu.toJSON()
     const mmap = nes.mmap.toJSON()
-    delete ppu.attrib
-    delete ppu.bgbuffer
-    delete ppu.buffer
-    delete ppu.pixrendered
-    delete ppu.vramMirrorTable
     const vramMemZip = compressArray(ppu.vramMem!)
     const nameTableZip = compressNameTable(ppu.nameTable!)
     const ptTileZip = compressPtTile(ppu.ptTile!)
+    Reflect.deleteProperty(ppu, 'attrib')
+    Reflect.deleteProperty(ppu, 'bgbuffer')
+    Reflect.deleteProperty(ppu, 'buffer')
+    Reflect.deleteProperty(ppu, 'pixrendered')
+    Reflect.deleteProperty(ppu, 'vramMirrorTable')
+    Reflect.deleteProperty(ppu, 'vramMem')
+    Reflect.deleteProperty(ppu, 'nameTable')
+    Reflect.deleteProperty(ppu, 'ptTile')
+
+    const cpu = nes.cpu.toJSON()
     const cpuMemZip = compressArray(cpu.mem!)
-    delete ppu.vramMem
-    delete ppu.nameTable
-    delete cpu.mem
-    delete ppu.ptTile
+    Reflect.deleteProperty(cpu, 'mem')
+
     return {
         path: url,
         data: {
@@ -102,10 +104,93 @@ function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj) => voi
     }
 }
 
+class ControllerState {
+    _events: Record<string, ControllerStateType[]>
+    _auto: Record<string, Record<string, {
+        timeout: number
+        beDown: boolean
+        once: boolean
+    }>>
+
+    constructor() {
+        this._events = {}
+        this._auto = {
+            1: {
+                8: {
+                    timeout: 0,
+                    beDown: false,
+                    once: true,
+                },
+                9: {
+                    timeout: 0,
+                    beDown: false,
+                    once: true,
+                },
+            },
+            2: {
+                8: {
+                    timeout: 0,
+                    beDown: false,
+                    once: true,
+                },
+                9: {
+                    timeout: 0,
+                    beDown: false,
+                    once: true,
+                },
+            },
+        }
+    }
+
+    on(keyCode: string, state: ControllerStateType) {
+        if (!this._events[keyCode]) {
+            this._events[keyCode] = []
+        }
+        this._events[keyCode].push(state)
+    }
+
+    emit(keyCode: string, stateValue: number, interval: number) {
+        this._events[keyCode]?.forEach((event) => {
+            const state = nes.controllers[event.p].state
+            if (event.index <= 7) {
+                state[event.index] = stateValue
+            }
+            else {
+                const auto = this._auto[event.p][event.index]
+                if (stateValue === 0x41) {
+                    if (auto.once) {
+                        state[event.index - 8] = 0x41
+                        auto.timeout = window.setInterval(() => {
+                            state[event.index - 8] = auto.beDown ? 0x41 : 0x40
+                            auto.beDown = !auto.beDown
+                        }, interval)
+                        auto.once = false
+                    }
+                }
+                else {
+                    clearInterval(auto.timeout)
+                    state[event.index - 8] = 0x40
+                    auto.once = true
+                    auto.beDown = false
+                }
+            }
+        })
+    }
+
+    getState(keyCode: string) {
+        return this._events[keyCode]
+    }
+
+    init() {
+        this._events = {}
+    }
+}
+
 export {
     nes,
     nesFrame,
     getNesData,
     loadNesData,
     rom,
+    ControllerState,
 }

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import jsnes from 'jsnes'
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
 import { createDB } from 'src/db'
-import type { EmitErrorObj, SavedOrLoaded, Automatic, Controller, SaveData } from './types'
+import type { EmitErrorObj, SavedOrLoaded, Controller, SaveData } from './types'
 import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between, key_in } from '@taiyuuki/utils'
+import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, controllerState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
@@ -62,7 +61,7 @@ if (!props.url) {
     throw 'nes-vue missing props: url.'
 }
 
-const [controller, turbo_btns] = useController(props)
+const controller = useController(props)
 
 const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
@@ -83,75 +82,16 @@ effect(() => {
     nes.ppu.clipToTvSize = !props.noClip
 })
 
-const automatic: { [key: string]: { [key: string]: Automatic } } = {
-    p1: {
-        C: {
-            timeout: 0,
-            beDown: false,
-            once: true,
-        },
-        D: {
-            timeout: 0,
-            beDown: false,
-            once: true,
-        },
-    },
-    p2: {
-        C: {
-            timeout: 0,
-            beDown: false,
-            once: true,
-        },
-        D: {
-            timeout: 0,
-            beDown: false,
-            once: true,
-        },
-    },
-}
-
 const interval = computed(() => {
     const time = (1000 / (2 * props.turbo))
     return math_between(time, 20, 100)
 })
 
-const downKeyboardEvent = function (event: KeyboardEvent) {
-    const code = event.code
-    if (key_in(code, controller.value)) {
-        const keyMap = controller.value[code]
-        if (turbo_btns.value.includes(event.code)) {
-            const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
-            if (autoObj.once) {
-                nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
-                autoObj.timeout = window.setInterval(() => {
-                    if (autoObj.beDown) {
-                        nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
-                    }
-                    else {
-                        nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
-                    }
-                    autoObj.beDown = !autoObj.beDown
-                }, interval.value)
-                autoObj.once = false
-            }
-            return
-        }
-        else {
-            nes.buttonDown(keyMap.p, jsnes.Controller[keyMap.value])
-        }
-    }
+function downKeyboardEvent(event: KeyboardEvent) {
+    controller.value.emit(event.code, 0x41, interval.value)
 }
-const upKeyboardEvent = function (event: KeyboardEvent) {
-    const code = event.code
-    if (key_in(code, controller.value)) {
-        const keyMap = controller.value[code]
-        if (turbo_btns.value.includes(event.code)) {
-            const autoObj = automatic[`p${keyMap.p}`][keyMap.key]
-            clearInterval(autoObj.timeout)
-            autoObj.once = true
-        }
-        nes.buttonUp(keyMap.p, jsnes.Controller[keyMap.value])
-    }
+function upKeyboardEvent(event: KeyboardEvent) {
+    controller.value.emit(event.code, 0x40, interval.value)
 }
 
 function addEvent() {
@@ -579,6 +519,12 @@ defineExpose({
     // prev,
     // next,
 })
+</script>
+
+<script lang="ts">
+export default {
+    name: 'nes-vue',
+}
 </script>
 
 <template>
