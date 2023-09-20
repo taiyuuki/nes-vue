@@ -85,3 +85,10 @@ export interface PlaybackData {
     frameData: FrameData
     nes: SaveData
 }
+
+export interface TasState {
+    [frame: number]: {
+        p1: number[]
+        p2: number[]
+    }
+}
