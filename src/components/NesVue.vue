@@ -4,7 +4,7 @@ import { createDB } from 'src/db'
 import type { EmitErrorObj, SavedOrLoaded, Controller, SaveData } from './types'
 import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr, math_between } from '@taiyuuki/utils'
+import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, controllerState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
@@ -61,7 +61,7 @@ if (!props.url) {
     throw 'nes-vue missing props: url.'
 }
 
-const controller = useController(props)
+const [controller, turbo_interval] = useController(props)
 
 const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
@@ -82,16 +82,11 @@ effect(() => {
     nes.ppu.clipToTvSize = !props.noClip
 })
 
-const interval = computed(() => {
-    const time = (1000 / (2 * props.turbo))
-    return math_between(time, 20, 100)
-})
-
 function downKeyboardEvent(event: KeyboardEvent) {
-    controller.value.emit(event.code, 0x41, interval.value)
+    controller.value.emit(event.code, 0x41, turbo_interval.value)
 }
 function upKeyboardEvent(event: KeyboardEvent) {
-    controller.value.emit(event.code, 0x40, interval.value)
+    controller.value.emit(event.code, 0x40, turbo_interval.value)
 }
 
 function addEvent() {

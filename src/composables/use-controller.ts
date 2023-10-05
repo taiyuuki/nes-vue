@@ -1,10 +1,11 @@
-import { object_keys } from '@taiyuuki/utils'
+import { math_between, object_keys } from '@taiyuuki/utils'
 import type { NesVueProps, Player } from 'src/components/types'
 import { ControllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
 import { onMounted, onBeforeUnmount, computed } from 'vue'
 
+// threshold of level.
 const THRESHOLD = 0.3
 
 // buttonDown - 0x41
@@ -52,6 +53,9 @@ export const P2_DEFAULT = {
     START: 'NumpadEnter',
 }
 
+const controllerState = new ControllerState()
+let interval = 1000 / (2 * 16)
+
 class GamepadManager {
     animationFrame: number
     axesHolding: Record<Player, boolean[]>
@@ -90,16 +94,12 @@ class GamepadManager {
         const hold = this.axesHolding[player]?.[aindex]
         if (check) {
             if (!hold) {
-                document.dispatchEvent(new KeyboardEvent('keydown', {
-                    code: this.gamepad_btns.value[player][bindex],
-                }))
+                controllerState.emit(this.gamepad_btns.value[player][bindex], 0x41, interval)
                 this.axesHolding[player][aindex] = true
             }
         }
         else if (hold) {
-            document.dispatchEvent(new KeyboardEvent('keyup', {
-                code: this.gamepad_btns.value[player][bindex],
-            }))
+            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x40, interval)
             this.axesHolding[player][aindex] = false
         }
     }
@@ -110,16 +110,12 @@ class GamepadManager {
             if (hold) {
                 return
             }
+            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x41, interval)
             this.btnHolding[player][bindex] = true
-            document.dispatchEvent(new KeyboardEvent('keydown', {
-                code: this.gamepad_btns.value[player][bindex],
-            }))
         }
         else if (hold) {
+            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x40, interval)
             this.btnHolding[player][bindex] = false
-            document.dispatchEvent(new KeyboardEvent('keyup', {
-                code: this.gamepad_btns.value[player][bindex],
-            }))
         }
     }
 
@@ -156,12 +152,16 @@ class GamepadManager {
     }
 }
 
-export const useController = (props: NesVueProps): ComputedRef<ControllerState> => {
-    const controllerState = new ControllerState()
+export const useController = (props: NesVueProps): [ComputedRef<ControllerState>, ComputedRef<number>] => {
+    const turbo_interval = computed(() => {
+        interval = 1000 / (2 * math_between(props.turbo as number, 5, 20))
+        return interval
+    })
+
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
 
-    const controller = computed(() => {
+    function setController() {
         controllerState.init()
         object_keys(KEYS_INDEX).forEach((key) => {
             const index = KEYS_INDEX[key]
@@ -174,6 +174,12 @@ export const useController = (props: NesVueProps): ComputedRef<ControllerState> 
                 index,
             })
         })
+    }
+
+    setController()
+
+    const controller = computed(() => {
+        setController()
         return controllerState
     })
 
@@ -228,5 +234,5 @@ export const useController = (props: NesVueProps): ComputedRef<ControllerState> 
         gamepad.close()
     })
 
-    return controller
+    return [controller, turbo_interval]
 }

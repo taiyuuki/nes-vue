@@ -149,8 +149,8 @@ class ControllerState {
         this._events[keyCode].push(state)
     }
 
-    emit(keyCode: string, stateValue: number, interval: number) {
-        this._events[keyCode]?.forEach((event) => {
+    emit(keyboadCode: string, stateValue: number, interval: number) {
+        this._events[keyboadCode]?.forEach((event) => {
             const state = nes.controllers[event.p].state
             if (event.index <= 7) {
                 state[event.index] = stateValue
