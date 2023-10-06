@@ -3,7 +3,7 @@ import type { NesVueProps, Player } from 'src/components/types'
 import { ControllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
-import { onMounted, onBeforeUnmount, computed } from 'vue'
+import { onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
 // threshold of level.
 const THRESHOLD = 0.3
@@ -152,14 +152,13 @@ class GamepadManager {
     }
 }
 
-export const useController = (props: NesVueProps): [ComputedRef<ControllerState>, ComputedRef<number>] => {
-    const turbo_interval = computed(() => {
-        interval = 1000 / (2 * math_between(props.turbo as number, 5, 20))
-        return interval
-    })
-
+export const useController = (props: NesVueProps): (eventCode: string, state: 0x41 | 0x40) => void => {
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
+
+    function setTurboInterval() {
+        interval = 1000 / (2 * math_between(props.turbo as number, 5, 20))
+    }
 
     function setController() {
         controllerState.init()
@@ -177,11 +176,11 @@ export const useController = (props: NesVueProps): [ComputedRef<ControllerState>
     }
 
     setController()
+    setTurboInterval()
 
-    const controller = computed(() => {
-        setController()
-        return controllerState
-    })
+    watch(() => props.p1, setController, { deep: true })
+    watch(() => props.p2, setController, { deep: true })
+    watch(() => props.turbo, setTurboInterval)
 
     const gamepad_btns = computed(() => {
         return {
@@ -234,5 +233,7 @@ export const useController = (props: NesVueProps): [ComputedRef<ControllerState>
         gamepad.close()
     })
 
-    return [controller, turbo_interval]
+    return function (eventCode: string, state: 0x41 | 0x40) {
+        controllerState.emit(eventCode, state, interval)
+    }
 }

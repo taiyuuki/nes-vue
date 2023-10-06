@@ -3,7 +3,7 @@ import jsnes from 'jsnes'
 import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
 import { compressArray, compressNameTable, compressPtTile, decompressArray, decompressNameTable, decompressPtTile, getVramMirrorTable } from 'src/utils'
-import { controllerState } from 'src/tas'
+import { tasState } from 'src/tas'
 import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/components/types'
 
 const nes = new jsnes.NES({
@@ -20,8 +20,8 @@ const rom = {
 }
 
 function nesFrame() {
-    if (nes.videoMode && nes.frameCounter in controllerState) {
-        const script = controllerState[nes.frameCounter]
+    if (nes.videoMode && nes.frameCounter in tasState) {
+        const script = tasState[nes.frameCounter]
         if (nes.frameCounter > 0) {
             nes.controllers[1].state = script.p1
             nes.controllers[2].state = script.p2
@@ -149,7 +149,7 @@ class ControllerState {
         this._events[keyCode].push(state)
     }
 
-    emit(keyboadCode: string, stateValue: number, interval: number) {
+    emit(keyboadCode: string, stateValue: 0x41 | 0x40, interval: number) {
         this._events[keyboadCode]?.forEach((event) => {
             const state = nes.controllers[event.p].state
             if (event.index <= 7) {

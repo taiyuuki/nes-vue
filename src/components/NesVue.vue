@@ -6,7 +6,7 @@ import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
-import { fm2Parse, controllerState } from 'src/tas'
+import { fm2Parse, tasState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
 import { useElement } from 'src/composables/use-instance'
 
@@ -61,7 +61,7 @@ if (!props.url) {
     throw 'nes-vue missing props: url.'
 }
 
-const [controller, turbo_interval] = useController(props)
+const emitControllerState = useController(props)
 
 const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
@@ -83,10 +83,10 @@ effect(() => {
 })
 
 function downKeyboardEvent(event: KeyboardEvent) {
-    controller.value.emit(event.code, 0x41, turbo_interval.value)
+    emitControllerState(event.code, 0x41)
 }
 function upKeyboardEvent(event: KeyboardEvent) {
-    controller.value.emit(event.code, 0x40, turbo_interval.value)
+    emitControllerState(event.code, 0x40)
 }
 
 function addEvent() {
@@ -380,7 +380,7 @@ function screenshot(download?: boolean, imageName?: string) {
 }
 
 function fm2Play() {
-    if (is_empty_obj(controllerState, false)) {
+    if (is_empty_obj(tasState, false)) {
         emitError({
             code: 3,
             message: 'FM2 Error: No fm2 scripts found.',
@@ -461,11 +461,9 @@ const canvasStyle = computed(() => {
     const pure = /^\d*$/
     let width = props.width
     let height = props.height
-    if (cvs.value) {
-        nextTick(() => {
-            cvs.value && fitInParent(cvs.value)
-        })
-    }
+    nextTick(() => {
+        cvs.value && fitInParent(cvs.value)
+    })
     if (pure.test(String(width))) {
         width += 'px'
     }

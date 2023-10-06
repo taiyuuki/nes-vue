@@ -42,4 +42,4 @@ function fm2Parse(text: string, fix: number) {
     }
 }
 
-export { fm2Parse, tasState as controllerState }
+export { fm2Parse, tasState }
