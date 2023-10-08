@@ -13,6 +13,7 @@ export default {
                 items: [
                     { text: 'Getting Started', link: '/guide/getting-started' },
                     { text: 'Props', link: '/guide/props' },
+                    { text: 'Directives', link: '/guide/directives' },
                     { text: 'Events', link: '/guide/events' },
                     { text: 'Methods', link: '/guide/methods' },
                     { text: 'TAS Video', link: '/guide/replay' },

@@ -1,6 +1,6 @@
 import { math_between, object_keys } from '@taiyuuki/utils'
 import type { NesVueProps, Player } from 'src/components/types'
-import { ControllerState } from 'src/nes'
+import { controllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
 import { onMounted, onBeforeUnmount, computed, watch } from 'vue'
@@ -53,8 +53,12 @@ export const P2_DEFAULT = {
     START: 'NumpadEnter',
 }
 
-const controllerState = new ControllerState()
-let interval = 1000 / (2 * 16)
+// const controllerState = new ControllerState()
+export let interval = 1000 / (2 * 16)
+
+export function emitControllerState(eventCode: string, state: 0x41 | 0x40) {
+    controllerState.emit(eventCode, state, interval)
+}
 
 class GamepadManager {
     animationFrame: number
@@ -148,6 +152,8 @@ class GamepadManager {
     close() {
         this.btnHolding.p1.fill(false)
         this.btnHolding.p2.fill(false)
+        this.axesHolding.p1.fill(false)
+        this.axesHolding.p2.fill(false)
         cancelAnimationFrame(this.animationFrame)
     }
 }
@@ -233,7 +239,5 @@ export const useController = (props: NesVueProps): (eventCode: string, state: 0x
         gamepad.close()
     })
 
-    return function (eventCode: string, state: 0x41 | 0x40) {
-        controllerState.emit(eventCode, state, interval)
-    }
+    return emitControllerState
 }

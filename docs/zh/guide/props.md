@@ -179,7 +179,9 @@ p2 = {
 
 ### 用其他方式操作游戏
 
-如果你需要以其他方式操作游戏，例如，用button元素的触摸事件操作方向键“上”：
+如果你需要通过HTML元素的点击或触摸事件来操作游戏，强烈推荐使用 [v-gamepad](/zh/guide/directives#v-gamepad) 指令。
+
+你也可以通过手动触发document上的`keydown`和`keyup`事件来操作游戏，但建议只在`v-gamepad`无法满足你的需求时这么做。
 
 ```vue
 <script setup>

@@ -186,11 +186,13 @@ class ControllerState {
     }
 }
 
+const controllerState = new ControllerState()
+
 export {
     nes,
     nesFrame,
     getNesData,
     loadNesData,
     rom,
-    ControllerState,
+    controllerState,
 }

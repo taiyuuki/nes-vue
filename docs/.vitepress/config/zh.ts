@@ -14,6 +14,7 @@ export default {
                 items: [
                     { text: '开始使用', link: '/zh/guide/getting-started' },
                     { text: '属性', link: '/zh/guide/props' },
+                    { text: '指令', link: '/zh/guide/directives' },
                     { text: '事件', link: '/zh/guide/events' },
                     { text: '方法', link: '/zh/guide/methods' },
                     { text: '播放录像', link: '/zh/guide/replay' },

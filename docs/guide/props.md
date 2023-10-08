@@ -179,7 +179,9 @@ The component has built-in support for the gamepad, which does not require addit
 
 ### Control the game in other ways
 
-If you need to control the game in other ways, such as triggering the direction key UP through the touch event of the button element.
+If you need to control the game through click or touch events of HTML elements, The [v-gamepad](/guide/directives#v-gamepad) directive is highly recommended.
+
+You can also control the game by dispatching `keydown` and `keyup` events to the document, But you should only do this when the v-gamepad doesn't meet your needs.
 
 ```vue
 <script setup>
