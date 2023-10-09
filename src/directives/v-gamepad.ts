@@ -43,7 +43,7 @@ export const vGamepad: Directive<HTMLElement, keyof Controller> = {
             target.addEventListener('mousedown', down)
             target.addEventListener('mouseup', up)
             target.addEventListener('mouseleave', up)
-            if (arg !== 'mouse') {
+            if (arg && arg !== 'mouse') {
                 console.warn('[nes-vue] argument should be mouse or touch, changed to default: mouse')
             }
         }
