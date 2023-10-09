@@ -7,7 +7,7 @@
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
-<script>
+</script>
 
 <template>
   <nes-vue
@@ -28,7 +28,7 @@ import { NesVue, vGamepad } from 'nes-vue'
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
-<script>
+</script>
 
 <template>
   <nes-vue
@@ -44,7 +44,7 @@ import { NesVue, vGamepad } from 'nes-vue'
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
-<script>
+</script>
 
 <template>
   <nes-vue

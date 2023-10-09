@@ -7,7 +7,7 @@
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
-<script>
+</script>
 
 <template>
   <nes-vue
@@ -26,6 +26,7 @@ To bind the touch event, you can add the `touch` modifier (default is `mouse`):
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
+</script>
 
 <template>
   <nes-vue
@@ -33,7 +34,6 @@ import { NesVue, vGamepad } from 'nes-vue'
   />
   <button v-gamepad:touch="'B'">B</button>
 </template>
-<script>
 ```
 
 To bind the player 2, you can add the `p2` modifier (default is `p1`):
@@ -41,6 +41,7 @@ To bind the player 2, you can add the `p2` modifier (default is `p1`):
 ```vue
 <script setup>
 import { NesVue, vGamepad } from 'nes-vue'
+</script>
 
 <template>
   <nes-vue
@@ -48,5 +49,4 @@ import { NesVue, vGamepad } from 'nes-vue'
   />
   <button v-gamepad:touch.p2="'B'">B</button>
 </template>
-<script>
 ```
