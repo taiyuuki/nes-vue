@@ -3,10 +3,14 @@ import { ref } from 'vue'
 import type { EmitErrorObj } from '../'
 import NesVue from 'src/components/NesVue.vue'
 import { useInstance } from 'src/composables/use-instance'
+import { vGamepad } from 'src/directives/v-gamepad'
+import type { Controller } from 'src/types'
 
 const nes = useInstance<typeof NesVue>()
 const gameUrl = ref<string>('Super Mario Bros (JU).nes')
 const saveable = ref(true)
+const btnA = ref<keyof Controller>('A')
+const btnB = ref<keyof Controller>('B')
 
 function resetGame() {
     saveable.value = false
@@ -59,6 +63,10 @@ function clear() {
 function onError(error: EmitErrorObj) {
     console.log(error.message)
 }
+
+function testVGamepad() {
+    btnA.value = 'C'
+}
 </script>
 
 <template>
@@ -72,7 +80,6 @@ function onError(error: EmitErrorObj) {
       no-clip
       db-name="my-nes"
       debugger
-      rewind-mode
       @error="onError"
     />
   </div>
@@ -112,6 +119,17 @@ function onError(error: EmitErrorObj) {
     </button>
     <button @click="clear">
       Clear
+    </button>
+  </div>
+  <div>
+    <button v-gamepad="btnA">
+      A
+    </button>
+    <button v-gamepad="btnB">
+      B
+    </button>
+    <button @click="testVGamepad">
+      Change A To C
     </button>
   </div>
 </template>

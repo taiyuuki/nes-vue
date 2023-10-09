@@ -1,5 +1,5 @@
 import { get_fill_arr } from '@taiyuuki/utils'
-import type { TasState } from 'src/components/types'
+import type { TasState } from 'src/types'
 
 let tasState: TasState = {}
 const NONE = '........'

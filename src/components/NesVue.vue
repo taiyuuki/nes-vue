@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
 import { createDB } from 'src/db'
-import type { EmitErrorObj, SavedOrLoaded, Controller, SaveData } from './types'
+import type { EmitErrorObj, SavedOrLoaded, Controller, SaveData } from 'src/types'
 import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
 import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
 import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
@@ -541,3 +541,4 @@ export default {
     </div>
   </div>
 </template>
+../types

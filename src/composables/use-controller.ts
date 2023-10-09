@@ -1,5 +1,5 @@
 import { math_between, object_keys } from '@taiyuuki/utils'
-import type { NesVueProps, Player } from 'src/components/types'
+import type { NesVueProps, Player } from 'src/types'
 import { controllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'

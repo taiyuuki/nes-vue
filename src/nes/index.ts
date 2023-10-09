@@ -4,7 +4,7 @@ import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
 import { compressArray, compressNameTable, compressPtTile, decompressArray, decompressNameTable, decompressPtTile, getVramMirrorTable } from 'src/utils'
 import { tasState } from 'src/tas'
-import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/components/types'
+import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/types'
 
 const nes = new jsnes.NES({
     onFrame,
