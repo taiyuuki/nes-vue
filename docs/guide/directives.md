@@ -17,7 +17,7 @@ import { NesVue, vGamepad } from 'nes-vue'
 </template>
 ```
 
-Attribute value can be `'UP'`、`'DOWN'`、`'LEFT'`、`'RIGHT'`、`'A'`、`'B'`、`'C'`、`'D'`、`'SELECT'` or `'START'`. **Note that there must be quotation marks.**
+Attribute value can be `'UP'`、`'DOWN'`、`'LEFT'`、`'RIGHT'`、`'A'`、`'B'`、`'C'`、`'D'`、`'SELECT'` or `'START'`. **Note that there must be quotation marks when using literal values.**
 
 By default, `v-gamepad` is bound to the mouse event, which controls the player 1.
 

@@ -19,7 +19,7 @@ import { NesVue, vGamepad } from 'nes-vue'
 
 这样，鼠标点击`button`元素即可触发游戏控制器的`B`按钮。
 
-属性值可以是`'UP'`、`'DOWN'`、`'LEFT'`、`'RIGHT'`、`'A'`、`'B'`、`'C'`、`'D'`、`'SELECT'`或`'START'`。**注意必须有引号**。
+属性值可以是`'UP'`、`'DOWN'`、`'LEFT'`、`'RIGHT'`、`'A'`、`'B'`、`'C'`、`'D'`、`'SELECT'`或`'START'`。**注意，如果使用的是字面值，必须添加引号**。
 
 指令默认绑定的是鼠标点击事件，控制玩家P1。
 
