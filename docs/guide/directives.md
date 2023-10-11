@@ -19,7 +19,24 @@ import { NesVue, vGamepad } from 'nes-vue'
 
 Attribute value can be `'UP'`、`'DOWN'`、`'LEFT'`、`'RIGHT'`、`'A'`、`'B'`、`'C'`、`'D'`、`'SELECT'` or `'START'`. **Note that there must be quotation marks when using literal values.**
 
-By default, `v-gamepad` is bound to the mouse event, which controls the player 1.
+You can also bind multiple buttons on the same element. A typical example is to bind `A` and `B` buttons on the `button` element:
+
+```vue
+<script setup>
+import { NesVue, vGamepad } from 'nes-vue'
+</script>
+
+<template>
+  <nes-vue
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
+  <button v-gamepad="['A', 'B']">AB</button>
+</template>
+```
+
+### Arguments and modifiers
+
+By default, `v-gamepad` is bound to the mouse event (`mousedown` and `mouseup`), which controls player 1.
 
 To bind the touch event, you can add the `touch` modifier (default is `mouse`):
 
@@ -32,7 +49,7 @@ import { NesVue, vGamepad } from 'nes-vue'
   <nes-vue
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
   />
-  <button v-gamepad:touch="'B'">B</button>
+  <button v-gamepad:touch="'A'">A</button>
 </template>
 ```
 
@@ -47,6 +64,6 @@ import { NesVue, vGamepad } from 'nes-vue'
   <nes-vue
     url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
   />
-  <button v-gamepad:touch.p2="'B'">B</button>
+  <button v-gamepad:touch.p2="'A'">A</button>
 </template>
 ```

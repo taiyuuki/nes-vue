@@ -17,6 +17,8 @@ export interface Controller {
     START: string
 }
 
+export type ControllerKey = keyof Controller
+
 export interface ControllerStateType {
     p: number
     index: number

@@ -124,14 +124,14 @@ The name of the object store for indexedDB.
 ### p1
 
 * Type `object`
-* Default  see[Controller](#controller)
+* Default  see[Controller](/guide/controller)
 
 Player 1 controller.
 
 ### p2
 
 * Type `object`
-* Default  see[Controller](#controller)
+* Default  see[Controller](/guide/controller)
 
 Player 2 controller.
 
@@ -141,62 +141,3 @@ Player 2 controller.
 * Default  false
 
 The error message is output in the console.
-
-## Controller
-
-The values of the controller keys are [KeyboardEvent.code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code), default:
-
-```js
-p1 = {
-    UP: 'KeyW',
-    DOWN: 'KeyS',
-    LEFT: 'KeyA',
-    RIGHT: 'KeyD',
-    A: 'KeyK',
-    B: 'KeyJ',
-    C: 'KeyI',
-    D: 'KeyU',
-    SELECT: 'Digit2',
-    START: 'Digit1'
-}
-p2 = {
-    UP: 'ArrowUp',
-    DOWN: 'ArrowDown',
-    LEFT: 'ArrowLeft',
-    RIGHT: 'ArrowRight',
-    A: 'Numpad2',
-    B: 'Numpad1',
-    C: 'Numpad5',
-    D: 'Numpad4'
-}
-```
-
-Each field is optional, and if a field is missing, the default value will be used.
-
-### Gamepad
-
-The component has built-in support for the gamepad, which does not require additional configuration.
-
-### Control the game in other ways
-
-If you need to control the game through click or touch events of HTML elements, The [v-gamepad](/guide/directives#v-gamepad) directive is highly recommended.
-
-You can also control the game by dispatching `keydown` and `keyup` events to the document, But you should only do this when the v-gamepad doesn't meet your needs.
-
-```vue
-<script setup>
-function upstart() {
-  document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW' }))
-}
-function upend() {
-  document.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW' }))
-}
-</script>
-
-<template>
-  <nes-vue
-    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
-  />
-  <button @touchstart="upstart" @touchend="upend">UP</button>
-</template>
-```

@@ -124,14 +124,14 @@ indexedDB数据库名称
 ### p1
 
 * Type `object`
-* 默认值  见[控制器](#控制器)
+* 默认值  见[控制器](/zh/guide/controller)
 
 玩家1控制器
 
 ### p2
 
 * Type `object`
-* 默认值  见[控制器](#控制器)
+* 默认值  见[控制器](/zh/guide/controller)
 
 玩家2控制器
 
@@ -142,61 +142,3 @@ indexedDB数据库名称
 
 错误信息输出到控制台。
 
-## 控制器
-
-控制器各属性值是 [KeyboardEvent.code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code), 默认值: 
-
-```js
-p1 = {
-    UP: 'KeyW',
-    DOWN: 'KeyS',
-    LEFT: 'KeyA',
-    RIGHT: 'KeyD',
-    A: 'KeyK',
-    B: 'KeyJ',
-    C: 'KeyI',
-    D: 'KeyU',
-    SELECT: 'Digit2',
-    START: 'Digit1'
-}
-p2 = {
-    UP: 'ArrowUp',
-    DOWN: 'ArrowDown',
-    LEFT: 'ArrowLeft',
-    RIGHT: 'ArrowRight',
-    A: 'Numpad2',
-    B: 'Numpad1',
-    C: 'Numpad5',
-    D: 'Numpad4'
-}
-```
-
-每个字段都是可选的，如果缺省会使用默认值。
-
-### 手柄
-
-组件内置了对手柄的支持，无需额外配置，也不受控制器属性的影响。
-
-### 用其他方式操作游戏
-
-如果你需要通过HTML元素的点击或触摸事件来操作游戏，强烈推荐使用 [v-gamepad](/zh/guide/directives#v-gamepad) 指令。
-
-你也可以通过手动触发document上的`keydown`和`keyup`事件来操作游戏，但建议只在`v-gamepad`无法满足你的需求时这么做。
-
-```vue
-<script setup>
-function upstart() {
-  document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW' }))
-}
-function upend() {
-  document.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW' }))
-}
-</script>
-
-<template>
-  <nes-vue
-    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
-  />
-  <button @touchstart="upstart" @touchend="upend">UP</button>
-</template>
-```

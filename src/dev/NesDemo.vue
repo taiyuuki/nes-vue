@@ -128,6 +128,12 @@ function testVGamepad() {
     <button v-gamepad="btnB">
       B
     </button>
+    <button v-gamepad="['A', 'B']">
+      AB
+    </button>
+    <button v-gamepad="['C', 'D']">
+      CD
+    </button>
     <button @click="testVGamepad">
       Change A To C
     </button>

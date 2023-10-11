@@ -53,8 +53,7 @@ export const P2_DEFAULT = {
     START: 'NumpadEnter',
 }
 
-// const controllerState = new ControllerState()
-export let interval = 1000 / (2 * 16)
+let interval = 1000 / (2 * 16)
 
 export function emitControllerState(eventCode: string, state: 0x41 | 0x40) {
     controllerState.emit(eventCode, state, interval)
@@ -98,12 +97,12 @@ class GamepadManager {
         const hold = this.axesHolding[player]?.[aindex]
         if (check) {
             if (!hold) {
-                controllerState.emit(this.gamepad_btns.value[player][bindex], 0x41, interval)
+                emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
                 this.axesHolding[player][aindex] = true
             }
         }
         else if (hold) {
-            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x40, interval)
+            emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.axesHolding[player][aindex] = false
         }
     }
@@ -114,11 +113,11 @@ class GamepadManager {
             if (hold) {
                 return
             }
-            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x41, interval)
+            emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
             this.btnHolding[player][bindex] = true
         }
         else if (hold) {
-            controllerState.emit(this.gamepad_btns.value[player][bindex], 0x40, interval)
+            emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.btnHolding[player][bindex] = false
         }
     }

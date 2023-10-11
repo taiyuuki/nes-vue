@@ -13,6 +13,7 @@ export default {
                 items: [
                     { text: 'Getting Started', link: '/guide/getting-started' },
                     { text: 'Props', link: '/guide/props' },
+                    { text: 'Controller', link: '/guide/controller' },
                     { text: 'Directives', link: '/guide/directives' },
                     { text: 'Events', link: '/guide/events' },
                     { text: 'Methods', link: '/guide/methods' },
