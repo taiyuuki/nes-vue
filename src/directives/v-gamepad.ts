@@ -24,6 +24,13 @@ function removeEventAll(el: HTMLElement, eventId: string) {
     }
 }
 
+function resolveKeys(key: ControllerKey[] | ControllerKey) {
+    if (typeof key === 'string') {
+        key = [key]
+    }
+    return Array.from(new Set(key)).map(key => key.toUpperCase()).sort() as  ControllerKey[]
+}
+
 /**
  * v-gamepad directive
  * @example
@@ -44,18 +51,16 @@ export const vGamepad: Directive<HTMLElement, ControllerKey | ControllerKey[]>  
     if (!binding.value) {
         throw '[nes-vue] v-gamepad value is required'
     }
-    if (typeof binding.value === 'string') {
-        binding.value = [binding.value]
-    }
     const arg = (binding.arg ?? '').toLowerCase()
     const checkPlayer = binding.modifiers.p2 || binding.modifiers.P2
     const player = checkPlayer ? P2_DEFAULT : P1_DEFAULT
-    const keys = Array.from(new Set(binding.value))
-        .map(key => key.toUpperCase())
-        .filter(key => key_in(key, player))
-        .sort() as ControllerKey[]
+    if (binding.oldValue) {
+        const oldKeys = resolveKeys(binding.oldValue).filter(key => key_in(key, player))
+        const oldEventId = `gamepad-${arg + (checkPlayer ? 'p2' : 'p1') + '-' + oldKeys.join('-')}`
+        removeEventAll(target, oldEventId)
+    }
+    const keys = resolveKeys(binding.value).filter(key => key_in(key, player))
     const eventId = `gamepad-${arg + (checkPlayer ? 'p2' : 'p1') + '-' + keys.join('-')}`
-    removeEventAll(target, eventId)
     if (keys.length) {
         if (arg === 'touch') {
             addEvent(target, eventId, 'touchstart', () => {

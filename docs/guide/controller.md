@@ -1,6 +1,6 @@
 # Controller
 
-The values of the controller keys are [KeyboardEvent.code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code), default:
+`p1` and `p2` properties can customize controller's corresponding keyboard key values as follows:
 
 ```js
 p1 = {
@@ -27,13 +27,13 @@ p2 = {
 }
 ```
 
-Each field is optional, and if a field is missing, the default value will be used.
+The values are [KeyboardEvent.code](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code), Each field is optional, and if a field is missing, the default value will be used.
 
 ## Control the game in other ways
 
-If you need to control the game through click or touch events of HTML elements, The [v-gamepad](/guide/directives#v-gamepad) directive is highly recommended.
+Strongly recommended to use [v-gamepad](/zh/guide/directives#v-gamepad) directive, which can bind any HTML element to game controller.
 
-You can also control the game by dispatching `keydown` and `keyup` events to the document, But you should only do this when the `v-gamepad` doesn't meet your needs.
+Otherwise, you can manually trigger `document`'s `keydown` and `keyup` events to control the game, but it is recommended to do this when `v-gamepad` cannot satisfy your needs, here is an example:
 
 ```vue
 <script setup>

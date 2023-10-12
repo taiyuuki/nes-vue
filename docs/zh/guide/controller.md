@@ -1,6 +1,6 @@
 # 控制器
 
-[`p1`](/zh/guide/props#p1)和[`p1`](/zh/guide/props#p2)属性可以自定义控制器对应的键盘按键，默认值如下: 
+[`p1`](/zh/guide/props#p1)和[`p2`](/zh/guide/props#p2)属性可以自定义控制器对应的键盘按键，默认值如下: 
 
 ```js
 p1 = {
