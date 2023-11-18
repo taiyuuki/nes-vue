@@ -67,6 +67,14 @@ function onError(error: EmitErrorObj) {
 function testVGamepad() {
     btnA.value = 'C'
 }
+
+function cheatCode() {
+    nes.value.cheatCode('079F-01-01')
+}
+
+function disableCheatCode() {
+    nes.value.cancelCheatCode('079F-01-01')
+}
 </script>
 
 <template>
@@ -136,6 +144,12 @@ function testVGamepad() {
     </button>
     <button @click="testVGamepad">
       Change A To C
+    </button>
+    <button @click="cheatCode">
+      Cheat Code
+    </button>
+    <button @click="disableCheatCode">
+      Disable Cheat Code
     </button>
   </div>
 </template>

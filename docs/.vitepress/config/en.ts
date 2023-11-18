@@ -18,6 +18,7 @@ export default {
                     { text: 'Events', link: '/guide/events' },
                     { text: 'Methods', link: '/guide/methods' },
                     { text: 'TAS Video', link: '/guide/replay' },
+                    { text: 'Cheat Code', link: '/guide/cheat' },
                 ],
             },
         ],

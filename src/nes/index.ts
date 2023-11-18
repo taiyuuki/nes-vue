@@ -36,18 +36,18 @@ function getNesData(url: string) {
     const vramMemZip = compressArray(ppu.vramMem!)
     const nameTableZip = compressNameTable(ppu.nameTable!)
     const ptTileZip = compressPtTile(ppu.ptTile!)
-    Reflect.deleteProperty(ppu, 'attrib')
-    Reflect.deleteProperty(ppu, 'bgbuffer')
-    Reflect.deleteProperty(ppu, 'buffer')
-    Reflect.deleteProperty(ppu, 'pixrendered')
-    Reflect.deleteProperty(ppu, 'vramMirrorTable')
-    Reflect.deleteProperty(ppu, 'vramMem')
-    Reflect.deleteProperty(ppu, 'nameTable')
-    Reflect.deleteProperty(ppu, 'ptTile')
+    delete ppu.attrib
+    delete ppu.bgbuffer
+    delete ppu.buffer
+    delete ppu.pixrendered
+    delete ppu.vramMirrorTable
+    delete ppu.vramMem
+    delete ppu.nameTable
+    delete ppu.ptTile
 
     const cpu = nes.cpu.toJSON()
     const cpuMemZip = compressArray(cpu.mem!)
-    Reflect.deleteProperty(cpu, 'mem')
+    delete cpu.mem
 
     return {
         path: url,

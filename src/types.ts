@@ -94,3 +94,5 @@ export interface TasState {
         p2: number[]
     }
 }
+
+export type CheatCodeMap = Record<number, number>

@@ -179,7 +179,7 @@ The return value is an image element of the screenshot.
 fm2URL(url: string) => Promise<fm2Play>
 ```
 
-Fetch the `*.fm2` file, refer to [Replay](/guide/replay)。
+Fetch the `*.fm2` file, refer to [Replay](/guide/replay).
 
 ## fm2Text
 
@@ -187,7 +187,7 @@ Fetch the `*.fm2` file, refer to [Replay](/guide/replay)。
 fm2Text(text: string) => Promise<fm2Play>
 ```
 
-Read the `*.fm2` file's text content, refer to [Replay](/guide/replay)。
+Read the `*.fm2` file's text content, refer to [Replay](/guide/replay).
 
 ## fm2Play
 
@@ -195,7 +195,7 @@ Read the `*.fm2` file's text content, refer to [Replay](/guide/replay)。
 fm2Play() => void
 ```
 
-Play fm2 video， refer to [Replay](/guide/replay)。
+Play fm2 video， refer to [Replay](/guide/replay).
 
 ## fm2Stop
 
@@ -203,4 +203,28 @@ Play fm2 video， refer to [Replay](/guide/replay)。
 fm2Stop() => void
 ```
 
-Stop fm2 video， refer to [Replay](/guide/replay)。
+Stop fm2 video， refer to [Replay](/guide/replay).
+
+## cheatCode
+
+```ts
+cheatCode(code: string) => void
+```
+
+Enable cheat code, refer to [Cheat Code](/guide/cheat).
+
+## cancelCheatCode
+
+```ts
+cancelCheatCode(code: string) => void
+```
+
+Disable cheat code, refer to [Cheat Code](/guide/cheat).
+
+## cancelCheatCodeAll
+
+```ts
+cancelCheatCodeAll() => void
+```
+
+Disable all cheat code, refer to [Cheat Code](/guide/cheat).

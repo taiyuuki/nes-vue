@@ -9,6 +9,7 @@ import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-contr
 import { fm2Parse, tasState } from 'src/tas'
 import { nes, getNesData, loadNesData, rom } from 'src/nes'
 import { useElement } from 'src/composables/use-instance'
+import { cheat } from 'src/cheat'
 
 defineOptions({
     name: 'nes-vue',
@@ -71,6 +72,7 @@ let isPaused = false
 let fpsStamp: number
 
 function emitError(errorObj: EmitErrorObj) {
+    errorObj.message = '[nes-vue] ' + errorObj.message
     if (props.debugger) {
         console.error(errorObj.message)
     }
@@ -187,6 +189,7 @@ function reset() {
     nes.videoMode && fm2Stop()
     isStop.value || stop()
     isPaused && (isPaused = false)
+    cheat.init()
     if (props.url) {
         start()
     }
@@ -430,6 +433,28 @@ function fm2Text(text: string, fix = 0) {
     return Promise.resolve(fm2Play)
 }
 
+function cheatCode(code: string) {
+    cheat.parse(code)
+}
+
+function cancelCheatCode(code: string) {
+    cheat.disable(code)
+}
+
+function cancelCheatCodeAll() {
+    cheat.init()
+}
+
+// function memory(address: string, type: 'always' | 'once' | 'less' | 'greater', value: number) {
+//     const TYPES = {
+//         always: 0,
+//         once: 1,
+//         less: 2,
+//         greater: 3,
+//     }
+//     cheat.on(toHexNumber(address), TYPES[type], value)
+// }
+
 function pause() {
     isPaused = true
     suspend()
@@ -509,6 +534,10 @@ defineExpose({
     fm2Text,
     fm2Play,
     fm2Stop,
+    cheatCode,
+    cancelCheatCode,
+    cancelCheatCodeAll,
+    // memory,
     // prev,
     // next,
 })

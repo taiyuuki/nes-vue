@@ -209,3 +209,27 @@ fm2Stop() => void
 ```
 
 停止播放录像，见[播放录像](/zh/guide/replay)。
+
+## cheatCode
+
+```ts
+cheatCode(code: string) => void
+```
+
+添加金手指。见[金手指](/zh/guide/cheat)。
+
+## cancelCheatCode
+
+```ts
+cancelCheatCode(code: string) => void
+```
+
+取消添加的金手指。见[金手指](/zh/guide/cheat)。
+
+## cancelCheatCodeAll
+
+```ts
+cancelCheatCodeAll() => void
+```
+
+取消所有添加的金手指。见[金手指](/zh/guide/cheat)。

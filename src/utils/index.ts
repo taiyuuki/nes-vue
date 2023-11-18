@@ -127,3 +127,7 @@ export function decompressNameTable(compressed: [number[], number[]]) {
     }
     return nameTable
 }
+
+export function toHexNumber(str: string) {
+    return Number('0x' + str)
+}

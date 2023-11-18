@@ -1,7 +1,7 @@
 // import { Playback } from 'src/playback'
 // import { compressArray, decompressArray } from 'src/utils'
+import { cheat } from 'src/cheat'
 import {  nes } from 'src/nes'
-// import { nesFrame, resume } from 'src/audio'
 
 const WIDTH = 256
 const HEIGHT = 240
@@ -17,6 +17,9 @@ function onFrame(u32: number[]) {
     for (let i = 0; i < 256 * 240; i += 1) {
         framebuffer_u32[i] = 0xff000000 | u32[i]
     }
+    cheat.onFrame()
+    //
+    // nesFrame(framebuffer_u32)
     // if (nes.playbackMode) {
     //     playback.push(compressArray(framebuffer_u32), nes.frameCounter)
     //     if (nes.frameCounter % 45 === 0) {

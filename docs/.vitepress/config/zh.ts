@@ -19,6 +19,7 @@ export default {
                     { text: '事件', link: '/zh/guide/events' },
                     { text: '方法', link: '/zh/guide/methods' },
                     { text: '播放录像', link: '/zh/guide/replay' },
+                    { text: '金手指', link: '/zh/guide/cheat' },
                 ],
             },
         ],

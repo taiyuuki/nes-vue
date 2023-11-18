@@ -25,8 +25,8 @@ features:
     details: Supports playing TAS videos.
   - title: 🎮Gamepad
     details: Support gamepad.
-  - title: 🔧Optional
-    details: Support custom resolution, buttons, combo frequency, etc.
+  - title: 🔧Cheat Code
+    details: Support cheat code.
   - title: 👯Multiplayer
     details: Support for dual players。
 ---
