@@ -1,6 +1,6 @@
 {
   "name": "nes-vue",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A NES(FC) emulator component for Vue 3",
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",
@@ -46,7 +46,7 @@
     "publish": "pnpm publish --registry https://registry.npmjs.org",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:build-gitee": "set GITEE=1 && vitepress build docs",
+    "docs:build-gitee": "set GITEE=1 && pnpx vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {},

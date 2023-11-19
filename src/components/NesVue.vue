@@ -206,6 +206,7 @@ function stop() {
     animationStop()
     clearInterval(fpsStamp)
     nes.reset()
+    cheat.init()
     isStop.value = true
 }
 

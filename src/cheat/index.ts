@@ -9,7 +9,7 @@ class Cheat {
     greater: CheatCodeMap
     lesser: CheatCodeMap
 
-    static reg = /([\da-fA-F]{4})-([0-3])([0-3])-([\da-fA-F]{1,6})/
+    static reg = /([\da-fA-F]{4})-([0-3])([0-4])-([\da-fA-F]{2,8})/
 
     constructor() {
         this.enable = false

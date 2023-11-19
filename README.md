@@ -22,6 +22,7 @@ A NES (FC)🎮 emulator component for Vue 3.
 - [x] Support for turbo button.
 - [x] Support for saving and loading.
 - [x] Support for playing TAS recordings. (`*.fm2`)
+- [x] Support for cheat codes.
 
 ## Usage
 
