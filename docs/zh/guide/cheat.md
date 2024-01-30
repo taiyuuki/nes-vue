@@ -6,7 +6,8 @@ v1.8.0开始，nes-vue支持金手指功能。
 
 金手指格式为`xxxx-yz-vv`，例如`079F-01-01`：
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { NesVue } from 'nes-vue'
 import { ref } from 'vue'
@@ -14,17 +15,17 @@ import { ref } from 'vue'
 const nes = ref()
 
 function injectCheat() {
-    // 开启金手指
+    // Enable cheat code
     nes.value.cheatCode('079F-01-01')
 }
 
 function cancelCheat() {
-    // 关闭金手指
+    // Disable cheat code
     nes.value.cancelCheatCode('079F-01-01')
 }
 
 function cancelAll() {
-    // 关闭所有金手指
+    // Disable all
     nes.value.cancelCheatCodeAll()
 }
 </script>
@@ -39,6 +40,43 @@ function cancelAll() {
   <button @click="cancelAll">Disable All</button>
 </template>
 ```
+
+```vue [vue-ts]
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+
+function injectCheat() {
+    // Enable cheat code
+    nes.value.cheatCode('079F-01-01')
+}
+
+function cancelCheat() {
+    // Disable cheat code
+    nes.value.cancelCheatCode('079F-01-01')
+}
+
+function cancelAll() {
+    // Disable all
+    nes.value.cancelCheatCodeAll()
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+  />
+  <button @click="injectCheat">Enable cheat code</button>
+  <button @click="cancelCheat">Disable Cheat Code</button>
+  <button @click="cancelAll">Disable All</button>
+</template>
+```
+:::
 
 ## 金手指格式说明
 

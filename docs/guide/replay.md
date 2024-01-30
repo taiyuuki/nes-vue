@@ -8,7 +8,8 @@ There are two ways to play the `*.fm2` here.
 
 The first is to fetch `*.fm2` files through a URL.
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
@@ -31,14 +32,46 @@ function playVideo() {
     width="512"
     height="480"
   />
+  <button @click="playVideo">Play TAS Video</button>
 </template>
 ```
+
+```vue [vue-ts]
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+
+function playVideo() {
+  const url = 'https://taiyuuki.github.io/nes-vue/happylee-supermariobros,warped.fm2'
+  nes.value.fm2URL(url) // return a Promise.
+  .then(fm2Play => {
+      fm2Play() // Playing the recording.
+  })
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="playVideo">Play TAS Video</button>
+</template>
+```
+:::
 
 ## Read the plain text string
 
 The second is to directly read the plain text string of the `*.fm2` file.
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
@@ -59,8 +92,38 @@ function playVideo() {
     width="512"
     height="480"
   />
+  <button @click="playVideo">Play TAS Video</button>
 </template>
 ```
+
+```vue [vue-ts]
+<script setup>
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+
+function playVideo() {
+  const text = `...` // The text here is the plain text string of fm2 file.
+  nes.value.fm2Text(text)
+  nes.value.fm2Play() // Playing the recording.
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="playVideo">Play TAS Video</button>
+</template>
+```
+
+:::
 
 ## Note
 

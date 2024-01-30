@@ -1,28 +1,6 @@
 # Methods
 
-All methods are mounted on component instances.
-
-## TypeScript
-
-If you use TypeScript, you can obtain the instance type of the component by `InstanceType`.
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import { NesVue } from 'nes-vue'
-
-const nes = ref<InstanceType<typeof NesVue>>()
-</script>
-
-<template>
-  <nes-vue
-    ref="nes"
-    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
-  />
-</template>
-```
-
-Alternatively, you can directly use the `NesVueInstance` type from `nes-vue`.
+All methods are mounted on component instances. If you use TypeScript, you can obtain the `NesVueInstance` from `nes-vue`.
 
 ```vue
 <script setup lang="ts">
@@ -116,7 +94,8 @@ load(id: string) => void
 
 example：
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
@@ -146,6 +125,39 @@ function load() {
   <button @click="load">Load</button>
 </template>
 ```
+```vue [vue-ts]
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+const id = 'example'
+
+function save() {
+  // save state
+  nes.value.save(id)
+}
+
+function load() {
+  // load state
+  nes.value.load(id)
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="save">Save</button>
+  <button @click="load">Load</button>
+</template>
+```
+:::
 
 ## remove
 

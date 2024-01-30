@@ -1,28 +1,6 @@
 # 方法
 
-所有方法都挂载于组件实例上。
-
-## TypeScript类型提示
-
-如果你使用TS，可以用`InstanceType`获取组件的实例类型。
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import { NesVue } from 'nes-vue'
-
-const nes = ref<InstanceType<typeof NesVue>>()
-</script>
-
-<template>
-  <nes-vue
-    ref="nes"
-    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
-  />
-</template>
-```
-
-或者也可以直接使用`nes-vue`提供的`NesVueInstance`类型。
+所有方法都挂载于组件实例上，如果你使用TS，可以通过`nes-vue`提供的`NesVueInstance`获取实例类型。
 
 ```vue
 <script setup lang="ts">
@@ -63,7 +41,7 @@ start(url?: string) => void
 
 ## reset
 
-重新开始游戏。
+重启游戏。
 
 ```ts
 reset() => void
@@ -107,7 +85,7 @@ save(id: string) => void
 
 默认情况下，存档是保存在 indexedDB，你可以设置[storage](/zh/guide/props#storage)属性让其保存在localStorage。
 
-每个存档大约需要200kB，如果需要保存较多的数据，建议使用默认的 indexedDB。
+每个存档大约200kB，如果需要保存较多的数据，建议使用默认的 indexedDB。
 
 ## load
 
@@ -119,7 +97,8 @@ load(id: string) => void
 
 存档、读档示例：
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
@@ -128,12 +107,12 @@ const nes = ref()
 const id = 'example'
 
 function save() {
-  // 存档
+  // save state
   nes.value.save(id)
 }
 
 function load() {
-  // 读档
+  // load state
   nes.value.load(id)
 }
 </script>
@@ -149,6 +128,39 @@ function load() {
   <button @click="load">Load</button>
 </template>
 ```
+```vue [vue-ts]
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+const id = 'example'
+
+function save() {
+  // save state
+  nes.value.save(id)
+}
+
+function load() {
+  // load state
+  nes.value.load(id)
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="save">Save</button>
+  <button @click="load">Load</button>
+</template>
+```
+:::
 
 ## remove
 

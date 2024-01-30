@@ -8,7 +8,8 @@
 
 第一种：通过URL读取*.fm2文件
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
@@ -31,15 +32,50 @@ function playVideo() {
     width="512"
     height="480"
   />
+  <button @click="playVideo">Play TAS Video</button>
 </template>
 ```
+
+```vue [vue-ts]
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref()
+
+function playVideo() {
+  const url = 'https://taiyuuki.github.io/nes-vue/happylee-supermariobros,warped.fm2'
+  nes.value.fm2URL(url) // 请求fm2文件，返回Promise，参数就是fm2Play方法。
+  .then(fm2Play => {
+      fm2Play() // 开始播放录像
+  })
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="playVideo">Play TAS Video</button>
+</template>
+```
+
+:::
 
 ## 读取纯文本
 
 第二种：直接读取 `*.fm2` 文件的纯文本形式的字符串
 
-```vue
+::: code-group
+```vue [vue-js]
 <script setup>
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
@@ -60,8 +96,36 @@ function playVideo() {
     width="512"
     height="480"
   />
+  <button @click="playVideo">Play TAS Video</button>
 </template>
 ```
+
+```vue [vue-ts]
+<script setup lang="ts">
+import { ref } from 'vue'
+import { NesVue } from 'nes-vue'
+
+const nes = ref() as Ref<NesVueInstance>
+
+function playVideo() {
+  const text = `...` // 假设text就是fm2的纯文本字符串
+  // 虽然fm2Text也返回Promise，但解析过程是同步的，所以可以用同步的方式使用。
+  nes.value.fm2Text(text) // 读取文本
+  nes.value.fm2Play() // 开始播放录像。
+}
+</script>
+
+<template>
+  <nes-vue
+    ref="nes"
+    url="https://taiyuuki.github.io/nes-vue/Super Mario Bros (JU).nes"
+    width="512"
+    height="480"
+  />
+  <button @click="playVideo">Play TAS Video</button>
+</template>
+```
+:::
 
 ## 注意事项
 
