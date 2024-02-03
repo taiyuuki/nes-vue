@@ -74,8 +74,6 @@ function playVideo() {
 ::: code-group
 ```vue [vue-js]
 <script setup>
-import type { Ref } from 'vue'
-import type { NesVueInstance } from 'nes-vue'
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
@@ -102,6 +100,8 @@ function playVideo() {
 
 ```vue [vue-ts]
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { NesVueInstance } from 'nes-vue'
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
