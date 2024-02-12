@@ -1,7 +1,7 @@
 import { toHexNumber } from 'src/utils'
-import { nes } from '../nes'
 import type { CheatCodeMap } from 'src/types'
 import { object_entries } from '@taiyuuki/utils'
+import { nes } from '../nes'
 
 class Cheat {
     enable: boolean

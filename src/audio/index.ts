@@ -1,7 +1,7 @@
-import {  nesFrame } from 'src/nes'
+import { nesFrame } from 'src/nes'
 import { math_between } from '@taiyuuki/utils'
 
-let audio_ctx = new AudioContext
+let audio_ctx = new AudioContext()
 let script_processor: ScriptProcessorNode
 let gain = 1
 const AUDIO_BUFFERING = 512
@@ -9,7 +9,8 @@ const SAMPLE_COUNT = 4 * 1024
 const SAMPLE_MASK = SAMPLE_COUNT - 1
 const audio_samples_L = new Float32Array(SAMPLE_COUNT)
 const audio_samples_R = new Float32Array(SAMPLE_COUNT)
-let audio_write_cursor = 0, audio_read_cursor = 0
+let audio_write_cursor = 0
+let audio_read_cursor = 0
 
 function audio_remain() {
     return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK

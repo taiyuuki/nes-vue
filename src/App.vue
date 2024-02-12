@@ -3,9 +3,9 @@ import NesDemo from './dev/NesDemo.vue'
 </script>
 
 <template>
-  <div>
-    <NesDemo />
-  </div>
+    <div>
+        <NesDemo />
+    </div>
 </template>
 
 <style>

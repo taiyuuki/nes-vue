@@ -58,7 +58,7 @@ class Playback {
 
     load(cb: (data: SaveData) => void) {
         const id = `playback-${--this.dbIndex}`
-        this.db.get_item(id).then(data => {
+        this.db.get_item(id).then((data) => {
             this.length = data.length
             this.frameList = data.frameList
             this.frameData = data.frameData

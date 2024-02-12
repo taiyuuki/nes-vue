@@ -11,4 +11,3 @@ export type { DBInstance }
 export {
     createDB,
 }
-

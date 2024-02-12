@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch, nextTick, ref, computed, effect } from 'vue'
+import { computed, effect, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { createDB } from 'src/db'
-import type { EmitErrorObj, SavedOrLoaded, Controller, SaveData } from 'src/types'
-import { audioFrame, audioStop, suspend, setGain, resume } from 'src/audio'
-import { WIDTH, HEIGHT, animationFrame, animationStop, fitInParent, cut } from 'src/animation'
-import { is_not_void, is_void, download_canvas, is_empty_obj, get_fill_arr } from '@taiyuuki/utils'
+import type { Controller, EmitErrorObj, SaveData, SavedOrLoaded } from 'src/types'
+import { audioFrame, audioStop, resume, setGain, suspend } from 'src/audio'
+import { HEIGHT, WIDTH, animationFrame, animationStop, cut, fitInParent } from 'src/animation'
+import { download_canvas, get_fill_arr, is_empty_obj, is_not_void, is_void } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
 import { fm2Parse, tasState } from 'src/tas'
-import { nes, getNesData, loadNesData, rom } from 'src/nes'
+import { getNesData, loadNesData, nes, rom } from 'src/nes'
 import { useElement } from 'src/composables/use-instance'
 import { cheat } from 'src/cheat'
 
 defineOptions({
-    name: 'nes-vue',
+    name: 'NesVue',
 })
 
 const props = withDefaults(defineProps<{
@@ -72,7 +72,7 @@ let isPaused = false
 let fpsStamp: number
 
 function emitError(errorObj: EmitErrorObj) {
-    errorObj.message = '[nes-vue] ' + errorObj.message
+    errorObj.message = `[nes-vue] ${errorObj.message}`
     if (props.debugger) {
         console.error(errorObj.message)
     }
@@ -105,7 +105,7 @@ function removeEvent() {
  * 🎮: Start the game in the stopped state. Normally, url is not required.
  * @param url Rom url
  */
-function start(url: string = <string>props.url) {
+function start(url: string = props.url) {
     if (is_void(cvs.value)) {
         return
     }
@@ -130,7 +130,7 @@ function start(url: string = <string>props.url) {
                 nes.loadROM(buffer)
                 fpsStamp = window.setInterval(() => {
                     const fps = nes.getFPS()
-                    emits('fps', fps ? fps : 0)
+                    emits('fps', fps || 0)
                 }, 1000)
                 resolve('success')
             }
@@ -176,7 +176,7 @@ function start(url: string = <string>props.url) {
     rp.then(() => {
         audioFrame()
         emits('success')
-    }, reason => {
+    }, (reason) => {
         emitError(reason)
         return reason
     })
@@ -227,7 +227,9 @@ function loadGameData(saveData: SaveData) {
 }
 
 function saveInStorage(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     try {
         localStorage.setItem(id, JSON.stringify(getNesData(props.url)))
         emits('saved', {
@@ -247,7 +249,9 @@ function saveInStorage(id: string) {
 }
 
 function loadInStorage(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     const saveDataString = localStorage.getItem(id)
     if (!saveDataString) {
         return emitError({
@@ -264,7 +268,9 @@ function loadInStorage(id: string) {
 }
 
 function saveIndexedDB(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     try {
         db.set_item(id, getNesData(props.url))
     }
@@ -277,8 +283,10 @@ function saveIndexedDB(id: string) {
 }
 
 function loadIndexedDB(id: string) {
-    if (checkId(id)) {return}
-    db.get_item(id).then(data => {
+    if (checkId(id)) {
+        return
+    }
+    db.get_item(id).then((data) => {
         loadGameData(data)
     })
 }
@@ -303,7 +311,9 @@ function loadIndexedDB(id: string) {
  * ```
  */
 function save(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     if (!nes.cpu.irqRequested || isStop.value) {
         return emitError({
             code: 1,
@@ -338,7 +348,9 @@ function save(id: string) {
  * ```
  */
 function load(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     if (!nes.cpu.irqRequested || isStop.value) {
         return emitError({
             code: 2,
@@ -357,7 +369,9 @@ function load(id: string) {
 }
 
 function remove(id: string) {
-    if (checkId(id)) {return}
+    if (checkId(id)) {
+        return
+    }
     if (props.storage) {
         localStorage.removeItem(id)
     }
@@ -370,12 +384,15 @@ function clear() {
     db.clear()
 }
 
-/** },
+/**
+   },
   }🎮: Screenshot
  * @param download True will start downloading the image inside the browser.
  */
 function screenshot(download?: boolean, imageName?: string) {
-    if (!cvs.value || isStop.value) {return}
+    if (!cvs.value || isStop.value) {
+        return
+    }
     const img = cut(cvs.value)
     if (download) {
         download_canvas(cvs.value, imageName)
@@ -503,7 +520,10 @@ watch(() => props.url, () => {
     rom.buffer = null
     reset()
 })
-watch(() => props.gain, () => { setGain(props.gain) })
+watch(
+    () => props.gain,
+    () => { setGain(props.gain) },
+)
 // watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
 
 onMounted(() => {
@@ -546,29 +566,29 @@ defineExpose({
 
 <script lang="ts">
 export default {
-    name: 'nes-vue',
+    name: 'NesVue',
 }
 </script>
 
 <template>
-  <div :style="canvasStyle">
-    <canvas
-      ref="cvs"
-      :width="WIDTH"
-      :height="HEIGHT"
-      style="display:inline-block"
-    />
-    <div
-      v-show="isStop"
-      style="position: absolute;top: 0;left: 0%; background-color: #000;width: 100%; height: 100%;"
-    />
-    <div
-      v-if="isStop"
-      style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
-      @click="start()"
-    >
-      {{ label }}
+    <div :style="canvasStyle">
+        <canvas
+            ref="cvs"
+            :width="WIDTH"
+            :height="HEIGHT"
+            style="display:inline-block"
+        />
+        <div
+            v-show="isStop"
+            style="position: absolute;top: 0;left: 0%; background-color: #000;width: 100%; height: 100%;"
+        />
+        <div
+            v-if="isStop"
+            style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
+            @click="start()"
+        >
+            {{ label }}
+        </div>
     </div>
-  </div>
 </template>
 ../types

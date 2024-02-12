@@ -1,7 +1,7 @@
 // import { Playback } from 'src/playback'
 // import { compressArray, decompressArray } from 'src/utils'
 import { cheat } from 'src/cheat'
-import {  nes } from 'src/nes'
+import { nes } from 'src/nes'
 
 const WIDTH = 256
 const HEIGHT = 240

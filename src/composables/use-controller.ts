@@ -3,7 +3,7 @@ import type { NesVueProps, Player } from 'src/types'
 import { controllerState } from 'src/nes'
 import { fillFalse, gpFilter } from 'src/utils'
 import type { ComputedRef } from 'vue'
-import { onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 
 // threshold of level.
 const THRESHOLD = 0.3
@@ -63,9 +63,9 @@ class GamepadManager {
     animationFrame: number
     axesHolding: Record<Player, boolean[]>
     btnHolding: Record<Player, boolean[]>
-    gamepad_btns: ComputedRef<{ p1: string[]; p2: string[] }>
+    gamepad_btns: ComputedRef<{ p1: string[], p2: string[] }>
 
-    constructor(gamepad_btns: ComputedRef<{ p1: string[]; p2: string[] }>) {
+    constructor(gamepad_btns: ComputedRef<{ p1: string[], p2: string[] }>) {
         window.addEventListener('gamepadconnected', this.connectHandler.bind(this, true))
         window.addEventListener('gamepaddisconnected', this.connectHandler.bind(this, false))
         this.animationFrame = requestAnimationFrame(this.frame.bind(this))
@@ -157,7 +157,7 @@ class GamepadManager {
     }
 }
 
-export const useController = (props: NesVueProps): (eventCode: string, state: 0x41 | 0x40) => void => {
+export function useController(props: NesVueProps): (eventCode: string, state: 0x41 | 0x40) => void {
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
 

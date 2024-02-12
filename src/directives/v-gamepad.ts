@@ -1,6 +1,6 @@
 import type { Directive } from 'vue'
 import type { ControllerKey } from 'src/types'
-import { emitControllerState, P1_DEFAULT, P2_DEFAULT } from 'src/composables/use-controller'
+import { P1_DEFAULT, P2_DEFAULT, emitControllerState } from 'src/composables/use-controller'
 import { key_in, object_keys } from '@taiyuuki/utils'
 
 const _events: Record<string, Record<string, ((e: Event) => void)[]>> = {}
@@ -14,8 +14,8 @@ function addEvent(el: HTMLElement, eventId: string, type: string, fn: <E extends
 
 function removeEventAll(el: HTMLElement, eventId: string) {
     if (_events[eventId]) {
-        object_keys(_events[eventId]).forEach(type => {
-            _events[eventId][type].forEach(fn => {
+        object_keys(_events[eventId]).forEach((type) => {
+            _events[eventId][type].forEach((fn) => {
                 el.removeEventListener(type, fn)
             })
             delete _events[eventId][type]
@@ -28,7 +28,7 @@ function resolveKeys(key: ControllerKey[] | ControllerKey) {
     if (typeof key === 'string') {
         key = [key]
     }
-    return Array.from(new Set(key)).map(key => key.toUpperCase()).sort() as  ControllerKey[]
+    return Array.from(new Set(key)).map(key => key.toUpperCase()).sort() as ControllerKey[]
 }
 
 /**
@@ -47,7 +47,7 @@ function resolveKeys(key: ControllerKey[] | ControllerKey) {
  * </template>
  * ```
  */
-export const vGamepad: Directive<HTMLElement, ControllerKey | ControllerKey[]>  = (target, binding) => {
+export const vGamepad: Directive<HTMLElement, ControllerKey | ControllerKey[]> = (target, binding) => {
     if (!binding.value) {
         throw '[nes-vue] v-gamepad value is required'
     }
@@ -56,42 +56,42 @@ export const vGamepad: Directive<HTMLElement, ControllerKey | ControllerKey[]>  
     const player = checkPlayer ? P2_DEFAULT : P1_DEFAULT
     if (binding.oldValue) {
         const oldKeys = resolveKeys(binding.oldValue).filter(key => key_in(key, player))
-        const oldEventId = `gamepad-${arg + (checkPlayer ? 'p2' : 'p1') + '-' + oldKeys.join('-')}`
+        const oldEventId = `gamepad-${`${arg + (checkPlayer ? 'p2' : 'p1')}-${oldKeys.join('-')}`}`
         removeEventAll(target, oldEventId)
     }
     const keys = resolveKeys(binding.value).filter(key => key_in(key, player))
-    const eventId = `gamepad-${arg + (checkPlayer ? 'p2' : 'p1') + '-' + keys.join('-')}`
+    const eventId = `gamepad-${`${arg + (checkPlayer ? 'p2' : 'p1')}-${keys.join('-')}`}`
     if (keys.length) {
         if (arg === 'touch') {
             addEvent(target, eventId, 'touchstart', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x41)
                 })
             })
             addEvent(target, eventId, 'touchend', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x40)
                 })
             })
             addEvent(target, eventId, 'touchcancel', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x40)
                 })
             })
         }
         else {
             addEvent(target, eventId, 'mousedown', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x41)
                 })
             })
             addEvent(target, eventId, 'mouseup', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x40)
                 })
             })
             addEvent(target, eventId, 'mouseleave', () => {
-                keys.forEach(key => {
+                keys.forEach((key) => {
                     emitControllerState(player[key], 0x40)
                 })
             })

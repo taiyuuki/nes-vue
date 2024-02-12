@@ -7,7 +7,7 @@ import {
 import { setupLayouts } from 'virtual:generated-layouts'
 import generatedRoutes from 'virtual:generated-pages'
 
-const routes =  setupLayouts(generatedRoutes)
+const routes = setupLayouts(generatedRoutes)
 routes.push({
     path: '/:catchAll(.*)*',
     component: () => import('pages/404.vue'),

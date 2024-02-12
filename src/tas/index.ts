@@ -6,14 +6,18 @@ const NONE = '........'
 
 const reg = /\|\d\|([LRUDTSAB.]{8})\|([LRUDTSAB.]{8})?\|\|/g
 
+function initTasState() {
+    tasState = {}
+}
+
 function fm2Parse(text: string, fix: number) {
     let match = reg.exec(text)
     let frame = 0 + fix
     let last = false
-    tasState = {}
-    if (!match) {
+    initTasState()
+    if (!match)
         return
-    }
+
     while (match) {
         const p1_match = match[1] === NONE
         const p2_match = match[2] === NONE
@@ -30,8 +34,8 @@ function fm2Parse(text: string, fix: number) {
             continue
         }
         last = true
-        const p1 = match[1] ? match[1].split('').map((x) => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
-        const p2 = match[2] ? match[2].split('').map((x) => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
+        const p1 = match[1] ? match[1].split('').map(x => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
+        const p2 = match[2] ? match[2].split('').map(x => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
         match = reg.exec(text)
 
         tasState[frame] = {
