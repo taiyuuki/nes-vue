@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
+    "@taiyuuki/eslint-config": "^1.0.0",
     "@taiyuuki/utils": "^0.4.6",
     "@types/node": "^18.18.3",
     "@vitejs/plugin-vue": "^3.2.0",

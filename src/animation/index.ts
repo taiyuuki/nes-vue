@@ -15,7 +15,7 @@ const imageData = new ImageData(WIDTH, HEIGHT)
 function onFrame(u32: number[]) {
     nes.frameCounter++
     for (let i = 0; i < 256 * 240; i += 1) {
-        framebuffer_u32[i] = 0xff000000 | u32[i]
+        framebuffer_u32[i] = 0xFF000000 | u32[i]
     }
     cheat.onFrame()
     //

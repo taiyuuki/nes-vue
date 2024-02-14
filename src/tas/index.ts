@@ -15,8 +15,9 @@ function fm2Parse(text: string, fix: number) {
     let frame = 0 + fix
     let last = false
     initTasState()
-    if (!match)
+    if (!match) {
         return
+    }
 
     while (match) {
         const p1_match = match[1] === NONE
