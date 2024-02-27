@@ -37,6 +37,8 @@ p2 = {
 
 ```vue
 <script setup>
+import { NesVue } from 'nes-vue'
+
 function move() {
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD' }))
 }

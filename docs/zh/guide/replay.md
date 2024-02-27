@@ -43,7 +43,7 @@ import type { NesVueInstance } from 'nes-vue'
 import { ref } from 'vue'
 import { NesVue } from 'nes-vue'
 
-const nes = ref()
+const nes = ref() as Ref<NesVueInstance>
 
 function playVideo() {
   const url = 'https://taiyuuki.github.io/nes-vue/happylee-supermariobros,warped.fm2'
