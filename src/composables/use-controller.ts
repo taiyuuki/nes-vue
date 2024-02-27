@@ -174,7 +174,7 @@ export function useController(props: NesVueProps): (eventCode: string, state: 0x
                 index,
             })
             controllerState.on(p2.value[key], {
-                p: 2,
+                p: key === 'SELECT' || key === 'START' ? 1 : 2,
                 index,
             })
         })
