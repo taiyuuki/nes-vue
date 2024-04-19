@@ -6,7 +6,8 @@ import { nes } from 'src/nes'
 const WIDTH = 256
 const HEIGHT = 240
 let animationframeID: number
-let framebuffer_u8!: Uint8ClampedArray, framebuffer_u32!: Uint32Array
+let framebuffer_u8!: Uint8ClampedArray, 
+    framebuffer_u32!: Uint32Array
 let canvas_ctx!: CanvasRenderingContext2D
 const imageData = new ImageData(WIDTH, HEIGHT)
 
@@ -18,6 +19,7 @@ function onFrame(u32: number[]) {
         framebuffer_u32[i] = 0xFF000000 | u32[i]
     }
     cheat.onFrame()
+
     //
     // nesFrame(framebuffer_u32)
     // if (nes.playbackMode) {
@@ -40,6 +42,7 @@ function animationFrame(cvs: HTMLCanvasElement) {
     const buffer = new ArrayBuffer(imageData.data.length)
     framebuffer_u8 = new Uint8ClampedArray(buffer)
     framebuffer_u32 = new Uint32Array(buffer)
+
     // playback.clearDB()
     nes.frameCounter = 1
     animationframeID = requestAnimationFrame(onAnimationFrame)
@@ -107,8 +110,7 @@ function fitInParent(cvs: HTMLCanvasElement) {
     if (desiredRatio < parentRatio) {
         cvs.style.height = `${parentHeight}px`
         cvs.style.width = `${Math.round(parentHeight + desiredRatio)}px`
-    }
-    else {
+    } else {
         cvs.style.width = `${parentWidth}px`
         cvs.style.height = `${Math.round(parentWidth / desiredRatio)}px`
     }
@@ -121,6 +123,7 @@ function animationStop() {
 function cut(cvs: HTMLCanvasElement) {
     const image = new Image()
     image.src = cvs.toDataURL('image/png')
+
     return image
 }
 
@@ -131,8 +134,10 @@ export {
     animationFrame,
     animationStop,
     fitInParent,
+
     // rewind,
     // forward,
     cut,
+
     // frameAction,
 }

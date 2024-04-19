@@ -20,13 +20,11 @@ export function compressArray(arr: number[] | Uint32Array) {
     for (let i = 1; i < arr.length; i++) {
         if (arr[i] === current) {
             count++
-        }
-        else {
+        } else {
             if (count > 1) {
                 compressed.push(count)
                 compressed.push(current)
-            }
-            else {
+            } else {
                 compressed.push(-current - 1)
             }
             current = arr[i]
@@ -35,6 +33,7 @@ export function compressArray(arr: number[] | Uint32Array) {
     }
     compressed.push(count)
     compressed.push(current)
+
     return compressed
 }
 
@@ -44,8 +43,7 @@ export function decompressArray(compressed: number[]): number[] {
         if (compressed[i] < 0) {
             decompressed.push(-compressed[i] - 1)
             i++
-        }
-        else {
+        } else {
             const count = compressed[i]
             const value = compressed[i + 1]
             for (let j = 0; j < count; j++) {
@@ -54,6 +52,7 @@ export function decompressArray(compressed: number[]): number[] {
             i += 2
         }
     }
+
     return decompressed
 }
 
@@ -64,13 +63,13 @@ export function compressPtTile(ptTile: PtTile[]): [number[], number[]] {
         for (let j = 0; j < ptTile[i].opaque.length; j++) {
             if (ptTile[i].opaque[j] === false) {
                 opaques.push(0)
-            }
-            else {
+            } else {
                 opaques.push(1)
             }
         }
         pixs.push(...ptTile[i].pix)
     }
+
     return [compressArray(opaques), compressArray(pixs)]
 }
 
@@ -96,6 +95,7 @@ export function decompressPtTile(compressed: [number[], number[]]) {
         opaque = Array(8)
         pix = []
     }
+
     return ptTile
 }
 
@@ -105,8 +105,10 @@ export function compressNameTable(nameTable: NameTable[]): [number[], number[]] 
     nameTable.reduce((prev, curr) => {
         tile.push(...curr.tile)
         attrib.push(...curr.attrib)
+
         return prev
     }, tile)
+
     return [compressArray(tile), compressArray(attrib)]
 }
 
@@ -125,6 +127,7 @@ export function decompressNameTable(compressed: [number[], number[]]) {
             attrib = []
         }
     }
+
     return nameTable
 }
 

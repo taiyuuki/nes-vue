@@ -8,14 +8,14 @@ declare module 'jsnes' {
         playbackMode: boolean
         frameCounter: number
         controllers: Controller[]
-        toJSON: () => NESInstance
-        fromJSON: (json: any) => void
-        reset: () => void
-        frame: () => void
-        buttonUp: (player: number, button: number) => boolean
-        buttonDown: (player: number, button: number) => boolean
-        loadROM: (url: string) => void
-        getFPS: () => number
+        toJSON: ()=> NESInstance
+        fromJSON: (json: any)=> void
+        reset: ()=> void
+        frame: ()=> void
+        buttonUp: (player: number, button: number)=> boolean
+        buttonDown: (player: number, button: number)=> boolean
+        loadROM: (url: string)=> void
+        getFPS: ()=> number
     }
 
     export interface Controller {
@@ -23,21 +23,21 @@ declare module 'jsnes' {
     }
 
     export interface NesOptions {
-        onFrame: (frameBuffer: number[]) => void
-        onAudioSample: (left: number, right: number) => void
+        onFrame: (frameBuffer: number[])=> void
+        onAudioSample: (left: number, right: number)=> void
         sampleRate?: number
     }
 
-    export type NESConstructor = new (options: NesOptions) => NESInstance
+    export type NESConstructor = new (options: NesOptions)=> NESInstance
 
     export interface CPU {
         mem: Array<number>
         cyclesToHalt: number
         irqRequested: boolean
         irqType: null
-        toJSON: () => Partial<CPU>
-        fromJSON: (json: any) => void
-        reset: () => void
+        toJSON: ()=> Partial<CPU>
+        fromJSON: (json: any)=> void
+        reset: ()=> void
     }
 
     export interface Mmap {
@@ -52,9 +52,9 @@ declare module 'jsnes' {
         irqLatchValue: number
         irqEnable: number
         prgAddressChanged: boolean
-        toJSON: () => Partial<Mmap>
-        fromJSON: (json: any) => void
-        reset: () => void
+        toJSON: ()=> Partial<Mmap>
+        fromJSON: (json: any)=> void
+        reset: ()=> void
     }
 
     export interface PPU {
@@ -87,9 +87,9 @@ declare module 'jsnes' {
         scanlineAlreadyRendered: null
         nameTable: NameTable[]
         ptTile: PtTile[]
-        toJSON: () => Partial<PPU>
-        fromJSON: (json: any) => void
-        reset: () => void
+        toJSON: ()=> Partial<PPU>
+        fromJSON: (json: any)=> void
+        reset: ()=> void
     }
 
     export interface NameTable {

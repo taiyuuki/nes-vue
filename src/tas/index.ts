@@ -35,8 +35,10 @@ function fm2Parse(text: string, fix: number) {
             continue
         }
         last = true
-        const p1 = match[1] ? match[1].split('').map(x => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
-        const p2 = match[2] ? match[2].split('').map(x => x === '.' ? 0x40 : 0x41).reverse() : get_fill_arr(8, 0x40)
+        const p1 = match[1] ? match[1].split('').map(x => x === '.' ? 0x40 : 0x41)
+            .reverse() : get_fill_arr(8, 0x40)
+        const p2 = match[2] ? match[2].split('').map(x => x === '.' ? 0x40 : 0x41)
+            .reverse() : get_fill_arr(8, 0x40)
         match = reg.exec(text)
 
         tasState[frame] = {

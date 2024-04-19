@@ -11,9 +11,7 @@ import { getNesData, loadNesData, nes, rom } from 'src/nes'
 import { useElement } from 'src/composables/use-instance'
 import { cheat } from 'src/cheat'
 
-defineOptions({
-    name: 'NesVue',
-})
+defineOptions({ name: 'NesVue' })
 
 const props = withDefaults(defineProps<{
     url: string
@@ -27,6 +25,7 @@ const props = withDefaults(defineProps<{
     debugger?: boolean
     turbo?: number
     dbName?: string
+
     // rewindMode?: boolean
     p1?: Partial<Controller>
     p2?: Partial<Controller>
@@ -41,12 +40,13 @@ const props = withDefaults(defineProps<{
     debugger: false,
     turbo: 16,
     dbName: 'nes-vue',
+
     // rewindMode: false,
     p1: () => P1_DEFAULT,
     p2: () => P2_DEFAULT,
 })
 
-const emits = defineEmits<NesVueEmits>()
+const emit = defineEmits<NesVueEmits>()
 
 interface NesVueEmits {
     (e: 'fps', fps: number): void
@@ -76,7 +76,8 @@ function emitError(errorObj: EmitErrorObj) {
     if (props.debugger) {
         console.error(errorObj.message)
     }
-    emits('error', errorObj)
+    emit('error', errorObj)
+
     return false
 }
 
@@ -111,15 +112,15 @@ function start(url: string = props.url) {
     }
     if (isStop.value) {
         isStop.value = false
-    }
-    else {
+    } else {
         audioStop()
         animationStop()
         clearInterval(fpsStamp)
     }
     if (url !== props.url) {
         rom.buffer = null
-        emits('update:url', url)
+        emit('update:url', url)
+
         return
     }
     animationFrame(cvs.value)
@@ -130,11 +131,10 @@ function start(url: string = props.url) {
                 nes.loadROM(buffer)
                 fpsStamp = window.setInterval(() => {
                     const fps = nes.getFPS()
-                    emits('fps', fps || 0)
+                    emit('fps', fps || 0)
                 }, 1000)
                 resolve('success')
-            }
-            catch (_) {
+            } catch (_) {
                 reject({
                     code: 0,
                     message: `${url} loading Error: Probably the ROM is unsupported.`,
@@ -144,8 +144,7 @@ function start(url: string = props.url) {
         }
         if (is_not_void(rom.buffer)) {
             loadROM(rom.buffer)
-        }
-        else {
+        } else {
             const req = new XMLHttpRequest()
             req.open('GET', url)
             req.overrideMimeType('text/plain; charset=x-user-defined')
@@ -155,12 +154,11 @@ function start(url: string = props.url) {
                     message: `${url} loading Error: ${req.statusText}`,
                 })
             }
-            req.onload = function () {
+            req.onload = function() {
                 if (this.status === 200) {
                     rom.buffer = this.responseText
                     loadROM(rom.buffer)
-                }
-                else {
+                } else {
                     reject({
                         code: 404,
                         message: `${url} loading Error: ${req.statusText}`,
@@ -175,9 +173,10 @@ function start(url: string = props.url) {
 
     rp.then(() => {
         audioFrame()
-        emits('success')
-    }, (reason) => {
+        emit('success')
+    }, reason => {
         emitError(reason)
+
         return reason
     })
 }
@@ -210,14 +209,13 @@ function stop() {
     isStop.value = true
 }
 
-function checkId(id: string | number | undefined) {
+function checkId(id: number | string | undefined) {
     if (id === void 0) {
         return emitError({
             code: 4,
             message: 'TypeError: id is undefined.',
         })
-    }
-    else {
+    } else {
         return false
     }
 }
@@ -232,13 +230,12 @@ function saveInStorage(id: string) {
     }
     try {
         localStorage.setItem(id, JSON.stringify(getNesData(props.url)))
-        emits('saved', {
+        emit('saved', {
             id,
             message: 'The state has been saved in localStorage',
             target: 'localStorage',
         })
-    }
-    catch (e: any) {
+    } catch (e: any) {
         if (e.name === 'QuotaExceededError') {
             return emitError({
                 code: 1,
@@ -260,7 +257,7 @@ function loadInStorage(id: string) {
         })
     }
     loadGameData(JSON.parse(saveDataString))
-    emits('loaded', {
+    emit('loaded', {
         id,
         message: 'Loaded state from localStorage',
         target: 'localStorage',
@@ -273,8 +270,7 @@ function saveIndexedDB(id: string) {
     }
     try {
         db.set_item(id, getNesData(props.url))
-    }
-    catch (_) {
+    } catch (_) {
         emitError({
             code: 1,
             message: 'Save Error: Unable to save data to indexedDB.',
@@ -286,7 +282,7 @@ function loadIndexedDB(id: string) {
     if (checkId(id)) {
         return
     }
-    db.get_item(id).then((data) => {
+    db.get_item(id).then(data => {
         loadGameData(data)
     })
 }
@@ -322,8 +318,7 @@ function save(id: string) {
     }
     if (props.storage) {
         saveInStorage(id)
-    }
-    else {
+    } else {
         saveIndexedDB(id)
     }
 }
@@ -359,8 +354,7 @@ function load(id: string) {
     }
     if (props.storage) {
         loadInStorage(id)
-    }
-    else {
+    } else {
         loadIndexedDB(id)
     }
     if (isPaused) {
@@ -374,8 +368,7 @@ function remove(id: string) {
     }
     if (props.storage) {
         localStorage.removeItem(id)
-    }
-    else {
+    } else {
         db.remove_item(id)
     }
 }
@@ -397,6 +390,7 @@ function screenshot(download?: boolean, imageName?: string) {
     if (download) {
         download_canvas(cvs.value, imageName)
     }
+
     return img
 }
 
@@ -406,6 +400,7 @@ function fm2Play() {
             code: 3,
             message: 'FM2 Error: No fm2 scripts found.',
         })
+
         return
     }
     reset()
@@ -423,14 +418,15 @@ async function fm2URL(url: string, fix = 0) {
         const res = await fetch(url)
         const text = await res.text()
         fm2Parse(text, fix)
-    }
-    catch (e) {
+    } catch (e) {
         emitError({
             code: 4,
             message: 'FM2 Error: Unable to load fm2 file.',
         })
+
         return Promise.reject(e)
     }
+
     return fm2Play
 }
 
@@ -448,6 +444,7 @@ function fm2Stop() {
  */
 function fm2Text(text: string, fix = 0) {
     fm2Parse(text, fix)
+
     return Promise.resolve(fm2Play)
 }
 
@@ -480,11 +477,13 @@ function pause() {
 
 function play() {
     isPaused = false
+
     // if (props.rewindMode) {
     //     frameAction()
     // }
     // else {
     resume()
+
     // }
 }
 
@@ -513,6 +512,7 @@ const canvasStyle = computed(() => {
     if (pure.test(String(height))) {
         height += 'px'
     }
+
     return `width: ${width};height: ${height};background-color: #000;margin: auto;position: relative;overflow: hidden;`
 })
 
@@ -524,9 +524,11 @@ watch(
     () => props.gain,
     () => { setGain(props.gain) },
 )
+
 // watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
 
 onMounted(() => {
+
     // nes.playbackMode = props.rewindMode
     rom.buffer = null
     if (props.autoStart) {
@@ -558,6 +560,7 @@ defineExpose({
     cheatCode,
     cancelCheatCode,
     cancelCheatCodeAll,
+
     // memory,
     // prev,
     // next,
@@ -565,30 +568,28 @@ defineExpose({
 </script>
 
 <script lang="ts">
-export default {
-    name: 'NesVue',
-}
+export default { name: 'NesVue' }
 </script>
 
 <template>
-    <div :style="canvasStyle">
-        <canvas
-            ref="cvs"
-            :width="WIDTH"
-            :height="HEIGHT"
-            style="display:inline-block"
-        />
-        <div
-            v-show="isStop"
-            style="position: absolute;top: 0;left: 0%; background-color: #000;width: 100%; height: 100%;"
-        />
-        <div
-            v-if="isStop"
-            style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
-            @click="start()"
-        >
-            {{ label }}
-        </div>
+  <div :style="canvasStyle">
+    <canvas
+      ref="cvs"
+      :width="WIDTH"
+      :height="HEIGHT"
+      style="display:inline-block"
+    />
+    <div
+      v-show="isStop"
+      style="position: absolute;top: 0;left: 0%; background-color: #000;width: 100%; height: 100%;"
+    />
+    <div
+      v-if="isStop"
+      style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);cursor: pointer;color: #f8f4ed;font-size: 20px;"
+      @click="start()"
+    >
+      {{ label }}
     </div>
+  </div>
 </template>
 ../types

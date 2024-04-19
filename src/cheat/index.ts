@@ -94,6 +94,4 @@ class Cheat {
 
 const cheat = new Cheat()
 
-export {
-    cheat,
-}
+export { cheat }

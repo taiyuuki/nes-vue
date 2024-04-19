@@ -55,7 +55,7 @@ export const P2_DEFAULT = {
 
 let interval = 1000 / (2 * 16)
 
-export function emitControllerState(eventCode: string, state: 0x41 | 0x40) {
+export function emitControllerState(eventCode: string, state: 0x40 | 0x41) {
     controllerState.emit(eventCode, state, interval)
 }
 
@@ -87,8 +87,7 @@ class GamepadManager {
     connectHandler(state: boolean, e: GamepadEvent) {
         if (state) {
             this.gamepads[e.gamepad.index] = e.gamepad
-        }
-        else if (this.gamepads.length === 0) {
+        } else if (this.gamepads.length === 0) {
             this.close()
         }
     }
@@ -100,8 +99,7 @@ class GamepadManager {
                 emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
                 this.axesHolding[player][aindex] = true
             }
-        }
-        else if (hold) {
+        } else if (hold) {
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.axesHolding[player][aindex] = false
         }
@@ -115,8 +113,7 @@ class GamepadManager {
             }
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
             this.btnHolding[player][bindex] = true
-        }
-        else if (hold) {
+        } else if (hold) {
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.btnHolding[player][bindex] = false
         }
@@ -157,7 +154,7 @@ class GamepadManager {
     }
 }
 
-export function useController(props: NesVueProps): (eventCode: string, state: 0x41 | 0x40) => void {
+export function useController(props: NesVueProps): (eventCode: string, state: 0x40 | 0x41)=> void {
     const p1 = computed(() => Object.assign(P1_DEFAULT, props.p1))
     const p2 = computed(() => Object.assign(P2_DEFAULT, props.p2))
 
@@ -167,7 +164,7 @@ export function useController(props: NesVueProps): (eventCode: string, state: 0x
 
     function setController() {
         controllerState.init()
-        object_keys(KEYS_INDEX).forEach((key) => {
+        object_keys(KEYS_INDEX).forEach(key => {
             const index = KEYS_INDEX[key]
             controllerState.on(p1.value[key], {
                 p: 1,

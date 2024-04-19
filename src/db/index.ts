@@ -8,6 +8,4 @@ type DBInstance<T = any> = InstanceType<typeof DB<T>>
 
 export type { DBInstance }
 
-export {
-    createDB,
-}
+export { createDB }

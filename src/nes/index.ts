@@ -15,9 +15,7 @@ const nes = new jsnes.NES({
 nes.videoMode = false
 nes.frameCounter = 1
 nes.playbackMode = false
-const rom = {
-    buffer: null as string | null,
-}
+const rom = { buffer: null as string | null }
 
 function nesFrame() {
     if (nes.videoMode && nes.frameCounter in tasState) {
@@ -64,7 +62,7 @@ function getNesData(url: string) {
     } as SaveData
 }
 
-function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj) => void, url?: string) {
+function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj)=> void, url?: string) {
     if (url && saveData.path !== url) {
         return emitError({
             code: 2,
@@ -94,8 +92,7 @@ function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj) => voi
         nes.mmap.fromJSON(mmap)
         nes.ppu.fromJSON(ppu)
         nes.frameCounter = frameCounter
-    }
-    catch (e) {
+    } catch (e) {
         console.error(e)
         emitError({
             code: 3,
@@ -149,13 +146,12 @@ class ControllerState {
         this._events[keyCode].push(state)
     }
 
-    emit(keyboadCode: string, stateValue: 0x41 | 0x40, interval: number) {
-        this._events[keyboadCode]?.forEach((event) => {
+    emit(keyboadCode: string, stateValue: 0x40 | 0x41, interval: number) {
+        this._events[keyboadCode]?.forEach(event => {
             const state = nes.controllers[event.p].state
             if (event.index <= 7) {
                 state[event.index] = stateValue
-            }
-            else {
+            } else {
                 const auto = this._auto[event.p][event.index]
                 if (stateValue === 0x41) {
                     if (auto.once) {
@@ -166,8 +162,7 @@ class ControllerState {
                         }, interval)
                         auto.once = false
                     }
-                }
-                else {
+                } else {
                     clearInterval(auto.timeout)
                     state[event.index - 8] = 0x40
                     auto.once = true

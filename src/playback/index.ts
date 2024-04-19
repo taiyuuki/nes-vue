@@ -10,6 +10,7 @@ class Playback {
     frameCache: FrameData
     frameList: number[]
     dbIndex: number
+
     constructor() {
         this.db = createDB('auto-save', 'playback_data')
         this.length = 0
@@ -56,9 +57,9 @@ class Playback {
         this.db.set_item(id, saveDatas)
     }
 
-    load(cb: (data: SaveData) => void) {
+    load(cb: (data: SaveData)=> void) {
         const id = `playback-${--this.dbIndex}`
-        this.db.get_item(id).then((data) => {
+        this.db.get_item(id).then(data => {
             this.length = data.length
             this.frameList = data.frameList
             this.frameData = data.frameData
@@ -68,6 +69,4 @@ class Playback {
     }
 }
 
-export {
-    Playback,
-}
+export { Playback }

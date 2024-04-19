@@ -1,8 +1,8 @@
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import rollupDelete from 'rollup-plugin-delete'
 import dts from 'vite-plugin-dts'
-import path from 'path'
 
 function resolve(dir: string) {
     return path.join(__dirname, dir)
@@ -12,7 +12,7 @@ function resolve(dir: string) {
 export default defineConfig({
     plugins: [
         dts({
-            outputDir: 'dist',
+            outDir: 'dist',
             staticImport: true,
             insertTypesEntry: true,
             rollupTypes: true,
@@ -22,17 +22,17 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve('src'),
-            src: resolve('src'),
-            common: resolve('src/common'),
-            components: resolve('src/components'),
-            composables: resolve('src/composables'),
+            'src': resolve('src'),
+            'common': resolve('src/common'),
+            'components': resolve('src/components'),
+            'composables': resolve('src/composables'),
         },
     },
     build: {
         lib: {
             entry: resolve('src/index.ts'),
             name: 'NesVue',
-            fileName: (format) => `nes-vue.${format}.js`,
+            fileName: format => `nes-vue.${format}.js`,
         },
         rollupOptions: {
             external: ['vue'],

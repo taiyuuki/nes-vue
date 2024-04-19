@@ -13,13 +13,13 @@ let audio_write_cursor = 0
 let audio_read_cursor = 0
 
 function audio_remain() {
-    return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK
+    return audio_write_cursor - audio_read_cursor & SAMPLE_MASK
 }
 
 function onAudioSample(left: number, right: number) {
     audio_samples_L[audio_write_cursor] = left
     audio_samples_R[audio_write_cursor] = right
-    audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
+    audio_write_cursor = audio_write_cursor + 1 & SAMPLE_MASK
 }
 
 function getSampleRate() {
@@ -29,6 +29,7 @@ function getSampleRate() {
     const myCtx = new window.AudioContext()
     const sampleRate = myCtx.sampleRate
     myCtx.close()
+
     return sampleRate
 }
 
@@ -44,12 +45,12 @@ function audioFrame() {
         const dst_l = dst.getChannelData(0)
         const dst_r = dst.getChannelData(1)
         for (let i = 0; i < len; i++) {
-            const src_idx = (audio_read_cursor + i) & SAMPLE_MASK
+            const src_idx = audio_read_cursor + i & SAMPLE_MASK
             dst_l[i] = audio_samples_L[src_idx] * gain
             dst_r[i] = audio_samples_R[src_idx] * gain
         }
 
-        audio_read_cursor = (audio_read_cursor + len) & SAMPLE_MASK
+        audio_read_cursor = audio_read_cursor + len & SAMPLE_MASK
     }
     script_processor.connect(audio_ctx.destination)
 }
