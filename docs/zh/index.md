@@ -11,7 +11,7 @@ hero:
   actions: 
     - theme: alt
       text: 在线游乐场
-      link: https://taiyuuki.gitee.io/nes-vue
+      link: https://taiyuuki.github.io/nes-vue
     - theme: brand
       text: 开始使用
       link: /zh/guide/getting-started

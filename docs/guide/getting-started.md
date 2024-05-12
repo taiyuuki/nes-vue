@@ -20,4 +20,4 @@ npm i nes-vue
 
 ## Playground
 
-[Playground](https://taiyuuki.gitee.io/nes-vue)
+[Playground](https://taiyuuki.github.io/nes-vue)

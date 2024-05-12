@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: alt
       text: Playground
-      link: https://taiyuuki.gitee.io/nes-vue
+      link: https://taiyuuki.github.io/nes-vue
     - theme: brand
       text: Getting Started
       link: /guide/getting-started
