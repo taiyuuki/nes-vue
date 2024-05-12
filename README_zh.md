@@ -45,4 +45,4 @@ npm install nes-vue --save
 </template>
 ```
 
-更多组件API请查看 [文档](https://taiyuuki.gitee.io/nes-vue-docs/zh/)
+更多组件API请查看 [文档](https://nes-vue-docs.netlify.app/zh/)
