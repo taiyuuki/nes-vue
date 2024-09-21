@@ -112,7 +112,8 @@ function start(url: string = props.url) {
     }
     if (isStop.value) {
         isStop.value = false
-    } else {
+    }
+    else {
         audioStop()
         animationStop()
         clearInterval(fpsStamp)
@@ -134,7 +135,8 @@ function start(url: string = props.url) {
                     emit('fps', fps || 0)
                 }, 1000)
                 resolve('success')
-            } catch (_) {
+            }
+            catch (_) {
                 reject({
                     code: 0,
                     message: `${url} loading Error: Probably the ROM is unsupported.`,
@@ -144,7 +146,8 @@ function start(url: string = props.url) {
         }
         if (is_not_void(rom.buffer)) {
             loadROM(rom.buffer)
-        } else {
+        }
+        else {
             const req = new XMLHttpRequest()
             req.open('GET', url)
             req.overrideMimeType('text/plain; charset=x-user-defined')
@@ -158,7 +161,8 @@ function start(url: string = props.url) {
                 if (this.status === 200) {
                     rom.buffer = this.responseText
                     loadROM(rom.buffer)
-                } else {
+                }
+                else {
                     reject({
                         code: 404,
                         message: `${url} loading Error: ${req.statusText}`,
@@ -215,7 +219,8 @@ function checkId(id: number | string | undefined) {
             code: 4,
             message: 'TypeError: id is undefined.',
         })
-    } else {
+    }
+    else {
         return false
     }
 }
@@ -235,7 +240,8 @@ function saveInStorage(id: string) {
             message: 'The state has been saved in localStorage',
             target: 'localStorage',
         })
-    } catch (e: any) {
+    }
+    catch (e: any) {
         if (e.name === 'QuotaExceededError') {
             return emitError({
                 code: 1,
@@ -270,7 +276,8 @@ function saveIndexedDB(id: string) {
     }
     try {
         db.set_item(id, getNesData(props.url))
-    } catch (_) {
+    }
+    catch (_) {
         emitError({
             code: 1,
             message: 'Save Error: Unable to save data to indexedDB.',
@@ -318,7 +325,8 @@ function save(id: string) {
     }
     if (props.storage) {
         saveInStorage(id)
-    } else {
+    }
+    else {
         saveIndexedDB(id)
     }
 }
@@ -354,7 +362,8 @@ function load(id: string) {
     }
     if (props.storage) {
         loadInStorage(id)
-    } else {
+    }
+    else {
         loadIndexedDB(id)
     }
     if (isPaused) {
@@ -368,7 +377,8 @@ function remove(id: string) {
     }
     if (props.storage) {
         localStorage.removeItem(id)
-    } else {
+    }
+    else {
         db.remove_item(id)
     }
 }
@@ -418,7 +428,8 @@ async function fm2URL(url: string, fix = 0) {
         const res = await fetch(url)
         const text = await res.text()
         fm2Parse(text, fix)
-    } catch (e) {
+    }
+    catch (e) {
         emitError({
             code: 4,
             message: 'FM2 Error: Unable to load fm2 file.',
@@ -592,4 +603,3 @@ export default { name: 'NesVue' }
     </div>
   </div>
 </template>
-../types
