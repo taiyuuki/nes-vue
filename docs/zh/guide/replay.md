@@ -136,8 +136,8 @@ function playVideo() {
 * 不同的游戏录像由于开始帧的位置差异，可能需要手动调整，这里提供了第二个参数来微调帧数。
 
   ```ts
-  nes.value.fm2Text(text, -1) // 提前1帧
-  nes.value.fm2URL(text, 2) // 延迟2帧
+  nes.value.fm2Play(-1) // 提前1帧
+  nes.value.fm2Play(2) // 延迟2帧
   ```
 
   具体需要调整多少，只能靠自己测试。

@@ -134,8 +134,8 @@ There are several points to note:
 * Due to differences in the start frame, some game recording videos may require manual adjustment. A second parameter is provided to fine-tune the frame count.
 
   ```ts
-  nes.value.fm2Text(text, -1) // 1 frame in advance
-  nes.value.fm2URL(text, 2) // Delay by 2 frames
+  nes.value.fm2Play(-1) // 1 frame in advance
+  nes.value.fm2Play(2) // Delay by 2 frames
   ```
 
   The specific number of frames that need to be adjusted can only be tested by yourself.
