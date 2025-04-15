@@ -62,21 +62,13 @@ export interface Automatic {
 
 export type Player = 'p1' | 'p2'
 
-export interface FrameData {
-    [frame: number]: number[]
-}
+export interface FrameData { [frame: number]: number[] }
 
 export interface SaveData {
     path: string
     data: {
-        cpu: any
-        mmap: any
-        ppu: any
-        vramMemZip: any
-        nameTableZip: any
-        cpuMemZip: any
-        ptTileZip: any
-        frameCounter: number
+        data: Uint8Array | string,
+        compress: boolean  
     }
 }
 

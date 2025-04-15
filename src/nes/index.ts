@@ -1,65 +1,26 @@
-import { get_fill_arr } from '@taiyuuki/utils'
-import jsnes from 'jsnes'
+
+import { NES } from '@nesjs/core'
 import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
-import { compressArray, compressNameTable, compressPtTile, decompressArray, decompressNameTable, decompressPtTile, getVramMirrorTable } from 'src/utils'
-import { tasState } from 'src/tas'
 import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/types'
 
-const nes = new jsnes.NES({
+const nes = new NES({
     onFrame,
     onAudioSample,
     sampleRate: getSampleRate(),
 })
 
-nes.videoMode = false
-nes.frameCounter = 1
-nes.playbackMode = false
 const rom = { buffer: null as string | null }
 
 function nesFrame() {
-    if (nes.videoMode && nes.frameCounter in tasState) {
-        const script = tasState[nes.frameCounter]
-        if (nes.frameCounter > 0) {
-            nes.controllers[1].state = script.p1
-            nes.controllers[2].state = script.p2
-        }
-    }
     nes.frame()
 }
 
 function getNesData(url: string) {
-    const ppu = nes.ppu.toJSON()
-    const mmap = nes.mmap.toJSON()
-    const vramMemZip = compressArray(ppu.vramMem!)
-    const nameTableZip = compressNameTable(ppu.nameTable!)
-    const ptTileZip = compressPtTile(ppu.ptTile!)
-    delete ppu.attrib
-    delete ppu.bgbuffer
-    delete ppu.buffer
-    delete ppu.pixrendered
-    delete ppu.vramMirrorTable
-    delete ppu.vramMem
-    delete ppu.nameTable
-    delete ppu.ptTile
-
-    const cpu = nes.cpu.toJSON()
-    const cpuMemZip = compressArray(cpu.mem!)
-    delete cpu.mem
-
     return {
         path: url,
-        data: {
-            cpu,
-            mmap,
-            ppu,
-            vramMemZip,
-            nameTableZip,
-            cpuMemZip,
-            ptTileZip,
-            frameCounter: nes.frameCounter,
-        },
-    } as SaveData
+        data: nes.toJSON(),
+    }
 }
 
 function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj)=> void, url?: string) {
@@ -76,23 +37,9 @@ function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj)=> void
         })
     }
     try {
-        const { ppu, cpu, mmap, frameCounter, vramMemZip, nameTableZip, cpuMemZip, ptTileZip } = saveData.data
-        ppu.attrib = get_fill_arr(0x20, 0)
-        ppu.bgbuffer = get_fill_arr(0xF000, 0)
-        ppu.buffer = get_fill_arr(0xF000, 0)
-        ppu.pixrendered = get_fill_arr(0xF000, 0)
-        ppu.vramMem = decompressArray(vramMemZip)
-        ppu.nameTable = decompressNameTable(nameTableZip)
-        ppu.vramMirrorTable = getVramMirrorTable()
-        ppu.ptTile = decompressPtTile(ptTileZip)
-        cpu.mem = decompressArray(cpuMemZip)
-        nes.ppu.reset()
-        nes.romData = rom.buffer
-        nes.cpu.fromJSON(cpu)
-        nes.mmap.fromJSON(mmap)
-        nes.ppu.fromJSON(ppu)
-        nes.frameCounter = frameCounter
-    } catch (e) {
+        nes.fromJSON(saveData.data)
+    }
+    catch (e) {
         console.error(e)
         emitError({
             code: 3,
@@ -148,11 +95,13 @@ class ControllerState {
 
     emit(keyboadCode: string, stateValue: 0x40 | 0x41, interval: number) {
         this._events[keyboadCode]?.forEach(event => {
-            const state = nes.controllers[event.p].state
+            const p = event.p as 1 | 2
+            const state = nes.controllers[p].state
             if (event.index <= 7) {
                 state[event.index] = stateValue
-            } else {
-                const auto = this._auto[event.p][event.index]
+            }
+            else {
+                const auto = this._auto[p][event.index]
                 if (stateValue === 0x41) {
                     if (auto.once) {
                         state[event.index - 8] = 0x41
@@ -162,7 +111,8 @@ class ControllerState {
                         }, interval)
                         auto.once = false
                     }
-                } else {
+                }
+                else {
                     clearInterval(auto.timeout)
                     state[event.index - 8] = 0x40
                     auto.once = true

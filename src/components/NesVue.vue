@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { computed, effect, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { createDB } from 'src/db'
 import type { Controller, EmitErrorObj, SaveData, SavedOrLoaded } from 'src/types'
 import { audioFrame, audioStop, resume, setGain, suspend } from 'src/audio'
 import { HEIGHT, WIDTH, animationFrame, animationStop, cut, fitInParent } from 'src/animation'
-import { download_canvas, get_fill_arr, is_empty_obj, is_not_void, is_void } from '@taiyuuki/utils'
+import { download_canvas, is_not_void, is_void } from '@taiyuuki/utils'
 import { P1_DEFAULT, P2_DEFAULT, useController } from 'src/composables/use-controller'
-import { fm2Parse, tasState } from 'src/tas'
 import { getNesData, loadNesData, nes, rom } from 'src/nes'
 import { useElement } from 'src/composables/use-instance'
-import { cheat } from 'src/cheat'
 
 defineOptions({ name: 'NesVue' })
 
@@ -81,7 +79,7 @@ function emitError(errorObj: EmitErrorObj) {
     return false
 }
 
-effect(() => {
+watchEffect(() => {
     nes.ppu.clipToTvSize = !props.noClip
 })
 
@@ -189,10 +187,9 @@ function start(url: string = props.url) {
  * 🎮: Restart the current game
  */
 function reset() {
-    nes.videoMode && fm2Stop()
+    nes.video.stop()
     isStop.value || stop()
     isPaused && (isPaused = false)
-    cheat.init()
     if (props.url) {
         start()
     }
@@ -209,7 +206,6 @@ function stop() {
     animationStop()
     clearInterval(fpsStamp)
     nes.reset()
-    cheat.init()
     isStop.value = true
 }
 
@@ -277,7 +273,8 @@ function saveIndexedDB(id: string) {
     try {
         db.set_item(id, getNesData(props.url))
     }
-    catch (_) {
+    catch (e) {
+        console.error(e)
         emitError({
             code: 1,
             message: 'Save Error: Unable to save data to indexedDB.',
@@ -317,7 +314,7 @@ function save(id: string) {
     if (checkId(id)) {
         return
     }
-    if (!nes.cpu.irqRequested || isStop.value) {
+    if (isStop.value) {
         return emitError({
             code: 1,
             message: 'Save Error: Can only be saved while the game is running.',
@@ -404,18 +401,10 @@ function screenshot(download?: boolean, imageName?: string) {
     return img
 }
 
-function fm2Play() {
-    if (is_empty_obj(tasState, false)) {
-        emitError({
-            code: 3,
-            message: 'FM2 Error: No fm2 scripts found.',
-        })
-
-        return
-    }
+function fm2Play(offset = 0) {
     reset()
-    nes.videoMode = true
     removeEvent()
+    nes.video.run(offset)
 }
 
 /**
@@ -423,11 +412,11 @@ function fm2Play() {
  * @param url fm2 file url
  * @param fix fix fm2
  */
-async function fm2URL(url: string, fix = 0) {
+async function fm2URL(url: string) {
     try {
         const res = await fetch(url)
         const text = await res.text()
-        fm2Parse(text, fix)
+        nes.video.parseFM2(text)
     }
     catch (e) {
         emitError({
@@ -442,9 +431,7 @@ async function fm2URL(url: string, fix = 0) {
 }
 
 function fm2Stop() {
-    nes.videoMode = false
-    nes.controllers[1].state = get_fill_arr(8, 0x40)
-    nes.controllers[2].state = get_fill_arr(8, 0x40)
+    nes.video.stop()
     addEvent()
 }
 
@@ -453,33 +440,23 @@ function fm2Stop() {
  * @param text - fm2 text
  * @param fix - fix fm2
  */
-function fm2Text(text: string, fix = 0) {
-    fm2Parse(text, fix)
+function fm2Text(text: string) {
+    nes.video.parseFM2(text)
 
     return Promise.resolve(fm2Play)
 }
 
 function cheatCode(code: string) {
-    cheat.parse(code)
+    nes.cheat.onCheat(code)
 }
 
 function cancelCheatCode(code: string) {
-    cheat.disable(code)
+    nes.cheat.disableCheat(code)
 }
 
 function cancelCheatCodeAll() {
-    cheat.init()
+    nes.cheat.reset()
 }
-
-// function memory(address: string, type: 'always' | 'once' | 'less' | 'greater', value: number) {
-//     const TYPES = {
-//         always: 0,
-//         once: 1,
-//         less: 2,
-//         greater: 3,
-//     }
-//     cheat.on(toHexNumber(address), TYPES[type], value)
-// }
 
 function pause() {
     isPaused = true

@@ -31,9 +31,9 @@ function load() {
 }
 
 function playVideo() {
-    nes.value.fm2URL('happylee-supermariobros,warped.fm2', 0)
+    nes.value.fm2URL('happylee-supermariobros,warped.fm2')
         .then(fm2Play => {
-            fm2Play()
+            fm2Play(0)
         })
 }
 
