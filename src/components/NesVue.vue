@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { Controller, EmitErrorObj, SaveData, SavedOrLoaded } from 'src/types'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { createDB } from 'src/db'
-import type { Controller, EmitErrorObj, SaveData, SavedOrLoaded } from 'src/types'
 import { audioFrame, audioStop, resume, setGain, suspend } from 'src/audio'
 import { HEIGHT, WIDTH, animationFrame, animationStop, cut, fitInParent } from 'src/animation'
 import { download_canvas, is_not_void, is_void } from '@taiyuuki/utils'
@@ -66,6 +66,9 @@ const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
 const db = createDB<SaveData>(props.dbName, 'save_data')
 let isPaused = false
+let fm2 = ''
+let fm2Offset = 0
+let playingVideo = false
 
 let fpsStamp: number
 
@@ -125,7 +128,7 @@ function start(url: string = props.url) {
     animationFrame(cvs.value)
 
     const rp = new Promise((resolve, reject) => {
-        function loadROM(buffer: string) {
+        function loadROM(buffer: Uint8Array) {
             try {
                 nes.loadROM(buffer)
                 fpsStamp = window.setInterval(() => {
@@ -146,28 +149,18 @@ function start(url: string = props.url) {
             loadROM(rom.buffer)
         }
         else {
-            const req = new XMLHttpRequest()
-            req.open('GET', url)
-            req.overrideMimeType('text/plain; charset=x-user-defined')
-            req.onerror = () => {
-                reject({
-                    code: 404,
-                    message: `${url} loading Error: ${req.statusText}`,
-                })
-            }
-            req.onload = function() {
-                if (this.status === 200) {
-                    rom.buffer = this.responseText
+            fetch(url)
+                .then(res => res.arrayBuffer())
+                .then(buffer => {
+                    rom.buffer = new Uint8Array(buffer)
                     loadROM(rom.buffer)
-                }
-                else {
+                })
+                .catch(e => {
                     reject({
-                        code: 404,
-                        message: `${url} loading Error: ${req.statusText}`,
+                        code: 0,
+                        message: `${url} loading Error: ${e.message}`,
                     })
-                }
-            }
-            req.send()
+                })
         }
         cvs.value && fitInParent(cvs.value)
         addEvent()
@@ -187,12 +180,13 @@ function start(url: string = props.url) {
  * 🎮: Restart the current game
  */
 function reset() {
-    nes.video.stop()
-    isStop.value || stop()
-    isPaused && (isPaused = false)
-    if (props.url) {
-        start()
+    nes.reloadROM()
+    if (playingVideo) {
+        playingVideo = false
+        addEvent()
     }
+    isPaused = false
+    isStop.value = false
 }
 
 /**
@@ -206,6 +200,7 @@ function stop() {
     animationStop()
     clearInterval(fpsStamp)
     nes.reset()
+    playingVideo = false
     isStop.value = true
 }
 
@@ -223,6 +218,9 @@ function checkId(id: number | string | undefined) {
 
 function loadGameData(saveData: SaveData) {
     loadNesData(saveData, emitError, props.url)
+    if (playingVideo) {
+        nes.playVideo(fm2, fm2Offset)
+    }
 }
 
 function saveInStorage(id: string) {
@@ -402,9 +400,11 @@ function screenshot(download?: boolean, imageName?: string) {
 }
 
 function fm2Play(offset = 0) {
-    reset()
+    fm2Offset = offset
+    nes.reloadROM()
     removeEvent()
-    nes.video.run(offset)
+    nes.playVideo(fm2, offset)
+    playingVideo = true
 }
 
 /**
@@ -415,8 +415,7 @@ function fm2Play(offset = 0) {
 async function fm2URL(url: string) {
     try {
         const res = await fetch(url)
-        const text = await res.text()
-        nes.video.parseFM2(text)
+        fm2 = await res.text()
     }
     catch (e) {
         emitError({
@@ -441,7 +440,7 @@ function fm2Stop() {
  * @param fix - fix fm2
  */
 function fm2Text(text: string) {
-    nes.video.parseFM2(text)
+    fm2 = text
 
     return Promise.resolve(fm2Play)
 }
@@ -465,27 +464,8 @@ function pause() {
 
 function play() {
     isPaused = false
-
-    // if (props.rewindMode) {
-    //     frameAction()
-    // }
-    // else {
     resume()
-
-    // }
 }
-
-// function prev() {
-//     if (!props.rewindMode) { return }
-//     isPause || pause()
-//     rewind()
-// }
-
-// function next() {
-//     if (!props.rewindMode) { return }
-//     isPause || pause()
-//     forward()
-// }
 
 const canvasStyle = computed(() => {
     const pure = /^\d*$/
@@ -513,11 +493,7 @@ watch(
     () => { setGain(props.gain) },
 )
 
-// watch(() => props.rewindMode, () => { nes.playbackMode = props.rewindMode })
-
 onMounted(() => {
-
-    // nes.playbackMode = props.rewindMode
     rom.buffer = null
     if (props.autoStart) {
         start()
@@ -548,10 +524,6 @@ defineExpose({
     cheatCode,
     cancelCheatCode,
     cancelCheatCodeAll,
-
-    // memory,
-    // prev,
-    // next,
 })
 </script>
 

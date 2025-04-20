@@ -25,7 +25,7 @@ export default defineConfig({
         },
     },
     plugins: [
-        vue({ reactivityTransform: true }),
+        vue(),
         pages({
             extensions: ['vue', 'md'],
             extendRoute(route) {
@@ -53,6 +53,9 @@ export default defineConfig({
             dts: 'src/auto-imports.d.ts',
         }),
     ],
+    optimizeDeps: {
+        exclude: ['@vue/repl'],
+    },
     build: {
         rollupOptions: {
             output: {

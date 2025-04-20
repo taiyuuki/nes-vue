@@ -10,7 +10,7 @@ const nes = new NES({
     sampleRate: getSampleRate(),
 })
 
-const rom = { buffer: null as string | null }
+const rom = { buffer: null as Uint8Array | null }
 
 function nesFrame() {
     nes.frame()

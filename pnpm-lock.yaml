@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@nesjs/core':
-        specifier: ^1.0.5
-        version: 1.0.5
+        specifier: ^1.0.9
+        version: 1.0.9
     devDependencies:
       '@taiyuuki/eslint-config':
         specifier: ^1.4.18
@@ -553,8 +553,8 @@ packages:
   '@microsoft/tsdoc@0.15.1':
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
 
-  '@nesjs/core@1.0.5':
-    resolution: {integrity: sha512-RrKqBZ6vlLtcfV8YJ3ToHBEZAK/JXMCfmzHiaxjJaOulT4tUIdm21QWRagyucAt+l5vZQhEtae/4cvlX/OSQ3g==}
+  '@nesjs/core@1.0.9':
+    resolution: {integrity: sha512-BHmDIlleBpqU005XKioD3l09xuvSyYGA+0LMzV+F1LYffLr6gUkcvmxsiC9lMCh7A16avG/etOrRmUxOrqau7Q==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2959,7 +2959,7 @@ snapshots:
 
   '@microsoft/tsdoc@0.15.1': {}
 
-  '@nesjs/core@1.0.5':
+  '@nesjs/core@1.0.9':
     dependencies:
       pako: 2.1.0
 

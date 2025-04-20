@@ -50,18 +50,41 @@ let script = `<script setup>
 import { ref, computed } from 'vue'
 import { NesVue } from 'nes-vue'
 
-const gameList = ${JSON.stringify(roms, null, 2)}
-const fm2List = ${JSON.stringify(fm2s, null, 2)}
+const gameList = [
+  "Super Mario Bros (JU).nes",
+  "Super Mario Bros 3.nes",
+  "Mighty Final Fight (USA).nes",
+  "Mitsume ga Tooru (Japan).nes"
+]
+const fm2List = [
+  [
+    "happylee-supermariobros,warped.fm2",
+    0
+  ],
+  [
+    "lordtom,maru,tompa-smb3-warps.fm2",
+    -1
+  ],
+  [
+    "xipov3-mightyfinalfight.fm2",
+    0
+  ],
+  [
+    "jy,aiqiyou-mitsumegatooru.fm2",
+    0
+  ]
+]
 const gameURL = ref(gameList[0])
 const nes = ref(null)
 const slt = ref(null)
 const disable = ref(true)
 const isPaused = ref(false)
 const pauseLabel = computed(() => isPaused.value ? 'Play' : 'Pause')
+const i = computed(() => gameList.indexOf(slt.value.value))
 
 function fetchFm2() {
-  const fm2 = fm2List[gameList.indexOf(slt.value.value)]
-  nes.value.fm2URL(...fm2)
+  const fm2 = fm2List[i.value]
+  nes.value.fm2URL(fm2[0])
     .then(() => {
       disable.value = false
   })
@@ -86,7 +109,8 @@ function selectRom() {
 
 const tasPlaying = ref(false)
 function playTAS() {
-  nes.value.fm2Play()
+  const fm2 = fm2List[i.value]
+  nes.value.fm2Play(fm2[1])
   tasPlaying.value = true
 }
 

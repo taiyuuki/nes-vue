@@ -5,7 +5,6 @@
   "module": "./dist/nes-vue.es.js",
   "main": "./dist/nes-vue.umd.js",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "license": "MIT",
   "files": [
     "dist"
@@ -13,7 +12,6 @@
   "exports": {
     ".": {
       "import": "./dist/nes-vue.es.js",
-      "require": "./dist/nes-vue.umd.js",
       "types": "./dist/index.d.ts"
     }
   },
@@ -51,7 +49,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@nesjs/core": "^1.0.5"
+    "@nesjs/core": "^1.0.9"
   },
   "devDependencies": {
     "@taiyuuki/eslint-config": "^1.4.18",

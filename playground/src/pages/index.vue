@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { Repl, ReplStore } from '@vue/repl'
-import '@vue/repl/style.css'
+import { Repl, useStore } from '@vue/repl'
 import { template, script, style } from '../template'
+import CodeMirror from '@vue/repl/codemirror-editor'
 
-const store = new ReplStore()
+const store = useStore()
+Object.assign(store.builtinImportMap.imports!, { 'nes-vue': './nes-vue.es.js' })
 
-store.state.files['App.vue'].code = script + template + style
+store.setFiles({
+  'App.vue': script + template + style,
+})
 
-store.setImportMap({ imports: { 'nes-vue': './nes-vue.es.js' } })
+
 </script>
 
 <template>
   <MainHeader :store="store" />
-  <Repl :store="store" />
+  <Repl :editor="CodeMirror" :store="store" />
 </template>
 
 <style>

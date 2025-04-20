@@ -87,7 +87,8 @@ class GamepadManager {
     connectHandler(state: boolean, e: GamepadEvent) {
         if (state) {
             this.gamepads[e.gamepad.index] = e.gamepad
-        } else if (this.gamepads.length === 0) {
+        }
+        else if (this.gamepads.length === 0) {
             this.close()
         }
     }
@@ -99,7 +100,8 @@ class GamepadManager {
                 emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
                 this.axesHolding[player][aindex] = true
             }
-        } else if (hold) {
+        }
+        else if (hold) {
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.axesHolding[player][aindex] = false
         }
@@ -113,7 +115,8 @@ class GamepadManager {
             }
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x41)
             this.btnHolding[player][bindex] = true
-        } else if (hold) {
+        }
+        else if (hold) {
             emitControllerState(this.gamepad_btns.value[player][bindex], 0x40)
             this.btnHolding[player][bindex] = false
         }
