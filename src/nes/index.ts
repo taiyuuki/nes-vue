@@ -2,7 +2,7 @@
 import { NES } from '@nesjs/core'
 import { onFrame } from 'src/animation'
 import { getSampleRate, onAudioSample } from 'src/audio'
-import type { ControllerStateType, EmitErrorObj, SaveData } from 'src/types'
+import type { ControllerStateType, EmitErrorObj, LocalSaveData } from 'src/types'
 
 const nes = new NES({
     onFrame,
@@ -16,18 +16,18 @@ function nesFrame() {
     nes.frame()
 }
 
-function getNesData(url: string) {
+function getNesData(hash: string) {
     return {
-        path: url,
+        hash,
         data: nes.toJSON(),
     }
 }
 
-function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj)=> void, url?: string) {
-    if (url && saveData.path !== url) {
+function loadNesData(saveData: LocalSaveData, emitError: (error: EmitErrorObj)=> void, hash?: string) {
+    if (hash && saveData.hash !== hash) {
         return emitError({
             code: 2,
-            message: `Load Error: The saved data is inconsistent with the current game, saved: ${saveData.path}, current: ${url}.`,
+            message: 'Load Error: The saved data is inconsistent with the current game.',
         })
     }
     if (!rom.buffer) {
@@ -37,7 +37,7 @@ function loadNesData(saveData: SaveData, emitError: (error: EmitErrorObj)=> void
         })
     }
     try {
-        nes.fromJSON(saveData.data)
+        return nes.fromJSON(saveData.data)
     }
     catch (e) {
         console.error(e)

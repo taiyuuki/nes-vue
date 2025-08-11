@@ -73,14 +73,14 @@ play() => void
 
 ## save
 
-存档
+传一个任意id将存档保存与本地
 
 ::: warning
 只有在游戏运行时才能存档、读档，读档还需要保证存档与游戏的一致性。
 :::
 
 ```ts
-save(id: string) => void
+save(id: string) => string
 ```
 
 默认情况下，存档是保存在 indexedDB，你可以设置[storage](/zh/guide/props#storage)属性让其保存在localStorage。
@@ -162,6 +162,8 @@ function load() {
 ```
 :::
 
+## getCurrentData()
+
 ## remove
 
 删除存档。
@@ -176,6 +178,26 @@ remove(id: string) => void
 
 ```ts
 clear() => void
+```
+
+## getCurrentData
+
+获取实际存档数据，你可以将它保存于任意地方。
+
+```ts
+interface SavedData {
+    hash: string
+    data: Uint8Array
+}
+getCurrentData() => SavedData | null
+```
+
+## loadGameData
+
+加载实际存档数据。
+
+```ts
+loadGameData(savedData: SavedData) => void
 ```
 
 ## screenshot

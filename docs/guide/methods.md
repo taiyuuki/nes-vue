@@ -1,6 +1,7 @@
 # Methods
 
-All methods are mounted on component instances. If you use TypeScript, you can obtain the `NesVueInstance` from `nes-vue`.
+All methods are attached to the component instance.
+If you are using TypeScript, you can import the  `NesVueInstance`  type supplied by  `nes-vue`  to get the instance’s type.
 
 ```vue
 <script setup lang="ts">
@@ -70,7 +71,7 @@ play() => void
 
 ## save
 
-Save game state.
+Save game state to localStorage or indexedDB by any id.
 
 ::: warning
 Can only be loaded while the game is running, and ensure that the running game is consistent with the saved game.
@@ -173,6 +174,26 @@ Clear all saved state.
 
 ```ts
 clear() => void
+```
+
+## getCurrentData
+
+Retrieve the raw save data so you can store it anywhere you like.
+
+```ts
+interface SavedData {
+    hash: string
+    data: Uint8Array
+}
+getCurrentData() => SavedData | null
+```
+
+## loadGameData
+
+Load raw save data created with  `getCurrentData` .
+
+```ts
+loadGameData(savedData: SavedData) => void
 ```
 
 ## screenshot

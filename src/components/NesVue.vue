@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Controller, EmitErrorObj, SaveData, SavedOrLoaded } from 'src/types'
+import type { Controller, EmitErrorObj, LocalSaveData, SavedData, SavedOrLoaded } from 'src/types'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { createDB } from 'src/db'
 import { audioFrame, audioStop, resume, setGain, suspend } from 'src/audio'
@@ -64,11 +64,12 @@ const emitControllerState = useController(props)
 
 const cvs = useElement<HTMLCanvasElement>()
 const isStop = ref<boolean>(true)
-const db = createDB<SaveData>(props.dbName, 'save_data')
+const db = createDB<LocalSaveData>(props.dbName, 'save_data')
 let isPaused = false
 let fm2 = ''
 let fm2Offset = 0
 let playingVideo = false
+let romHash = ''
 
 let fpsStamp: number
 
@@ -85,6 +86,13 @@ function emitError(errorObj: EmitErrorObj) {
 watchEffect(() => {
     nes.ppu.clipToTvSize = !props.noClip
 })
+
+async function getRomHash(buffer: Uint8Array): Promise<string> {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer.buffer as ArrayBuffer)
+
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+}
 
 function downKeyboardEvent(event: KeyboardEvent) {
     emitControllerState(event.code, 0x41)
@@ -128,7 +136,7 @@ function start(url: string = props.url) {
     animationFrame(cvs.value)
 
     const rp = new Promise((resolve, reject) => {
-        function loadROM(buffer: Uint8Array) {
+        async function loadROM(buffer: Uint8Array) {
             try {
                 nes.loadROM(buffer)
                 fpsStamp = window.setInterval(() => {
@@ -136,6 +144,7 @@ function start(url: string = props.url) {
                     emit('fps', fps || 0)
                 }, 1000)
                 resolve('success')
+                romHash = await getRomHash(buffer)
             }
             catch (_) {
                 reject({
@@ -199,9 +208,9 @@ function stop() {
     audioStop()
     animationStop()
     clearInterval(fpsStamp)
-    nes.reset()
     playingVideo = false
     isStop.value = true
+    nes.reset()
 }
 
 function checkId(id: number | string | undefined) {
@@ -216,8 +225,8 @@ function checkId(id: number | string | undefined) {
     }
 }
 
-function loadGameData(saveData: SaveData) {
-    loadNesData(saveData, emitError, props.url)
+function loadGameData(saveData: LocalSaveData) {
+    loadNesData(saveData, emitError, romHash)
     if (playingVideo) {
         nes.playVideo(fm2, fm2Offset)
     }
@@ -228,12 +237,15 @@ function saveInStorage(id: string) {
         return
     }
     try {
-        localStorage.setItem(id, JSON.stringify(getNesData(props.url)))
+        const data = getNesData(romHash)
+        localStorage.setItem(id, JSON.stringify(data))
         emit('saved', {
             id,
             message: 'The state has been saved in localStorage',
             target: 'localStorage',
         })
+
+        return data
     }
     catch (e: any) {
         if (e.name === 'QuotaExceededError') {
@@ -269,7 +281,10 @@ function saveIndexedDB(id: string) {
         return
     }
     try {
-        db.set_item(id, getNesData(props.url))
+        const data = getNesData(romHash)
+        db.set_item(id, data)
+
+        return data
     }
     catch (e) {
         console.error(e)
@@ -303,20 +318,25 @@ function loadIndexedDB(id: string) {
  * function save() {
  *  if (nes.value) {
  *   // Save state
- *   nes.value.save(id)
+ *   const saveId = nes.value.save()
  *  }
  * }
  * ```
  */
-function save(id: string) {
-    if (checkId(id)) {
-        return
+function save(id?: string) {
+    if (!romHash && !id) {
+        return void 0
+    }
+    if (!id) {
+        id = romHash
     }
     if (isStop.value) {
-        return emitError({
+        emitError({
             code: 1,
             message: 'Save Error: Can only be saved while the game is running.',
         })
+
+        return void 0
     }
     if (props.storage) {
         saveInStorage(id)
@@ -324,11 +344,13 @@ function save(id: string) {
     else {
         saveIndexedDB(id)
     }
+
+    return id
 }
 
 /**
  * 🎮: Load game state
- * @param id Game state id
+ * @param saveId Game state id
  * @example
  * ```ts
  * import { ref } from 'vue'
@@ -336,17 +358,17 @@ function save(id: string) {
  * import { NesVue } from 'nes-vue'
  *
  * const nes = ref<NesVueInstance | null>(null)
- * const id = 'example'
+ * 
  * function load() {
  *  if (nes.value) {
  *   // Load state
- *   nes.value.load(id)
+ *   nes.value.load(saveId)
  *  }
  * }
  * ```
  */
-function load(id: string) {
-    if (checkId(id)) {
+function load(saveId = romHash) {
+    if (checkId(saveId)) {
         return
     }
     if (!nes.cpu.irqRequested || isStop.value) {
@@ -356,14 +378,37 @@ function load(id: string) {
         })
     }
     if (props.storage) {
-        loadInStorage(id)
+        loadInStorage(saveId)
     }
     else {
-        loadIndexedDB(id)
+        loadIndexedDB(saveId)
     }
     if (isPaused) {
         play()
     }
+}
+
+function getCurrentData(): SavedData | null {
+    if (!romHash) {
+        return null
+    }
+    const sd = getNesData(romHash)
+
+    return {
+        hash: romHash,
+        data: sd.data.data,
+    } as SavedData
+}
+
+function loadSavedData(currentSavedData: SavedData) {
+    loadGameData({
+        hash: currentSavedData.hash,
+        data: {
+            compress: true,
+            data: currentSavedData.data,
+        },
+    })
+    
 }
 
 function remove(id: string) {
@@ -447,6 +492,19 @@ function fm2Text(text: string) {
 
 function cheatCode(code: string) {
     nes.cheat.onCheat(code)
+
+    // function toHexNumber(nstr: string) {
+    //     return Number(`0x${nstr}`)
+    // }
+    // const REG = /([\dA-Fa-f]{4})-([0-3])([0-4])-([\dA-Fa-f]{2,8})/
+    // const matchs = REG.exec(code)
+    // if (!matchs) {
+    //     return
+    // }
+    // const cheatAddress = toHexNumber(matchs[1])
+    // const cheatType = toHexNumber(matchs[2])
+    // const cheatValue = toHexNumber(matchs[4])
+    // nes.cpu.mem[cheatAddress] = cheatValue
 }
 
 function cancelCheatCode(code: string) {
@@ -514,6 +572,8 @@ defineExpose({
     play,
     save,
     load,
+    loadSavedData,
+    getCurrentData,
     remove,
     clear,
     screenshot,

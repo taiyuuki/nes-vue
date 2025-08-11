@@ -64,19 +64,24 @@ export type Player = 'p1' | 'p2'
 
 export interface FrameData { [frame: number]: number[] }
 
-export interface SaveData {
-    path: string
+export interface LocalSaveData {
+    hash: string
     data: {
         data: Uint8Array | string,
         compress: boolean  
     }
 }
 
+export interface SavedData {
+    hash: string
+    data: Uint8Array | string
+}
+
 export interface PlaybackData {
     length: number
     frameList: number[]
     frameData: FrameData
-    nes: SaveData
+    nes: LocalSaveData
 }
 
 export interface TasState {

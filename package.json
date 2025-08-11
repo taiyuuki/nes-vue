@@ -49,7 +49,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@nesjs/core": "^1.0.9"
+    "@nesjs/core": "^1.0.10"
   },
   "devDependencies": {
     "@taiyuuki/eslint-config": "^1.4.18",
